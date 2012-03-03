@@ -12,7 +12,7 @@ public class RTSPermissions {
 	
 	public static boolean canFileRequest(CommandSender sender){
 		if(!sender.hasPermission("reportrts.command.modreq")){
-			sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] You need permission to do that: reportrts.command.ban");
+			sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] You need permission to do that: reportrts.command.modreq");
 			return false;
 		}
 		return true;
