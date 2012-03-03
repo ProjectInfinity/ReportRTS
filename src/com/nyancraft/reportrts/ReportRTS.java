@@ -21,6 +21,7 @@ public class ReportRTS extends JavaPlugin{
 	
 	public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
 	public boolean notifyStaffOnNewRequest;
+	public boolean hideNotification;
 	public int maxRequests;
 	
 	public static Permission permission = null;
@@ -57,6 +58,7 @@ public class ReportRTS extends JavaPlugin{
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
+		hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
 		maxRequests = getConfig().getInt("maxRequests");
 	} 
 	

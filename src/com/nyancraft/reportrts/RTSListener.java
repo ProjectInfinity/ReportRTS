@@ -22,7 +22,7 @@ public class RTSListener implements Listener{
 		
 		openRequests = plugin.requestMap.size();
 		
-		if(openRequests < 1)
+		if(openRequests < 1 && !plugin.hideNotification)
 			event.getPlayer().sendMessage("There are no requests at this time.");
 		
 		if(openRequests > 0)

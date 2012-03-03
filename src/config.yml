@@ -1,5 +1,7 @@
 # notifyStaff - Notifies staff members when a new request is filed.
 # maxRequests - Maximum number of requests a user may have open at the same time.
+# hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 
 notifyStaff: true
 maxRequests: 5
+hideMessageIfEmpty: false
