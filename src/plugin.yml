@@ -2,6 +2,7 @@ name: ReportRTS
 main: com.nyancraft.reportrts.ReportRTS
 version: 0.1
 author: ProjectInfinity
+softdepend: [Vault]
 commands:
   modreq:
     description: Request help from staff

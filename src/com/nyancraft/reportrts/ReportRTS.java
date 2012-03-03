@@ -8,6 +8,9 @@ import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
 
+import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -19,6 +22,8 @@ public class ReportRTS extends JavaPlugin{
 	public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
 	public boolean notifyStaffOnNewRequest;
 	public int maxRequests;
+	
+	public static Permission permission = null;
 	
 	public void onDisable(){
 		RTSDatabaseManager.disableDB();
@@ -41,6 +46,7 @@ public class ReportRTS extends JavaPlugin{
 		getCommand("unclaim").setExecutor(new UnclaimCommand(plugin));
 		getCommand("modlist").setExecutor(new ModlistCommand());
 		getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand());
+		if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
 	}
 	
 	public void reloadPlugin(){
@@ -56,5 +62,14 @@ public class ReportRTS extends JavaPlugin{
 	
     public static ReportRTS getPlugin(){
         return plugin;
+    }
+    
+    private Boolean setupPermissions()
+    {
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
     }
 }
