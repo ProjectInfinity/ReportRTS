@@ -1,0 +1,5 @@
+# notifyStaff - Notifies staff members when a new request is filed.
+# maxRequests - Maximum number of requests a user may have open at the same time.
+
+notifyStaff: true
+maxRequests: 5
