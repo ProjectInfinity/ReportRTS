@@ -29,7 +29,7 @@ public class RTSPermissions {
 	}
 	
 	public static boolean canCheckAllRequests(CommandSender sender){
-		if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.modreq");
+		if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.check");
 		return sender.hasPermission("reportrts.command.check");
 	}
 	
