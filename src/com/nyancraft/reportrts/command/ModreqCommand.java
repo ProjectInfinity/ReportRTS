@@ -29,6 +29,7 @@ public class ModreqCommand implements CommandExecutor {
 			return true;
 		}
 		if(!RTSPermissions.canFileRequest(sender)) return true;
+		if(args.length == 0) return false;
 		if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests) {
 			sender.sendMessage(ChatColor.RED + "[ReportRTS] You have too many requests open, please wait before filing more.");
 			return true;
