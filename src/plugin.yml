@@ -50,6 +50,9 @@ permissions:
   reportrts.command.check:
     description: Permission to check all requests.
     default: op
+  reportrts.command.check.self:
+    description: Permission to check your own requests.
+    default: op
   reportrts.command.complete:
     description: Permission to complete and reopen requests.
     default: op

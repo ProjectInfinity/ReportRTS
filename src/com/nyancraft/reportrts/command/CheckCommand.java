@@ -32,7 +32,15 @@ public class CheckCommand implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!RTSPermissions.canCheckAllRequests(sender)){
-			sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] You need permission to do that: reportrts.command.check");
+			if(!RTSPermissions.canCheckOwnRequests(sender)){
+				sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] You need permission to do that: reportrts.command.check or reportrts.command.check.self");
+				return true;
+			}
+			if(args.length > 0) {
+				sender.sendMessage(ChatColor.RED + "[ReportRTS] You may only use /check to check the status of your requests.");
+				return true;
+			}
+			checkSelf(sender);
 			return true;
 		}
 		if(args.length == 0){
@@ -213,5 +221,32 @@ public class CheckCommand implements CommandExecutor {
 		sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + currentRequest.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + currentRequest.getX() + ", " + currentRequest.getY() + ", " + currentRequest.getZ());
 		sender.sendMessage(ChatColor.GRAY + currentRequest.getMessage());
 		
+	}
+	
+	private void checkSelf(CommandSender sender){
+		int openRequests = 0;
+		for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
+			if(entry.getValue().getName().equals(sender.getName())) openRequests++;
+		}
+			int i = 0;
+			sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " open requests " + ChatColor.AQUA + "----------");
+			if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open requests at this time.");
+			for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
+				if(entry.getValue().getName().equals(sender.getName())){
+					i++;
+					if(i > 5) break;
+		
+					HelpRequest currentRequest = entry.getValue();
+					 substring = currentRequest.getMessage();
+			            if (substring.length() >= 20) {
+			                substring = substring.substring(0, 20) + "...";
+			            }
+			            date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
+			            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+			            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
+			            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
+				}
+
+			}
 	}
 }

@@ -33,6 +33,11 @@ public class RTSPermissions {
 		return sender.hasPermission("reportrts.command.check");
 	}
 	
+	public static boolean canCheckOwnRequests(CommandSender sender){
+		if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.check.self");
+		return sender.hasPermission("reportrts.command.check.self");
+	}
+	
 	public static boolean canCompleteRequests(CommandSender sender){
 		if(ReportRTS.permission != null){
 			if(!ReportRTS.permission.has(sender, "reportrts.command.complete")){
