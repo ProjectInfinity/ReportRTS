@@ -1,7 +1,35 @@
 # notifyStaff - Notifies staff members when a new request is filed.
 # maxRequests - Maximum number of requests a user may have open at the same time.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
+# messages - Change messages shown in ReportRTS.
 
 notifyStaff: true
 maxRequests: 5
 hideMessageIfEmpty: false
+
+messages:
+  generalPermissionError: '%yellow%You need permission to do that: {0}'
+  generalInternalError: '%red%An error occurred. Reference: {0}'
+  generalOpenRequests: '%green%There are {0} open requests. Type /check to see them.'
+  generalNoRequests: '%white%There are no requests at this time.'
+  generalRequestNotFound: '%red%Request #{0} was not found.'
+  banUser: '%gold%{0} has banned {1} from filing requests.'
+  unbanUser: '%gold%{0} has unbanned {1} from filing requests.'
+  checkNoRequests: '%gold%There are no requests right now.'
+  claimRequest: '%gold%{0} is now handling request #{1}.'
+  claimNotOpen: '%red%You may only claim open requests.'
+  unclaimReqMod: '%gold%{0} is no longer handling request #{1}.'
+  unclaimReqSelf: 'Request #{0} has been unclaimed.'
+  unclaimNotClaimed: '%red%You may only unclaim requests that are claimed.'
+  completedReq: '%gold%Request #{0} was completed by {1}.'
+  holdRequest: '%gold%Request #{0} was put on hold by {1}'
+  holdNoRequests: '%gold%There are no requests on hold right now.'
+  broadcastMessage: '%white%[%red%Mod-Broadcast%white%] %red%{0}: %green%{1}'
+  modreqFiledUser: '%gold%Your request has been filed. A staff member should be with you soon.'
+  modreqFiledMod: '%green%A new request has been filed by {0}.'
+  modreqTooManyOpen: '%red%You have too many requests open, please wait before filing more.'
+  modlistMessage: '%aqua%Staff online: %yellow%{0}'
+  modlistNoMods: '%yellow%There are no staff members online.'
+  reopenedRequest: '%gold%{0} has reopened request #{1}'
+  reopenedRequestSelf: '%gold%Request #{0} has been reopened.'
+  teleportToRequest: '%blue%Teleported to request #{0}'

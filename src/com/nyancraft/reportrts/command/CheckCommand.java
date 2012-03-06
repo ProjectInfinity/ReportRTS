@@ -16,6 +16,7 @@ import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.RTSFunctions;
 
 public class CheckCommand implements CommandExecutor {
@@ -33,11 +34,11 @@ public class CheckCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!RTSPermissions.canCheckAllRequests(sender)){
 			if(!RTSPermissions.canCheckOwnRequests(sender)){
-				sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] You need permission to do that: reportrts.command.check or reportrts.command.check.self");
+				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check or reportrts.command.check.self"));
 				return true;
 			}
 			if(args.length > 0) {
-				sender.sendMessage(ChatColor.RED + "[ReportRTS] You may only use /check to check the status of your requests.");
+				sender.sendMessage(ChatColor.RED + "You may only use /check to check the status of your requests.");
 				return true;
 			}
 			checkSelf(sender);
@@ -123,7 +124,7 @@ public class CheckCommand implements CommandExecutor {
 		
 		int pageNumber = Integer.parseInt(page);
 		sender.sendMessage(ChatColor.AQUA + "--------- " + requestList.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-		if(plugin.requestMap.size() == 0) sender.sendMessage(ChatColor.GOLD + "There are no requests right now.");
+		if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 		for(int i = (pageNumber * 5) - 5; i < (pageNumber * 5) && i < requestList.size(); i++){
 			HelpRequest currentRequest = requestList.get(i).getValue();
 			 substring = currentRequest.getMessage();
@@ -146,7 +147,7 @@ public class CheckCommand implements CommandExecutor {
 		try {
 			int heldRequests = RTSDatabaseManager.getHeldRequests();
 			sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
-			if(heldRequests == 0) sender.sendMessage(ChatColor.GOLD + "There are no held requests right now.");
+			if(heldRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
 			while(result.next()){
 				 substring = result.getString("text");
 
@@ -159,7 +160,7 @@ public class CheckCommand implements CommandExecutor {
 			}
 			result.close();
 		} catch (SQLException e) {
-			sender.sendMessage(ChatColor.RED + "[ReportRTS] Unable to check held requests. Check the console for errors.");
+			sender.sendMessage(Message.parse("generalInternalError", "Cannot check held requests, see console for errors."));
 			e.printStackTrace();
 			return;
 		}
@@ -202,7 +203,7 @@ public class CheckCommand implements CommandExecutor {
 				result.close();
 				return;
 			} catch (SQLException e) {
-				sender.sendMessage(ChatColor.RED + "[ReportRTS]" + " Request #" + id + " was not found.");
+				sender.sendMessage(Message.parse("generalRequestNotFound", id));
 				return;
 			}
 			

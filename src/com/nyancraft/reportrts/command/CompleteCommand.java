@@ -9,6 +9,7 @@ import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.util.Message;
 
 public class CompleteCommand implements CommandExecutor {
 
@@ -24,12 +25,12 @@ public class CompleteCommand implements CommandExecutor {
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 		
 		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3)) {
-			sender.sendMessage(ChatColor.RED + "[ReportRTS] Unable to mark request #" + args[0] + " as completed.");
+			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + "as complete"));
 			return true;	
 		}
 		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) plugin.requestMap.remove(Integer.parseInt(args[0]));
 			
-		RTSFunctions.messageMods(ChatColor.GOLD + "[ReportRTS] Request #" + args[0] + " was completed by " + sender.getName() + "", sender.getServer().getOnlinePlayers());
+		RTSFunctions.messageMods(Message.parse("completedReq", args[0], sender.getName()), sender.getServer().getOnlinePlayers());
 		return true;
 	}
 

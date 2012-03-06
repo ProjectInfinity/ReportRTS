@@ -1,12 +1,12 @@
 package com.nyancraft.reportrts;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.nyancraft.reportrts.RTSPermissions;
+import com.nyancraft.reportrts.util.Message;
 
 public class RTSListener implements Listener{
 	private final ReportRTS plugin;
@@ -23,9 +23,9 @@ public class RTSListener implements Listener{
 		openRequests = plugin.requestMap.size();
 		
 		if(openRequests < 1 && !plugin.hideNotification)
-			event.getPlayer().sendMessage("There are no requests at this time.");
+			event.getPlayer().sendMessage(Message.parse("generalNoRequests"));
 		
 		if(openRequests > 0)
-			event.getPlayer().sendMessage(ChatColor.GREEN + "There are " + openRequests + " open requests, type /check to see them.");
+			event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests));
 	}
 }

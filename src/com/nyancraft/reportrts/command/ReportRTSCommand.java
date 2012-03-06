@@ -11,6 +11,7 @@ import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.util.Message;
 
 public class ReportRTSCommand implements CommandExecutor{
 
@@ -34,19 +35,19 @@ public class ReportRTSCommand implements CommandExecutor{
 			case BAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
 				if(!RTSDatabaseManager.setUserStatus(args[1], 1)){
-					sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to ban " + args[1] + " from filing requests.");
+					sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
 					return true;
 				}
-				RTSFunctions.messageMods(ChatColor.GOLD + "[ReportRTS] " + sender.getName() + " has banned " + args[1] + " from filing requests.", sender.getServer().getOnlinePlayers());
+				RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), sender.getServer().getOnlinePlayers());
 				break;
 			
 			case UNBAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
 				if(!RTSDatabaseManager.setUserStatus(args[1], 0)){
-					sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to unban " + args[1] + " from filing requests.");
+					sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
 					return true;
 				}
-				RTSFunctions.messageMods(ChatColor.GOLD + "[ReportRTS] " + sender.getName() + " has unbanned " + args[1] + " from filing requests.", sender.getServer().getOnlinePlayers());
+				RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), sender.getServer().getOnlinePlayers());
 				break;
 				
 			case RESET:

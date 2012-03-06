@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
+import com.nyancraft.reportrts.util.Message;
 
 public class ModBroadcastCommand implements CommandExecutor{
 
@@ -15,7 +16,7 @@ public class ModBroadcastCommand implements CommandExecutor{
 		if(!RTSPermissions.canBroadcast(sender)) return true;
 		if(args.length == 0) return false;
 		String message = RTSFunctions.implode(args, " ");
-		RTSFunctions.messageMods(ChatColor.RED + "[Mod-Broadcast] " + sender.getName() + ": " + ChatColor.GREEN + message, sender.getServer().getOnlinePlayers());
+		RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), sender.getServer().getOnlinePlayers());
 		
 		return true;
 	}

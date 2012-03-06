@@ -15,6 +15,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.util.Message;
 
 public class TeleportCommand implements CommandExecutor {
 	
@@ -44,7 +45,7 @@ public class TeleportCommand implements CommandExecutor {
 			Location location = null;
 			try {
 				if(!rs.isBeforeFirst()){
-					sender.sendMessage(ChatColor.RED + "[ReportRTS] That request ID does not exist.");
+					sender.sendMessage(Message.parse("generalRequestNotFound", args[0]));
 					return true;
 				}
 				location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
@@ -69,7 +70,7 @@ public class TeleportCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
 			return true;
 		}
-		player.sendMessage(ChatColor.BLUE + "[ReportRTS] Teleported to request #" + Integer.parseInt(args[0]));
+		player.sendMessage(Message.parse("teleportedToRequest", args[0]));
 		return true;
 	}
 

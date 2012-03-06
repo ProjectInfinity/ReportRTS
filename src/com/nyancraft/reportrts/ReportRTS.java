@@ -1,7 +1,9 @@
 package com.nyancraft.reportrts;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.nyancraft.reportrts.RTSDatabaseManager;
@@ -10,6 +12,7 @@ import com.nyancraft.reportrts.data.HelpRequest;
 
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,6 +23,8 @@ public class ReportRTS extends JavaPlugin{
 	private static final Logger log = Logger.getLogger("Minecraft");
 	
 	public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
+	public Map<String, String> messageMap = new HashMap<String, String>();
+	
 	public boolean notifyStaffOnNewRequest;
 	public boolean hideNotification;
 	public int maxRequests;
@@ -52,6 +57,7 @@ public class ReportRTS extends JavaPlugin{
 	
 	public void reloadPlugin(){
 		requestMap.clear();
+		messageMap.clear();
 		RTSDatabaseManager.getOpenRequests();
 		RTSFunctions.populateHeldRequestsWithData();
 		reloadConfig();
@@ -60,6 +66,11 @@ public class ReportRTS extends JavaPlugin{
 		notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
 		hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
 		maxRequests = getConfig().getInt("maxRequests");
+		ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
+		for(String message : Messages.getKeys(false)){
+			messageMap.put(message, Messages.getString(message));
+			
+		}
 	} 
 	
     public static ReportRTS getPlugin(){
@@ -71,6 +82,7 @@ public class ReportRTS extends JavaPlugin{
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
+            log.info("[ReportRTS] Vault and a compatible permissions manager was found. Using Vault for permissions.");
         }
         return (permission != null);
     }

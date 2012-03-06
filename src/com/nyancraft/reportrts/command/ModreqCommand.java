@@ -14,6 +14,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.util.Message;
 
 public class ModreqCommand implements CommandExecutor {
 
@@ -31,7 +32,7 @@ public class ModreqCommand implements CommandExecutor {
 		if(!RTSPermissions.canFileRequest(sender)) return true;
 		if(args.length == 0) return false;
 		if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests) {
-			sender.sendMessage(ChatColor.RED + "[ReportRTS] You have too many requests open, please wait before filing more.");
+			sender.sendMessage(Message.parse("modreqTooManyOpen"));
 			return true;
 		}
 		
@@ -39,16 +40,16 @@ public class ModreqCommand implements CommandExecutor {
 		String message = RTSFunctions.implode(args, " ");
 		int userId = RTSDatabaseManager.getUserIdCreateIfNotExists(player.getName());
 		if(!RTSDatabaseManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
-			sender.sendMessage(ChatColor.RED + "[ReportRTS] Something went wrong, your request could not be filed.");
+			sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
 			return true;
 		}
 		int ticketId = RTSDatabaseManager.getlatestTicketIdByUser(player.getName(), userId);
 		
 		Location location = player.getLocation();
 		
-		sender.sendMessage(ChatColor.GOLD + "[ReportRTS] Your request has been filed. A staff member should be with you soon.");
+		sender.sendMessage(Message.parse("modreqFiledUser"));
 		plugin.getLogger().log(Level.INFO, "" + player.getName() + " filed a request.");
-		if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(ChatColor.GREEN + "[ReportRTS] A new request has been filed by " + player.getName(), sender.getServer().getOnlinePlayers());
+		if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName()), sender.getServer().getOnlinePlayers());
 		
 		plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), player.getWorld().getName()));
 		

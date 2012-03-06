@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.RTSPermissions;
+import com.nyancraft.reportrts.util.Message;
 
 public class ModlistCommand implements CommandExecutor{
 
@@ -20,12 +21,12 @@ public class ModlistCommand implements CommandExecutor{
 			if(RTSPermissions.isModerator(player)) staff = staff + player.getName() + ", ";
 		}
 		if(staff.length() == 0){
-			sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] There are no staff members online.");
+			sender.sendMessage(Message.parse("modlistNoMods"));
 			return true;
 		}
 		staff = staff.substring(0, staff.length() - 2);
 		
-		sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] " + ChatColor.AQUA + "Staff online: " + ChatColor.YELLOW + staff);
+		sender.sendMessage(Message.parse("modlistMessage", staff));
 		return true;
 	}
 }
