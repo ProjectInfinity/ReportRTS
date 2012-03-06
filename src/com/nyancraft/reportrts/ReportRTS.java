@@ -69,7 +69,6 @@ public class ReportRTS extends JavaPlugin{
 		ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
 		for(String message : Messages.getKeys(false)){
 			messageMap.put(message, Messages.getString(message));
-			
 		}
 	} 
 	
