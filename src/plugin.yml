@@ -1,6 +1,6 @@
 name: ReportRTS
 main: com.nyancraft.reportrts.ReportRTS
-version: 0.2.2
+version: 0.2.3
 author: ProjectInfinity
 softdepend: [Vault]
 commands:
