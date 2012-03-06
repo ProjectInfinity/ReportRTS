@@ -207,6 +207,7 @@ public class RTSDatabaseManager {
     	if(!db.checkConnection()) return false;
     	ResultSet rs = db.query("SELECT `status` FROM reportrts_request WHERE `id` = " + id);
     	try {
+    		if(!rs.isBeforeFirst()) return false;
 			if(rs.getInt("status") == status) {
 				rs.close();
 				return false;

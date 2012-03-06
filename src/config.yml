@@ -19,7 +19,7 @@ messages:
   claimRequest: '%gold%{0} is now handling request #{1}.'
   claimNotOpen: '%red%You may only claim open requests.'
   unclaimReqMod: '%gold%{0} is no longer handling request #{1}.'
-  unclaimReqSelf: 'Request #{0} has been unclaimed.'
+  unclaimReqSelf: '%gold%Request #{0} has been unclaimed.'
   unclaimNotClaimed: '%red%You may only unclaim requests that are claimed.'
   completedReq: '%gold%Request #{0} was completed by {1}.'
   holdRequest: '%gold%Request #{0} was put on hold by {1}'

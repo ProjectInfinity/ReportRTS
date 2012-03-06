@@ -2,7 +2,6 @@ package com.nyancraft.reportrts.command;
 
 import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

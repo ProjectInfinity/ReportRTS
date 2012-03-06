@@ -3,7 +3,6 @@ package com.nyancraft.reportrts;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import com.nyancraft.reportrts.RTSDatabaseManager;

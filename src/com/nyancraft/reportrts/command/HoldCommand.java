@@ -1,6 +1,5 @@
 package com.nyancraft.reportrts.command;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,7 +24,7 @@ public class HoldCommand implements CommandExecutor {
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 		
 		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2)) {
-			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + "on hold."));
+			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
 			return true;	
 		}
 		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) plugin.requestMap.remove(Integer.parseInt(args[0]));
