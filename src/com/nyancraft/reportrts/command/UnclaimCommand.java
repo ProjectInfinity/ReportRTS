@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
@@ -32,6 +33,11 @@ public class UnclaimCommand implements CommandExecutor{
 		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0)){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
 			return true;
+		}
+		Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+		if(player != null){
+			player.sendMessage(Message.parse("unclaimUser", plugin.requestMap.get(Integer.parseInt(args[0])).getModName()));
+			player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage()));
 		}
 		plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(0);
 		RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(Integer.parseInt(args[0])).getModName(), args[0]), sender.getServer().getOnlinePlayers());

@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
@@ -27,7 +28,21 @@ public class HoldCommand implements CommandExecutor {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
 			return true;	
 		}
-		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) plugin.requestMap.remove(Integer.parseInt(args[0]));
+		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+			Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+			if(player != null){
+				player.sendMessage(Message.parse("holdUser", sender.getName()));
+				String reason = RTSFunctions.implode(args, " ");
+				
+				if(reason.length() < 3){
+					reason = "None specified.";
+				}else{
+					reason = reason.substring(2);
+				}
+				player.sendMessage(Message.parse("holdText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), reason));
+			}
+			plugin.requestMap.remove(Integer.parseInt(args[0]));
+		}
 			
 		RTSFunctions.messageMods(Message.parse("holdRequest", args[0], sender.getName()), sender.getServer().getOnlinePlayers());
 		return true;
