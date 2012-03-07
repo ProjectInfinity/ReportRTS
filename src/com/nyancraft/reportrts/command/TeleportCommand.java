@@ -70,7 +70,7 @@ public class TeleportCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
 			return true;
 		}
-		player.sendMessage(Message.parse("teleportedToRequest", args[0]));
+		player.sendMessage(Message.parse("teleportToRequest", args[0]));
 		return true;
 	}
 

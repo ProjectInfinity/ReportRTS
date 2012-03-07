@@ -42,13 +42,22 @@ public class RTSFunctions {
 	if( array.length == 0 ) {
 	    return out;
 	}
-
+	
 	for( String part : array ) {
 	    out = out + part + glue;
 	}
 	out = out.substring(0, out.length() - glue.length() );
 
 	return out;
+    }
+    
+    public static String cleanUpSign(String[] lines){
+    	
+    	String out = "";
+    	for(String part : lines){
+    		out = out + part.trim(); 
+    	}
+    	return out;
     }
     /***
      * Messages all online moderators on the server

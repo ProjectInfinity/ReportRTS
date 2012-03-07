@@ -31,7 +31,7 @@ messages:
   holdRequest: '%gold%Request #{0} was put on hold by {1}'
   holdNoRequests: '%gold%There are no requests on hold right now.'
   holdUser: '%gold%Your request was put on hold by {0}'
-  holdText: '%gold%Request text: %yellow%{0} Reason: {1}'
+  holdText: '%gold%Request text: %yellow%{0} %gold%Reason: %yellow%{1}'
   broadcastMessage: '%white%[%red%Mod-Broadcast%white%] %red%{0}: %green%{1}'
   modreqFiledUser: '%gold%Your request has been filed. A staff member should be with you soon.'
   modreqFiledMod: '%green%A new request has been filed by {0}.'
