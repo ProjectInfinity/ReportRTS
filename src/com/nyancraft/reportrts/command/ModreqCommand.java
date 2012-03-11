@@ -30,7 +30,7 @@ public class ModreqCommand implements CommandExecutor {
 		}
 		if(!RTSPermissions.canFileRequest(sender)) return true;
 		if(args.length == 0) return false;
-		if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests) {
+		if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
 			sender.sendMessage(Message.parse("modreqTooManyOpen"));
 			return true;
 		}

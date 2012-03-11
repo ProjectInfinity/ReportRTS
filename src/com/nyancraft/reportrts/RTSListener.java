@@ -54,7 +54,7 @@ public class RTSListener implements Listener{
 	    	block.breakNaturally();
 	    	return;
 	    }
-	    if(RTSFunctions.getOpenRequestsByUser(event.getPlayer()) >= plugin.maxRequests){
+	    if(RTSFunctions.getOpenRequestsByUser(event.getPlayer()) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(event.getPlayer(), "reportrts.command.modreq.unlimited") : event.getPlayer().hasPermission("reportrts.command.modreq.unlimited"))){
 	    	event.getPlayer().sendMessage(Message.parse("modreqTooManyOpen"));
 	    	block.breakNaturally();
 	    	return;
