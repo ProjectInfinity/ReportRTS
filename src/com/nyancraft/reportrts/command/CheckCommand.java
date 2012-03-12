@@ -200,10 +200,18 @@ public class CheckCommand implements CommandExecutor {
 					status = "Closed";
 					statusColor = ChatColor.GREEN;
 				}
+				String text = rs.getString("text");
 				
 				sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + rs.getInt(1) + " - " + statusColor + status + ChatColor.AQUA + " ---------");
 				sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + rs.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + rs.getInt("x") + ", " + rs.getInt("y") + ", " + rs.getInt("z"));
-				sender.sendMessage(ChatColor.GRAY + rs.getString("text"));
+				
+				if(rs.getInt("status") == 3){
+					rs.close();
+					rs = DatabaseManager.getDatabase().getHeldTicketById(id);
+					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + rs.getString("name") + ".");
+					rs.close();
+				}
+				sender.sendMessage(ChatColor.GRAY + text);
 				
 				rs.close();
 				return;
