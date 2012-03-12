@@ -5,10 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class CompleteCommand implements CommandExecutor {
@@ -24,7 +24,7 @@ public class CompleteCommand implements CommandExecutor {
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 		
-		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3)) {
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
 			return true;	
 		}

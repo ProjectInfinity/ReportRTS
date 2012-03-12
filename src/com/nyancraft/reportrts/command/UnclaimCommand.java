@@ -5,10 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class UnclaimCommand implements CommandExecutor{
@@ -30,7 +30,7 @@ public class UnclaimCommand implements CommandExecutor{
 			sender.sendMessage(Message.parse("unclaimNotClaimed"));
 			return true;
 		}
-		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0)){
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0)){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
 			return true;
 		}

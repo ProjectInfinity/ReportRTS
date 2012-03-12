@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class RTSListener implements Listener{
@@ -59,9 +60,9 @@ public class RTSListener implements Listener{
 	    	block.breakNaturally();
 	    	return;
 	    }
-	    int userId = RTSDatabaseManager.getUserIdCreateIfNotExists(event.getPlayer().getName());
-	    if(RTSDatabaseManager.fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
-	    	int ticketId = RTSDatabaseManager.getlatestTicketIdByUser(event.getPlayer().getName(), userId);
+	    int userId = DatabaseManager.getDatabase().getUserId(event.getPlayer().getName());
+	    if(DatabaseManager.getDatabase().fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
+	    	int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
 	    	plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getWorld().getName()));
 	    	event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
 	    	RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName()), event.getPlayer().getServer().getOnlinePlayers());

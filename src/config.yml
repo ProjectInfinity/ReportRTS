@@ -2,11 +2,20 @@
 # maxRequests - Maximum number of requests a user may have open at the same time.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # messages - Change messages shown in ReportRTS.
+# mysql.enabled - If true, uses MySQL instead of SQLite. CURRENTLY UNSUPPORTED, DO NOT SET TO TRUE.
 
 notifyStaff: true
 maxRequests: 5
 hideMessageIfEmpty: false
 
+mysql:
+  enable: false
+  hostname: 'localhost'
+  port: 3306
+  database: 'minecraft'
+  username: 'username'
+  password: 'password'
+  
 messages:
   generalPermissionError: '%yellow%You need permission to do that: {0}'
   generalInternalError: '%red%An error occurred. Reference: {0}'
@@ -27,7 +36,7 @@ messages:
   unclaimText: '%gold%Request text: %yellow%{0}'
   completedReq: '%gold%Request #{0} was completed by {1}.'
   completedUser: '%gold%{0} completed your request.'
-  completedText: '%gold%Request text: {0}'
+  completedText: '%gold%Request text: %yellow%{0}'
   holdRequest: '%gold%Request #{0} was put on hold by {1}'
   holdNoRequests: '%gold%There are no requests on hold right now.'
   holdUser: '%gold%Your request was put on hold by {0}'

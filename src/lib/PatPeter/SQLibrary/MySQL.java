@@ -67,7 +67,7 @@ public class MySQL extends DatabaseHandler {
 	}*/
 	
 	@Override
-	protected boolean initialize() {
+	public boolean initialize() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver"); // Check that server's Java has MySQL support.
 			return true;

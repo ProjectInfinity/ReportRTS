@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 
 public class RTSFunctions {
 
@@ -101,8 +102,11 @@ public class RTSFunctions {
     	for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
     		if(entry.getValue().getStatus() == 1){
     			int ticketId = entry.getValue().getId();
-    			ResultSet rs = RTSDatabaseManager.db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.mod_id = user.id WHERE request.id = '" + ticketId + "'");
+    			ResultSet rs = DatabaseManager.getDatabase().getHeldTicketById(ticketId);
     			try {
+    				if(ReportRTS.getPlugin().useMySQL){
+    					if(rs.isBeforeFirst()) rs.next();
+    				}
     				entry.getValue().setModName(rs.getString("name"));
 					rs.close();
 				} catch (SQLException e) {

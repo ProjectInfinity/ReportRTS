@@ -12,10 +12,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.RTSFunctions;
 
@@ -143,22 +143,24 @@ public class CheckCommand implements CommandExecutor {
 		int pageNumber = Integer.parseInt(page);
 		int i = (pageNumber * 5) - 5;
 
-		ResultSet result = RTSDatabaseManager.db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + i + "' LIMIT 5");
+		//ResultSet result = RTSDatabaseManager.db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + i + "' LIMIT 5");
+		ResultSet rs = DatabaseManager.getDatabase().getHeldRequests(i);
 		try {
-			int heldRequests = RTSDatabaseManager.getHeldRequests();
+			//int heldRequests = RTSDatabaseManager.getHeldRequests();
+			int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
 			sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
 			if(heldRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
-			while(result.next()){
-				 substring = result.getString("text");
+			while(rs.next()){
+				 substring = rs.getString("text");
 
 	            if (substring.length() >= 20) {
 	                substring = substring.substring(0, 20) + "...";
 	            }
-	            date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-	            ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
-	            sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);	
+	            date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
+	            ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+	            sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);	
 			}
-			result.close();
+			rs.close();
 		} catch (SQLException e) {
 			sender.sendMessage(Message.parse("generalInternalError", "Cannot check held requests, see console for errors."));
 			e.printStackTrace();
@@ -170,37 +172,40 @@ public class CheckCommand implements CommandExecutor {
 		HelpRequest currentRequest = plugin.requestMap.get(id);
 		
 		if(currentRequest == null) {
-			ResultSet result = RTSDatabaseManager.db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.id = '" + id + "'");
-
+			ResultSet rs = DatabaseManager.getDatabase().getTicketById(id);
+			
 			ChatColor online;
 			try {
-				online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
-				date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
+				if(ReportRTS.getPlugin().useMySQL){
+					if(rs.isBeforeFirst()) rs.next();
+				}
+				online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+				date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
 				String status = null;
 				ChatColor statusColor = null;
 				
-				if(result.getInt("status") == 0){
+				if(rs.getInt("status") == 0){
 					status = "Open";
 					statusColor = ChatColor.YELLOW;
 				}
-				if(result.getInt("status") == 1){
+				if(rs.getInt("status") == 1){
 					status = "Claimed";
 					statusColor = ChatColor.RED;
 				}
-				if(result.getInt("status") == 2){
+				if(rs.getInt("status") == 2){
 					status = "On Hold";
 					statusColor = ChatColor.LIGHT_PURPLE;
 				}
-				if(result.getInt("status") == 3){
+				if(rs.getInt("status") == 3){
 					status = "Closed";
 					statusColor = ChatColor.GREEN;
 				}
 				
-				sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + result.getInt(1) + " - " + statusColor + status + ChatColor.AQUA + " ---------");
-				sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + result.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + result.getInt("x") + ", " + result.getInt("y") + ", " + result.getInt("z"));
-				sender.sendMessage(ChatColor.GRAY + result.getString("text"));
+				sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + rs.getInt(1) + " - " + statusColor + status + ChatColor.AQUA + " ---------");
+				sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + rs.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + rs.getInt("x") + ", " + rs.getInt("y") + ", " + rs.getInt("z"));
+				sender.sendMessage(ChatColor.GRAY + rs.getString("text"));
 				
-				result.close();
+				rs.close();
 				return;
 			} catch (SQLException e) {
 				sender.sendMessage(Message.parse("generalRequestNotFound", id));

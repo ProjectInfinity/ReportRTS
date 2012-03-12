@@ -7,10 +7,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class ReportRTSCommand implements CommandExecutor{
@@ -34,7 +34,7 @@ public class ReportRTSCommand implements CommandExecutor{
 				
 			case BAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
-				if(!RTSDatabaseManager.setUserStatus(args[1], 1)){
+				if(!DatabaseManager.getDatabase().setUserStatus(args[1], 1)){
 					sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
 					return true;
 				}
@@ -43,7 +43,7 @@ public class ReportRTSCommand implements CommandExecutor{
 			
 			case UNBAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
-				if(!RTSDatabaseManager.setUserStatus(args[1], 0)){
+				if(!DatabaseManager.getDatabase().setUserStatus(args[1], 0)){
 					sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
 					return true;
 				}
@@ -52,20 +52,18 @@ public class ReportRTSCommand implements CommandExecutor{
 				
 			case RESET:
 				if(!RTSPermissions.canResetPlugin(sender)) return true;
-				if(!RTSDatabaseManager.resetDB()){
+				if(!DatabaseManager.getDatabase().resetDB()){
 					sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to reset the plugin.");
 					return true;
 				}
 				plugin.reloadPlugin();
 				sender.sendMessage(ChatColor.GOLD + "[ReportRTS] You deleted all users and requests from ReportRTS.");
 				plugin.getLogger().log(Level.INFO, sender.getName() + " deleted all users and requests from ReportRTS!");
-				break;
-				
+				break;	
 			}
 		}catch(Exception e){
 			return false;
 		}
-
 		return true;
 	}
 	

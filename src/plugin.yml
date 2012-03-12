@@ -1,6 +1,6 @@
 name: ReportRTS
 main: com.nyancraft.reportrts.ReportRTS
-version: 0.2.3
+version: 0.3.0
 author: ProjectInfinity
 softdepend: [Vault]
 commands:
@@ -46,6 +46,9 @@ permissions:
     default: op
   reportrts.command.modreq:
     description: Permission to file a request.
+    default: op
+  reportrts.command.modreq.unlimited:
+    description: Permission to file unlimited amounts of requests.
     default: op
   reportrts.command.check:
     description: Permission to check all requests.

@@ -5,13 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
 
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,20 +27,32 @@ public class ReportRTS extends JavaPlugin{
 	
 	public boolean notifyStaffOnNewRequest;
 	public boolean hideNotification;
+	public boolean useMySQL;
 	public int maxRequests;
+	public String mysqlPort;
+	public String mysqlHostname;
+	public String mysqlDatabase;
+	public String mysqlUsername;
+	public String mysqlPassword;
 	
 	public static Permission permission = null;
 	
 	public void onDisable(){
-		RTSDatabaseManager.disableDB();
+		DatabaseManager.getDatabase().disconnect();
 		saveConfig();
 	}
 	
 	public void onEnable(){
 		plugin = this;
-		getServer().getPluginManager().registerEvents(new RTSListener(plugin), plugin);
-		RTSDatabaseManager.enableDB();
-		reloadPlugin();
+		reloadSettings();
+		final PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new RTSListener(plugin), plugin);
+		if(!DatabaseManager.load()){
+			log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
+			pm.disablePlugin(this);
+		}
+		DatabaseManager.getDatabase().populateRequestMap();
+		RTSFunctions.populateHeldRequestsWithData();
 		getCommand("modreq").setExecutor(new ModreqCommand(plugin));
 		getCommand("check").setExecutor(new CheckCommand(plugin));
 		getCommand("complete").setExecutor(new CompleteCommand(plugin));
@@ -57,19 +70,29 @@ public class ReportRTS extends JavaPlugin{
 	public void reloadPlugin(){
 		requestMap.clear();
 		messageMap.clear();
-		RTSDatabaseManager.getOpenRequests();
+		reloadSettings();
+		DatabaseManager.getDatabase().populateRequestMap();
 		RTSFunctions.populateHeldRequestsWithData();
+	} 
+	
+	public void reloadSettings(){
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
 		hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
 		maxRequests = getConfig().getInt("maxRequests");
+		useMySQL = getConfig().getBoolean("mysql.enable");
+		mysqlPort = getConfig().getString("mysql.port");
+		mysqlHostname = getConfig().getString("mysql.hostname");
+		mysqlDatabase = getConfig().getString("mysql.database");
+		mysqlUsername = getConfig().getString("mysql.username");
+		mysqlPassword = getConfig().getString("mysql.password");
 		ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
 		for(String message : Messages.getKeys(false)){
 			messageMap.put(message, Messages.getString(message));
 		}
-	} 
+	}
 	
     public static ReportRTS getPlugin(){
         return plugin;

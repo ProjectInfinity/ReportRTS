@@ -5,10 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class HoldCommand implements CommandExecutor {
@@ -24,7 +24,7 @@ public class HoldCommand implements CommandExecutor {
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 		
-		if(!RTSDatabaseManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2)) {
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
 			return true;	
 		}

@@ -8,11 +8,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.RTSDatabaseManager;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class ModreqCommand implements CommandExecutor {
@@ -37,12 +37,12 @@ public class ModreqCommand implements CommandExecutor {
 		
 		Player player = (Player)sender;
 		String message = RTSFunctions.implode(args, " ");
-		int userId = RTSDatabaseManager.getUserIdCreateIfNotExists(player.getName());
-		if(!RTSDatabaseManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
+		int userId = DatabaseManager.getDatabase().getUserId(player.getName());
+		if(!DatabaseManager.getDatabase().fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {	
 			sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
 			return true;
 		}
-		int ticketId = RTSDatabaseManager.getlatestTicketIdByUser(player.getName(), userId);
+		int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
 		
 		Location location = player.getLocation();
 		

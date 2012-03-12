@@ -9,12 +9,13 @@ import java.util.logging.Level;
 import org.bukkit.Location;
 
 import com.nyancraft.reportrts.data.HelpRequest;
-
+import com.nyancraft.reportrts.ReportRTS;
 import lib.PatPeter.SQLibrary.*;
 
 public class RTSDatabaseManager {
 	public static File dbFolder = new File("plugins/ReportRTS");
-    public static SQLite db = new SQLite(ReportRTS.getPlugin().getLogger(), "[ReportRTS]", "ReportRTS", dbFolder.getPath());
+    
+	public static SQLite db = new SQLite(ReportRTS.getPlugin().getLogger(), "[ReportRTS]", "ReportRTS", dbFolder.getPath());
  
     /**
      * Initializes, opens and confirms the tables and database.

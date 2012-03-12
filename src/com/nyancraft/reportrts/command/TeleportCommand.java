@@ -15,6 +15,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class TeleportCommand implements CommandExecutor {
@@ -41,13 +42,14 @@ public class TeleportCommand implements CommandExecutor {
 		
 		if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
 			
-			ResultSet rs = RTSDatabaseManager.db.query("SELECT `x`, `y`, `z`, `world` FROM reportrts_request WHERE `id` = '" + Integer.parseInt(args[0]) + "' LIMIT 1");
+			ResultSet rs = DatabaseManager.getDatabase().getLocationById(Integer.parseInt(args[0]));
 			Location location = null;
 			try {
 				if(!rs.isBeforeFirst()){
 					sender.sendMessage(Message.parse("generalRequestNotFound", args[0]));
 					return true;
 				}
+				if(ReportRTS.getPlugin().useMySQL) rs.first();
 				location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
 				rs.close();
 			} catch (SQLException e) {
@@ -59,6 +61,7 @@ public class TeleportCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
 				return true;
 			}
+			player.sendMessage(Message.parse("teleportToRequest", args[0]));
 			return true;
 		}
 		
