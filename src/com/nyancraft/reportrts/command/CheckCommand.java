@@ -208,6 +208,9 @@ public class CheckCommand implements CommandExecutor {
 				if(rs.getInt("status") == 3){
 					rs.close();
 					rs = DatabaseManager.getDatabase().getHeldTicketById(id);
+					if(ReportRTS.getPlugin().useMySQL){
+						if(rs.isBeforeFirst()) rs.next();
+					}
 					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + rs.getString("name") + ".");
 					rs.close();
 				}
