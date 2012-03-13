@@ -2,7 +2,7 @@
 # maxRequests - Maximum number of requests a user may have open at the same time.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # messages - Change messages shown in ReportRTS.
-# mysql.enabled - If true, uses MySQL instead of SQLite. CURRENTLY UNSUPPORTED, DO NOT SET TO TRUE.
+# mysql.enable - If true, uses MySQL instead of SQLite. CURRENTLY UNSUPPORTED, DO NOT SET TO TRUE.
 
 notifyStaff: true
 maxRequests: 5
