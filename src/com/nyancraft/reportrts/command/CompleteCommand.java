@@ -37,8 +37,8 @@ public class CompleteCommand implements CommandExecutor {
 		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) {
 			Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
 			if(player != null){
-				player.sendMessage(Message.parse("completedUser", sender.getName(), comment));
-				player.sendMessage(Message.parse("completedText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage()));
+				player.sendMessage(Message.parse("completedUser", sender.getName()));
+				player.sendMessage(Message.parse("completedText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), comment));
 			}
 			plugin.requestMap.remove(Integer.parseInt(args[0]));
 		}
