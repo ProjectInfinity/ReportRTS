@@ -22,7 +22,7 @@ public class ReopenCommand implements CommandExecutor{
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0)){
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "")){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
 			return true;
 		}

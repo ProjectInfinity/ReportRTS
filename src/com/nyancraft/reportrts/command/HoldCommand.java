@@ -23,8 +23,14 @@ public class HoldCommand implements CommandExecutor {
 		if(!RTSPermissions.canPutTicketOnHold(sender)) return true;
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		String reason = RTSFunctions.implode(args, " ");
 		
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2)) {
+		if(reason.length() <= args[0].length()){
+			reason = "None specified.";
+		}else{
+			reason = reason.substring(args[0].length());
+		}
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2, reason)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
 			return true;	
 		}
@@ -32,13 +38,6 @@ public class HoldCommand implements CommandExecutor {
 			Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
 			if(player != null){
 				player.sendMessage(Message.parse("holdUser", sender.getName()));
-				String reason = RTSFunctions.implode(args, " ");
-				
-				if(reason.length() <= args[0].length()){
-					reason = "None specified.";
-				}else{
-					reason = reason.substring(args[0].length());
-				}
 				player.sendMessage(Message.parse("holdText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), reason.trim()));
 			}
 			plugin.requestMap.remove(Integer.parseInt(args[0]));

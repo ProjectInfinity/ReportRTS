@@ -23,8 +23,14 @@ public class CompleteCommand implements CommandExecutor {
 		if(!RTSPermissions.canCompleteRequests(sender)) return true;
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		String comment = RTSFunctions.implode(args, " ");
 		
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3)) {
+		if(comment.length() <= args[0].length()){
+			comment = "None.";
+		}else{
+			comment = comment.substring(args[0].length()).trim();
+		}
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
 			return true;	
 		}

@@ -35,7 +35,9 @@ public interface Database {
 	
 	public ResultSet getLocationById(int id);
 	
-	public boolean setRequestStatus(int id, String player, int status);
+	public ResultSet getUnnotifiedUsers();
+	
+	public boolean setRequestStatus(int id, String player, int status, String comment);
 	
 	public boolean setUserStatus(String player, int status);
 	
