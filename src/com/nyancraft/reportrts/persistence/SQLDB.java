@@ -187,8 +187,8 @@ public abstract class SQLDB implements Database{
 			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ? WHERE `id` = ?");
     		ps.setInt(1, status);
     		ps.setInt(2, modId);
-    		ps.setString(3, comment);
-    		ps.setLong(4, System.currentTimeMillis() / 1000);
+    		ps.setLong(3, System.currentTimeMillis() / 1000);
+    		ps.setString(4, comment);
     		ps.setInt(5, id);
     		if(ps.executeUpdate() < 1) {
     			ps.close();
