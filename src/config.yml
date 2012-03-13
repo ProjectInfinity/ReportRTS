@@ -36,7 +36,7 @@ messages:
   unclaimText: '%gold%Request text: %yellow%{0}'
   completedReq: '%gold%Request #{0} was completed by {1}.'
   completedUser: '%gold%{0} completed your request.'
-  completedText: '%gold%Request text: %yellow%{0}'
+  completedText: '%gold%Request text: %yellow%{0} %gold%Comment: %yellow%{1}'
   holdRequest: '%gold%Request #{0} was put on hold by {1}'
   holdNoRequests: '%gold%There are no requests on hold right now.'
   holdUser: '%gold%Your request was put on hold by {0}'
