@@ -17,6 +17,8 @@ public interface Database {
 	
 	public void populateRequestMap();
 	
+	public void deleteRequestsByTime(String table, int lessThanThis);
+	
 	public int getNumberHeldRequests();
 	
 	public int getUserId(String player);

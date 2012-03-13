@@ -34,12 +34,12 @@ public class HoldCommand implements CommandExecutor {
 				player.sendMessage(Message.parse("holdUser", sender.getName()));
 				String reason = RTSFunctions.implode(args, " ");
 				
-				if(reason.length() < 3){
+				if(reason.length() <= args[0].length()){
 					reason = "None specified.";
 				}else{
-					reason = reason.substring(2);
+					reason = reason.substring(args[0].length());
 				}
-				player.sendMessage(Message.parse("holdText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), reason));
+				player.sendMessage(Message.parse("holdText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), reason.trim()));
 			}
 			plugin.requestMap.remove(Integer.parseInt(args[0]));
 		}

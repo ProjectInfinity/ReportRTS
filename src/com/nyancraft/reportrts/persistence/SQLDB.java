@@ -252,4 +252,13 @@ public abstract class SQLDB implements Database{
 	public ResultSet getLocationById(int id){
 		return query(QueryGen.getLocationById(id));
 	}
+	
+	@Override
+	public void deleteRequestsByTime(String table, int lessThanThis){
+		try {
+			query(QueryGen.deleteRequestOlderThan(table, lessThanThis)).close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

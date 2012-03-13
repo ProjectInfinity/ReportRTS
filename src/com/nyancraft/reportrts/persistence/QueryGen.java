@@ -88,4 +88,7 @@ public class QueryGen {
 	public static String getLocationById(int id){
 		return "SELECT `x`, `y`, `z`, `world` FROM reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
 	}
+	public static String deleteRequestOlderThan(String table, int lessThanThis){
+		return "DELETE FROM " + table + " WHERE tstamp < " + lessThanThis;
+	}
 }

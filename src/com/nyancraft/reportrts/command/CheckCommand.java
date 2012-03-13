@@ -177,7 +177,7 @@ public class CheckCommand implements CommandExecutor {
 			ChatColor online;
 			try {
 				if(ReportRTS.getPlugin().useMySQL){
-					if(rs.isBeforeFirst()) rs.next();
+					if(rs.isBeforeFirst()) rs.first();
 				}
 				online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
 				date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
@@ -209,7 +209,7 @@ public class CheckCommand implements CommandExecutor {
 					rs.close();
 					rs = DatabaseManager.getDatabase().getHeldTicketById(id);
 					if(ReportRTS.getPlugin().useMySQL){
-						if(rs.isBeforeFirst()) rs.next();
+						if(rs.isBeforeFirst()) rs.first();
 					}
 					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + rs.getString("name") + ".");
 					rs.close();
