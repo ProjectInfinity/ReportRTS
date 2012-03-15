@@ -12,7 +12,7 @@ public class Message {
         
         Object prop = ReportRTS.getPlugin().messageMap.get(key);
         if( prop == null || !(prop instanceof String) ) {
-            return "<" + key + ">";
+            return "Missing message <" + key + "> in ReportRTS/config.yml";
         }
         
         String message = (String) prop;
