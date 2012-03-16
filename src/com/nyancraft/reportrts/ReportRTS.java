@@ -23,6 +23,7 @@ public class ReportRTS extends JavaPlugin{
 	
 	public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
 	public Map<String, String> messageMap = new HashMap<String, String>();
+	public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
 	
 	public boolean notifyStaffOnNewRequest;
 	public boolean hideNotification;
@@ -52,6 +53,7 @@ public class ReportRTS extends JavaPlugin{
 		}
 		DatabaseManager.getDatabase().populateRequestMap();
 		RTSFunctions.populateHeldRequestsWithData();
+		RTSFunctions.populateNotificationMapWithData();
 		getCommand("modreq").setExecutor(new ModreqCommand(plugin));
 		getCommand("check").setExecutor(new CheckCommand(plugin));
 		getCommand("complete").setExecutor(new CompleteCommand(plugin));

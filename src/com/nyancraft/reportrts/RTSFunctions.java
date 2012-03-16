@@ -117,6 +117,25 @@ public class RTSFunctions {
     }
     
     /**
+     * Populates the notificationMap with data.
+     */
+    public static void populateNotificationMapWithData(){
+    	try{
+    		ResultSet rs = DatabaseManager.getDatabase().getUnnotifiedUsers();
+    		if(!rs.isBeforeFirst()) return;
+    		if(ReportRTS.getPlugin().useMySQL){
+    			rs.first();
+    		}
+    		while(rs.next()){
+        		ReportRTS.getPlugin().notificationMap.put(rs.getInt(1), rs.getString("name"));
+    		}
+    		rs.close();
+    	}catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    /**
      * Get number of open request by the specified user.
      * @param player
      * @return

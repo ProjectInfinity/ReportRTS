@@ -1,5 +1,11 @@
 package com.nyancraft.reportrts;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -16,6 +22,7 @@ import com.nyancraft.reportrts.util.Message;
 public class RTSListener implements Listener{
 	private final ReportRTS plugin;
 	private int openRequests;
+	private List<Integer> notificationList = new ArrayList<Integer>(); 
 	
 	public RTSListener(ReportRTS plugin){
 		this.plugin = plugin;
@@ -23,6 +30,29 @@ public class RTSListener implements Listener{
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerJoin(PlayerJoinEvent event){
+		if(plugin.notificationMap.size() > 0){
+			for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
+
+				if(entry.getValue().equals(event.getPlayer().getName())){
+					ResultSet rs = DatabaseManager.getDatabase().getTicketById(entry.getKey());
+					try{
+						if(plugin.useMySQL) rs.first();
+						event.getPlayer().sendMessage(Message.parse("completedUserOffline"));
+						event.getPlayer().sendMessage(Message.parse("completedText", rs.getString("text"), rs.getString("mod_comment")));
+						rs.close();
+						if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().severe("Unable to set notification status to 1.");
+						notificationList.add(entry.getKey());
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+				}
+			}
+			for(int id : notificationList){
+				plugin.notificationMap.remove(id);
+			}
+			notificationList.clear();
+		}
+		
 		if(!RTSPermissions.isModerator(event.getPlayer())) return;
 		
 		openRequests = plugin.requestMap.size();
@@ -32,6 +62,7 @@ public class RTSListener implements Listener{
 		
 		if(openRequests > 0)
 			event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests));
+		
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)

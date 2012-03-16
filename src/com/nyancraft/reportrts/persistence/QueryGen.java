@@ -94,4 +94,7 @@ public class QueryGen {
 	public static String getUnnotifiedUsers(){
 		return "SELECT * FROM reportrts_request AS request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE `status` = 3 AND notified_of_completion = 0";
 	}
+	public static String setNotificationStatus(int id, int status){
+		return "UPDATE reportrts_request SET `notified_of_completion` = " + status + " WHERE `id` = " + id; 
+	}
 }

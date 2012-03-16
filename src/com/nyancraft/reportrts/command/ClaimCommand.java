@@ -27,7 +27,7 @@ public class ClaimCommand implements CommandExecutor{
 			sender.sendMessage(Message.parse("claimNotOpen"));
 			return true;
 		}
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 1, "")){
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 1, "", 0)){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
 			return true;
 		}

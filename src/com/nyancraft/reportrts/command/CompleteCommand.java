@@ -30,12 +30,19 @@ public class CompleteCommand implements CommandExecutor {
 		}else{
 			comment = comment.substring(args[0].length()).trim();
 		}
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment)) {
+		
+		int online = 0;
+		
+		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) online = (RTSFunctions.isUserOnline(plugin.requestMap.get(Integer.parseInt(args[0])).getName(), sender.getServer())) ? 1 : 0;
+		
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment, online)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
 			return true;	
 		}
+		
 		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) {
 			Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+			if(online == 0) plugin.notificationMap.put(Integer.parseInt(args[0]), plugin.requestMap.get(Integer.parseInt(args[0])).getName());
 			if(player != null){
 				player.sendMessage(Message.parse("completedUser", sender.getName()));
 				player.sendMessage(Message.parse("completedText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), comment));

@@ -171,7 +171,7 @@ public abstract class SQLDB implements Database{
     }
 
 	@Override
-	public boolean setRequestStatus(int id, String player, int status, String comment) {
+	public boolean setRequestStatus(int id, String player, int status, String comment, int notified) {
 		if(!isLoaded()) return false;
 		ResultSet rs = query(QueryGen.getTicketStatusById(id));
 		try{
@@ -184,12 +184,13 @@ public abstract class SQLDB implements Database{
 			rs.close();
 			int modId = getUserId(player);
 			
-			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ? WHERE `id` = ?");
+			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
     		ps.setInt(1, status);
     		ps.setInt(2, modId);
     		ps.setLong(3, System.currentTimeMillis() / 1000);
     		ps.setString(4, comment);
-    		ps.setInt(5, id);
+    		ps.setInt(5, notified);
+    		ps.setInt(6, id);
     		if(ps.executeUpdate() < 1) {
     			ps.close();
     			return false;
@@ -266,5 +267,11 @@ public abstract class SQLDB implements Database{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public boolean setNotificationStatus(int id, int status){
+		query(QueryGen.setNotificationStatus(id, status));
+		return true;
 	}
 }

@@ -30,7 +30,7 @@ public class HoldCommand implements CommandExecutor {
 		}else{
 			reason = reason.substring(args[0].length());
 		}
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2, reason)) {
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2, reason, 0)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
 			return true;	
 		}

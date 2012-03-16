@@ -37,7 +37,9 @@ public interface Database {
 	
 	public ResultSet getUnnotifiedUsers();
 	
-	public boolean setRequestStatus(int id, String player, int status, String comment);
+	public boolean setRequestStatus(int id, String player, int status, String comment, int notified);
+	
+	public boolean setNotificationStatus(int id, int status);
 	
 	public boolean setUserStatus(String player, int status);
 	

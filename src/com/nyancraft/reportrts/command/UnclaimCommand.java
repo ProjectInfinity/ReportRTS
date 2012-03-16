@@ -30,7 +30,7 @@ public class UnclaimCommand implements CommandExecutor{
 			sender.sendMessage(Message.parse("unclaimNotClaimed"));
 			return true;
 		}
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "")){
+		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
 			return true;
 		}
