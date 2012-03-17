@@ -44,7 +44,7 @@ messages:
   holdText: '%gold%Request text: %yellow%{0} %gold%Reason: %yellow%{1}'
   broadcastMessage: '%white%[%red%Mod-Broadcast%white%] %red%{0}: %green%{1}'
   modreqFiledUser: '%gold%Your request has been filed. A staff member should be with you soon.'
-  modreqFiledMod: '%green%A new request has been filed by {0}.'
+  modreqFiledMod: '%green%A new request has been filed by {0}, id assigned #{1}.'
   modreqTooManyOpen: '%red%You have too many requests open, please wait before filing more.'
   modlistMessage: '%aqua%Staff online: %yellow%{0}'
   modlistNoMods: '%yellow%There are no staff members online.'
