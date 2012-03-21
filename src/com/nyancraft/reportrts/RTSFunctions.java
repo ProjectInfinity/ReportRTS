@@ -147,4 +147,13 @@ public class RTSFunctions {
 		}
     	return openRequestsByUser;
     }
+    
+    public static long checkTimeBetweenRequests(CommandSender sender){
+		for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
+			if(entry.getValue().getName().equals(sender.getName())){
+				if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - 30)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - 30);
+			}
+		}
+    	return 0;
+    }
 }

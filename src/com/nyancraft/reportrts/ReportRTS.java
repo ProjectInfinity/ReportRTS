@@ -29,6 +29,7 @@ public class ReportRTS extends JavaPlugin{
 	public boolean hideNotification;
 	public boolean useMySQL;
 	public int maxRequests;
+	public int requestDelay;
 	public String mysqlPort;
 	public String mysqlHostname;
 	public String mysqlDatabase;
@@ -82,7 +83,8 @@ public class ReportRTS extends JavaPlugin{
 		saveConfig();
 		notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
 		hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
-		maxRequests = getConfig().getInt("maxRequests");
+		maxRequests = getConfig().getInt("request.max");
+		requestDelay = getConfig().getInt("request.delay");
 		useMySQL = getConfig().getBoolean("mysql.enable");
 		mysqlPort = getConfig().getString("mysql.port");
 		mysqlHostname = getConfig().getString("mysql.hostname");
