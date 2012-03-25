@@ -25,6 +25,10 @@ public interface Database {
 	
 	public boolean fileRequest(String player, String world, Location location, String message, int userId);
 	
+	public boolean insertRequest(int modId, String world, int x, int y, int z, String message, int userId, int tstamp);
+	
+	public boolean insertUser(int userId, String name, int banned);
+	
 	public int getLatestTicketIdByUser(int userId);
 	
 	public ResultSet getHeldRequests(int from);
@@ -37,6 +41,8 @@ public interface Database {
 	
 	public ResultSet getUnnotifiedUsers();
 	
+	public ResultSet getAllFromTable(String table);
+	
 	public boolean setRequestStatus(int id, String player, int status, String comment, int notified);
 	
 	public boolean setNotificationStatus(int id, int status);
@@ -44,6 +50,8 @@ public interface Database {
 	public boolean setUserStatus(String player, int status);
 	
 	public boolean resetDB();
+	
+	public boolean checkTable(String table);
 	
 	public Connection connection();
 }

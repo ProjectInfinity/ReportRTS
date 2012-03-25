@@ -77,4 +77,10 @@ public class MySQLDB extends SQLDB {
 		db.query("TRUNCATE TABLE reportrts_user");
 		return true;
 	}
+	
+	@Override
+	public boolean checkTable(String table){
+		if(!db.checkTable(table)) return false;
+		return true;
+	}
 }

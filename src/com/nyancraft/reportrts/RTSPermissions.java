@@ -172,4 +172,19 @@ public class RTSPermissions {
 		}
 		return true;
 	}
+	
+	public static boolean canImport(CommandSender sender){
+		if(ReportRTS.permission != null){
+			if(!ReportRTS.permission.has(sender, "reportrts.command.import")){
+				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.import"));
+				return false;
+			}
+			return true;
+		}
+		if(!sender.hasPermission("reportrts.command.import")){
+			sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.import"));
+			return false;
+		}
+		return true;
+	}
 }

@@ -274,4 +274,47 @@ public abstract class SQLDB implements Database{
 		query(QueryGen.setNotificationStatus(id, status));
 		return true;
 	}
+	
+	@Override
+	public boolean insertRequest(int modId, String world, int x, int y, int z, String message, int userId, int tstamp) {
+		if(!isLoaded() || userId == 0) return false;
+		try{
+			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.createRequest());
+			ps.setInt(1, userId);
+			ps.setLong(2, tstamp);
+			ps.setString(3, world);
+			ps.setInt(4, x);
+			ps.setInt(5, y);
+			ps.setInt(6, z);
+			ps.setString(7, message);
+			if(ps.executeUpdate() < 1) return false;
+			ps.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean insertUser(int userId, String name, int banned){
+		if(!isLoaded() || userId == 0) return false;
+		try{
+			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.createExactUser());
+			ps.setInt(1, userId);
+			ps.setString(2, name);
+			ps.setInt(3, banned);
+			if(ps.executeUpdate() < 1) return false;
+			ps.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public ResultSet getAllFromTable(String table){
+		return query(QueryGen.getAllFromTable(table));
+	}
 }

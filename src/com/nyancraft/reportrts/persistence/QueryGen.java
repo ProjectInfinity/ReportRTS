@@ -59,6 +59,9 @@ public class QueryGen {
 	public static String createUser(){
 		return "INSERT INTO `reportrts_user` (`name`, `banned`) VALUES (?, '0')";
 	}
+	public static String createExactUser(){
+		return "INSERT INTO `reportrts_user` (`id`,`name`, `banned`) VALUES (?,?,?)";
+	}
 	public static String createRequest(){
 		return "INSERT INTO `reportrts_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`," +
 				" `text`, `status`, `notified_of_completion`) VALUES" +
@@ -87,6 +90,9 @@ public class QueryGen {
 	}
 	public static String getLocationById(int id){
 		return "SELECT `x`, `y`, `z`, `world` FROM reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
+	}
+	public static String getAllFromTable(String table){
+		return "SELECT * FROM `" + table + "`";
 	}
 	public static String deleteRequestOlderThan(String table, int lessThanThis){
 		return "DELETE FROM " + table + " WHERE tstamp < " + lessThanThis;

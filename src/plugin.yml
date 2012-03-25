@@ -12,7 +12,7 @@ commands:
     usage: /<command> [id | page <id> | p <id>]
   complete:
     description: Marks specified request as completed
-    usage: /<command> [id] [comment]
+    usage: /<command> [id]
     aliases: [done]
   tp-id:
     description: Teleports to the specified request

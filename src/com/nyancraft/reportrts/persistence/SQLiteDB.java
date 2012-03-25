@@ -74,4 +74,10 @@ public class SQLiteDB extends SQLDB {
 		db.query("DELETE FROM reportrts_user");
 		return true;
 	}
+	
+	@Override
+	public boolean checkTable(String table){
+		if(!db.checkTable(table)) return false;
+		return true;
+	}
 }

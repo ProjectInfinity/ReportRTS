@@ -1,5 +1,6 @@
 package com.nyancraft.reportrts.command;
 
+import java.sql.ResultSet;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -60,6 +61,39 @@ public class ReportRTSCommand implements CommandExecutor{
 				sender.sendMessage(ChatColor.GOLD + "[ReportRTS] You deleted all users and requests from ReportRTS.");
 				plugin.getLogger().log(Level.INFO, sender.getName() + " deleted all users and requests from ReportRTS!");
 				break;	
+				
+			case IMPORT:
+				if(!RTSPermissions.canImport(sender)) return true;
+				sender.sendMessage(ChatColor.GOLD + "[ReportRTS] Attempting to import from ModTRS (MySQL only)...");
+				if(!DatabaseManager.getDatabase().checkTable("modtrs_request") || !DatabaseManager.getDatabase().checkTable("modtrs_user")){
+					sender.sendMessage(ChatColor.RED + "[ReportRTS] Please check that the ModTRS tables exist.");
+					return true;
+				}
+				ResultSet rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_user");
+				int imported = 0;
+				while(rs.next()){
+					if(!DatabaseManager.getDatabase().insertUser(rs.getInt("id"), rs.getString("name"), rs.getInt("banned"))){
+						sender.sendMessage(ChatColor.RED + "[ReportRTS] An error occured during the insertion of users from ModTRS.");
+						return true;
+					}
+					imported++;
+				}
+				rs.close();
+				sender.sendMessage(ChatColor.GREEN + "[ReportRTS] Successfully imported " + imported + " users from ModTRS.");
+				
+				rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_request");
+				imported = 0;
+				while(rs.next()){
+					if(!DatabaseManager.getDatabase().insertRequest(0, rs.getString("world"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("text"), rs.getInt("user_id"), rs.getInt("tstamp"))){
+						sender.sendMessage(ChatColor.RED + "[ReportRTS] An error occured during the insertion of requests from ModTRS.");
+						return true;
+					}
+					imported++;
+				}
+				rs.close();
+				sender.sendMessage(ChatColor.GREEN + "[ReportRTS] Successfully imported " + imported + " requests from ModTRS.");
+				plugin.reloadPlugin();
+				break;
 			}
 		}catch(Exception e){
 			return false;
@@ -71,6 +105,7 @@ public class ReportRTSCommand implements CommandExecutor{
 		RELOAD,
 		BAN,
 		UNBAN,
-		RESET
+		RESET,
+		IMPORT
 	}
 }
