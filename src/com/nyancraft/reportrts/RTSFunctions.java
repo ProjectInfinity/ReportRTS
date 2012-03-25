@@ -56,7 +56,7 @@ public class RTSFunctions {
     	
     	String out = "";
     	for(String part : lines){
-    		out = out + part.trim(); 
+    		out = out + part.trim() + " ";
     	}
     	return out;
     }
