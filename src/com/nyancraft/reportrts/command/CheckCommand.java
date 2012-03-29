@@ -32,6 +32,8 @@ public class CheckCommand implements CommandExecutor {
 	private String date = null;
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		if(!RTSPermissions.canCheckAllRequests(sender)){
 			if(!RTSPermissions.canCheckOwnRequests(sender)){
 				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check or reportrts.command.check.self"));
@@ -42,6 +44,7 @@ public class CheckCommand implements CommandExecutor {
 				return true;
 			}
 			checkSelf(sender);
+			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 			return true;
 		}
 		if(args.length == 0){
@@ -62,6 +65,7 @@ public class CheckCommand implements CommandExecutor {
 		            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
 		            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
 			}
+			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 		if(!RTSFunctions.isParsableToInt(args[0])){
@@ -108,7 +112,7 @@ public class CheckCommand implements CommandExecutor {
 		}
 		
 		checkId(Integer.parseInt(args[0]), sender);
-		
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 	private enum SubCommands{
@@ -143,10 +147,8 @@ public class CheckCommand implements CommandExecutor {
 		int pageNumber = Integer.parseInt(page);
 		int i = (pageNumber * 5) - 5;
 
-		//ResultSet result = RTSDatabaseManager.db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + i + "' LIMIT 5");
 		ResultSet rs = DatabaseManager.getDatabase().getHeldRequests(i);
 		try {
-			//int heldRequests = RTSDatabaseManager.getHeldRequests();
 			int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
 			sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
 			if(heldRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));

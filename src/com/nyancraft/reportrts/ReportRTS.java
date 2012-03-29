@@ -28,6 +28,7 @@ public class ReportRTS extends JavaPlugin{
 	public boolean notifyStaffOnNewRequest;
 	public boolean hideNotification;
 	public boolean useMySQL;
+	public boolean debugMode;
 	public int maxRequests;
 	public int requestDelay;
 	public String mysqlPort;
@@ -65,7 +66,7 @@ public class ReportRTS extends JavaPlugin{
 		getCommand("claim").setExecutor(new ClaimCommand(plugin));
 		getCommand("unclaim").setExecutor(new UnclaimCommand(plugin));
 		getCommand("modlist").setExecutor(new ModlistCommand());
-		getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand());
+		getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
 		if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
 	}
 	
@@ -91,6 +92,7 @@ public class ReportRTS extends JavaPlugin{
 		mysqlDatabase = getConfig().getString("mysql.database");
 		mysqlUsername = getConfig().getString("mysql.username");
 		mysqlPassword = getConfig().getString("mysql.password");
+		debugMode = getConfig().getBoolean("debug");
 		ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
 		for(String message : Messages.getKeys(false)){
 			messageMap.put(message, Messages.getString(message));

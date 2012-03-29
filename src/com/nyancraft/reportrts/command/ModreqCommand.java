@@ -43,6 +43,8 @@ public class ModreqCommand implements CommandExecutor {
 				}
 			}
 		}
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		
 		Player player = (Player)sender;
 		String message = RTSFunctions.implode(args, " ");
@@ -61,6 +63,7 @@ public class ModreqCommand implements CommandExecutor {
 		
 		plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), player.getWorld().getName()));
 		
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ModreqCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 }

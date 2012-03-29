@@ -21,7 +21,8 @@ public class ReopenCommand implements CommandExecutor{
 		if(!RTSPermissions.canCompleteRequests(sender)) return true;
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
-
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
 			return true;
@@ -33,7 +34,7 @@ public class ReopenCommand implements CommandExecutor{
 		
 		RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
 		sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
-		
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ReopenCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 }

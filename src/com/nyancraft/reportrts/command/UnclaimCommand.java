@@ -22,6 +22,8 @@ public class UnclaimCommand implements CommandExecutor{
 		if(args.length == 0) return false;
 		if(!RTSPermissions.canClaimTicket(sender)) return true;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
 			sender.sendMessage(Message.parse("unclaimNotClaimed"));
 			return true;
@@ -44,6 +46,7 @@ public class UnclaimCommand implements CommandExecutor{
 		plugin.requestMap.get(Integer.parseInt(args[0])).setModName(null);
 		sender.sendMessage(Message.parse("unclaimReqSelf", args[0]));
 		
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " UnclaimCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 }

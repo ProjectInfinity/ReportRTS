@@ -23,6 +23,8 @@ public class CompleteCommand implements CommandExecutor {
 		if(!RTSPermissions.canCompleteRequests(sender)) return true;
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		String comment = RTSFunctions.implode(args, " ");
 		
 		if(comment.length() <= args[0].length()){
@@ -51,6 +53,7 @@ public class CompleteCommand implements CommandExecutor {
 		}
 			
 		RTSFunctions.messageMods(Message.parse("completedReq", args[0], sender.getName()), sender.getServer().getOnlinePlayers());
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CompleteCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 

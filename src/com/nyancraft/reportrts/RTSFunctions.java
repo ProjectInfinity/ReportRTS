@@ -156,4 +156,8 @@ public class RTSFunctions {
 		}
     	return 0;
     }
+    
+    public static long getTimeSpent(long start){
+    	return System.currentTimeMillis() - start;
+    }
 }

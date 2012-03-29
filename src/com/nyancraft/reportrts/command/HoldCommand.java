@@ -23,6 +23,8 @@ public class HoldCommand implements CommandExecutor {
 		if(!RTSPermissions.canPutTicketOnHold(sender)) return true;
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		String reason = RTSFunctions.implode(args, " ");
 		
 		if(reason.length() <= args[0].length()){
@@ -44,6 +46,7 @@ public class HoldCommand implements CommandExecutor {
 		}
 			
 		RTSFunctions.messageMods(Message.parse("holdRequest", args[0], sender.getName()), sender.getServer().getOnlinePlayers());
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " HoldCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 

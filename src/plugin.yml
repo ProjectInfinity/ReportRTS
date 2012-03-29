@@ -20,7 +20,7 @@ commands:
     aliases: [tpid]
   reportrts:
     description: General commands for ReportRTS
-    usage: /<command> [reload | ban | unban | reset]
+    usage: /<command> [reload | ban | unban | reset | status]
   hold:
     description: Puts the specified ticket on hold
     usage: /<command> [id]
@@ -67,6 +67,9 @@ permissions:
     default: op
   reportrts.command.reset:
     description: Permission to reset the plugin.
+    default: op
+  reportrts.command.stats:
+    description: Permission to look up staff stats.
     default: op
   reportrts.command.ban:
     description: Permission to ban people from ReportRTS.

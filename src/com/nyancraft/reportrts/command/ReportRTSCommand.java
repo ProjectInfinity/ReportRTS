@@ -94,6 +94,10 @@ public class ReportRTSCommand implements CommandExecutor{
 				sender.sendMessage(ChatColor.GREEN + "[ReportRTS] Successfully imported " + imported + " requests from ModTRS.");
 				plugin.reloadPlugin();
 				break;
+				
+			case STATS:
+				if(!RTSPermissions.canCheckStats(sender)) return true;
+				break;
 			}
 		}catch(Exception e){
 			return false;
@@ -106,6 +110,7 @@ public class ReportRTSCommand implements CommandExecutor{
 		BAN,
 		UNBAN,
 		RESET,
-		IMPORT
+		IMPORT,
+		STATS
 	}
 }

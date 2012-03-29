@@ -187,4 +187,19 @@ public class RTSPermissions {
 		}
 		return true;
 	}
+	
+	public static boolean canCheckStats(CommandSender sender){
+		if(ReportRTS.permission != null){
+			if(!ReportRTS.permission.has(sender, "reportrts.command.stats")){
+				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.stats"));
+				return false;
+			}
+			return true;
+		}
+		if(!sender.hasPermission("reportrts.command.stats")){
+			sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.stats"));
+			return false;
+		}
+		return true;
+	}
 }

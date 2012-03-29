@@ -23,6 +23,8 @@ public class ClaimCommand implements CommandExecutor{
 		if(args.length == 0) return false;
 		if(!RTSPermissions.canClaimTicket(sender)) return true;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
+		long start = 0;
+		if(plugin.debugMode) start = System.currentTimeMillis();
 		if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
 			sender.sendMessage(Message.parse("claimNotOpen"));
 			return true;
@@ -39,6 +41,7 @@ public class ClaimCommand implements CommandExecutor{
 		plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(1);
 		plugin.requestMap.get(Integer.parseInt(args[0])).setModName(sender.getName());
 		RTSFunctions.messageMods(Message.parse("claimRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
+		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ClaimCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
 	}
 
