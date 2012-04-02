@@ -33,6 +33,8 @@ public interface Database {
 	
 	public ResultSet getHeldRequests(int from);
 	
+	public ResultSet getHandledBy(String player);
+	
 	public ResultSet getTicketById(int id);
 	
 	public ResultSet getHeldTicketById(int id);

@@ -103,4 +103,7 @@ public class QueryGen {
 	public static String setNotificationStatus(int id, int status){
 		return "UPDATE reportrts_request SET `notified_of_completion` = " + status + " WHERE `id` = " + id; 
 	}
+	public static String getHandledBy(){
+		return "SELECT * FROM reportrts_request WHERE mod_id = ?";
+	}
 }

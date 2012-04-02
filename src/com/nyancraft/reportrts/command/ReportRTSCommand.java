@@ -17,6 +17,7 @@ import com.nyancraft.reportrts.util.Message;
 public class ReportRTSCommand implements CommandExecutor{
 
 	private ReportRTS plugin;
+	private ResultSet rs;
 	
 	public ReportRTSCommand(ReportRTS plugin) {
 		this.plugin = plugin;
@@ -69,7 +70,7 @@ public class ReportRTSCommand implements CommandExecutor{
 					sender.sendMessage(ChatColor.RED + "[ReportRTS] Please check that the ModTRS tables exist.");
 					return true;
 				}
-				ResultSet rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_user");
+				rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_user");
 				int imported = 0;
 				while(rs.next()){
 					if(!DatabaseManager.getDatabase().insertUser(rs.getInt("id"), rs.getString("name"), rs.getInt("banned"))){
@@ -97,6 +98,24 @@ public class ReportRTSCommand implements CommandExecutor{
 				
 			case STATS:
 				if(!RTSPermissions.canCheckStats(sender)) return true;
+				try{
+					rs = DatabaseManager.getDatabase().getHandledBy(args[1]);
+					int currentHeld = 0;
+					int currentClaimed = 0;
+					int totalCompleted = 0;
+					while(rs.next()){
+						if(rs.getInt("status") == 1) currentClaimed++;
+						if(rs.getInt("status") == 2) currentHeld++;
+						if(rs.getInt("status") == 3) totalCompleted++;
+					}
+					rs.close();
+					sender.sendMessage(ChatColor.YELLOW + "---- Stats for " + args[1] + " ----");
+					sender.sendMessage(ChatColor.YELLOW + "Currently claimed requests: " + currentClaimed);
+					sender.sendMessage(ChatColor.YELLOW + "Currently held requests: " + currentHeld);
+					sender.sendMessage(ChatColor.YELLOW + "Total completed requests: " + totalCompleted);
+				}catch(ArrayIndexOutOfBoundsException e){
+					return false;
+				}
 				break;
 			}
 		}catch(Exception e){

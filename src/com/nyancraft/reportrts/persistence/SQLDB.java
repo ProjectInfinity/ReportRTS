@@ -317,4 +317,16 @@ public abstract class SQLDB implements Database{
 	public ResultSet getAllFromTable(String table){
 		return query(QueryGen.getAllFromTable(table));
 	}
+	
+	@Override
+	public ResultSet getHandledBy(String player){
+		try{
+			PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getHandledBy());
+			ps.setInt(1, getUserId(player));
+			return ps.executeQuery();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
