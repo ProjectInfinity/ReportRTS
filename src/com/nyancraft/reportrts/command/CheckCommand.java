@@ -54,8 +54,9 @@ public class CheckCommand implements CommandExecutor {
 			for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
 				i++;
 				if(i > 5) break;
-	
+
 				HelpRequest currentRequest = entry.getValue();
+				if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
 				 substring = currentRequest.getMessage();
 		            if (substring.length() >= 20) {
 		                substring = substring.substring(0, 20) + "...";
@@ -131,7 +132,8 @@ public class CheckCommand implements CommandExecutor {
 		if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 		for(int i = (pageNumber * 5) - 5; i < (pageNumber * 5) && i < requestList.size(); i++){
 			HelpRequest currentRequest = requestList.get(i).getValue();
-			 substring = currentRequest.getMessage();
+			if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
+			substring = currentRequest.getMessage();
 
             if (substring.length() >= 20) {
                 substring = substring.substring(0, 20) + "...";
