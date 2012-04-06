@@ -5,7 +5,7 @@
 # mysql.enable - If true, uses MySQL instead of SQLite.
 # request.max - Maximum number of requests a user may have open at the same time.
 # request.delay - User has to wait this amount of seconds before filing another request.
-# request.hideOfflineSenders - If set to true, hides all requests in /check from offline users.
+# request.hideOffline - If set to true, hides all requests in /check from offline users.
 
 notifyStaff: true
 hideMessageIfEmpty: false
@@ -14,7 +14,7 @@ debug: false
 request:
   delay: 60
   max: 5
-  hideOfflineSenders: false
+  hideOffline: false
 
 mysql:
   enable: false
