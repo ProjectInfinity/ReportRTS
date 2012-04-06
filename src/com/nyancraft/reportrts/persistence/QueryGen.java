@@ -97,6 +97,9 @@ public class QueryGen {
 	public static String deleteRequestOlderThan(String table, int lessThanThis){
 		return "DELETE FROM " + table + " WHERE tstamp < " + lessThanThis;
 	}
+	public static String deleteEntryById(String table, int id){
+		return "DELETE FROM '" + table + "' WHERE `id` = '" + id + "'";
+	}
 	public static String getUnnotifiedUsers(){
 		return "SELECT * FROM reportrts_request AS request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE `status` = 3 AND notified_of_completion = 0";
 	}

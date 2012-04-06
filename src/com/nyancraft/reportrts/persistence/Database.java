@@ -19,6 +19,8 @@ public interface Database {
 	
 	public void deleteRequestsByTime(String table, int lessThanThis);
 	
+	public void deleteEntryById(String table, int id);
+	
 	public int getNumberHeldRequests();
 	
 	public int getUserId(String player);

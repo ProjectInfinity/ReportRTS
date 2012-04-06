@@ -20,7 +20,26 @@ public class CompleteCommand implements CommandExecutor {
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(!RTSPermissions.canCompleteRequests(sender)) return true;
+		if(!RTSPermissions.canCompleteRequests(sender)){
+			if(!RTSPermissions.canCompleteOwnRequests(sender)){
+				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
+				return true;
+			}
+			if(!RTSFunctions.isParsableToInt(args[0])) return false;
+			long start = 0;
+			if(plugin.debugMode) start = System.currentTimeMillis();
+			if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+				sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
+				return true;
+			}
+			DatabaseManager.getDatabase().deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
+			plugin.requestMap.remove(Integer.parseInt(args[0]));
+			RTSFunctions.messageMods(Message.parse("completedReq", "Cancellation System"), sender.getServer().getOnlinePlayers());
+			sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
+			
+			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CompleteCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+			return true;
+		}
 		if(args.length == 0) return false;
 		if(!RTSFunctions.isParsableToInt(args[0])) return false;
 		long start = 0;
