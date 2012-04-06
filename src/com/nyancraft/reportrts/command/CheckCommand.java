@@ -104,7 +104,7 @@ public class CheckCommand implements CommandExecutor {
 					}
 					break;
 				}
-
+				if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 				return true;
 			} catch(IllegalArgumentException e){
 				return false;
