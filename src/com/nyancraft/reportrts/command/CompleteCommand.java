@@ -22,22 +22,26 @@ public class CompleteCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!RTSPermissions.canCompleteRequests(sender)){
 			if(!RTSPermissions.canCompleteOwnRequests(sender)){
-				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
+				if(!RTSFunctions.isParsableToInt(args[0])) return false;
+				long start = 0;
+				if(plugin.debugMode) start = System.currentTimeMillis();
+				if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+					sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
+					return true;
+				}
+				if(!plugin.requestMap.get(Integer.parseInt(args[0])).getName().equalsIgnoreCase(sender.getName())){
+					sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
+					return true;
+				}
+				DatabaseManager.getDatabase().deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
+				plugin.requestMap.remove(Integer.parseInt(args[0]));
+				RTSFunctions.messageMods(Message.parse("completedReq", Integer.parseInt(args[0]),"Cancellation System"), sender.getServer().getOnlinePlayers());
+				sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
+				
+				if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CompleteCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 				return true;
 			}
-			if(!RTSFunctions.isParsableToInt(args[0])) return false;
-			long start = 0;
-			if(plugin.debugMode) start = System.currentTimeMillis();
-			if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
-				sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
-				return true;
-			}
-			DatabaseManager.getDatabase().deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
-			plugin.requestMap.remove(Integer.parseInt(args[0]));
-			RTSFunctions.messageMods(Message.parse("completedReq", Integer.parseInt(args[0]),"Cancellation System"), sender.getServer().getOnlinePlayers());
-			sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
-			
-			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CompleteCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+			sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
 			return true;
 		}
 		if(args.length == 0) return false;
