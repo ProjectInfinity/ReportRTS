@@ -34,7 +34,7 @@ public class CompleteCommand implements CommandExecutor {
 			}
 			DatabaseManager.getDatabase().deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
 			plugin.requestMap.remove(Integer.parseInt(args[0]));
-			RTSFunctions.messageMods(Message.parse("completedReq", "Cancellation System"), sender.getServer().getOnlinePlayers());
+			RTSFunctions.messageMods(Message.parse("completedReq", Integer.parseInt(args[0]),"Cancellation System"), sender.getServer().getOnlinePlayers());
 			sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 			
 			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CompleteCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
