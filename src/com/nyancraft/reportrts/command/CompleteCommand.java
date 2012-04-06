@@ -21,7 +21,7 @@ public class CompleteCommand implements CommandExecutor {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!RTSPermissions.canCompleteRequests(sender)){
-			if(!RTSPermissions.canCompleteOwnRequests(sender)){
+			if(RTSPermissions.canCompleteOwnRequests(sender)){
 				if(!RTSFunctions.isParsableToInt(args[0])) return false;
 				long start = 0;
 				if(plugin.debugMode) start = System.currentTimeMillis();
