@@ -73,9 +73,11 @@ public class ReportRTS extends JavaPlugin{
 	public void reloadPlugin(){
 		requestMap.clear();
 		messageMap.clear();
+		notificationMap.clear();
 		reloadSettings();
 		DatabaseManager.getDatabase().populateRequestMap();
 		RTSFunctions.populateHeldRequestsWithData();
+		RTSFunctions.populateNotificationMapWithData();
 	} 
 	
 	public void reloadSettings(){
