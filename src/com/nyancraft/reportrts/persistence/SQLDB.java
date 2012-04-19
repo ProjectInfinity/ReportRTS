@@ -332,6 +332,7 @@ public abstract class SQLDB implements Database{
 	
 	@Override
 	public void deleteEntryById(String table, int id){
+		System.out.println(QueryGen.deleteEntryById(table, id));
 		this.query(QueryGen.deleteEntryById(table, id));
 	}
 }
