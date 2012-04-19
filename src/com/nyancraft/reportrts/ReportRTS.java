@@ -27,6 +27,7 @@ public class ReportRTS extends JavaPlugin{
 	
 	public boolean notifyStaffOnNewRequest;
 	public boolean hideNotification;
+	public boolean hideWhenOffline;
 	public boolean useMySQL;
 	public boolean debugMode;
 	public int maxRequests;
@@ -86,6 +87,7 @@ public class ReportRTS extends JavaPlugin{
 		saveConfig();
 		notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
 		hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
+		hideWhenOffline = getConfig().getBoolean("request.hideOffline");
 		maxRequests = getConfig().getInt("request.max");
 		requestDelay = getConfig().getInt("request.delay");
 		useMySQL = getConfig().getBoolean("mysql.enable");

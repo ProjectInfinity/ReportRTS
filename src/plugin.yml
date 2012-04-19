@@ -59,6 +59,9 @@ permissions:
   reportrts.command.complete:
     description: Permission to complete and reopen requests.
     default: op
+  reportrts.command.complete.self:
+    description: Permission to complete your own requests.
+    default: op
   reportrts.command.teleport:
     description: Permission to teleport to requests.
     default: op

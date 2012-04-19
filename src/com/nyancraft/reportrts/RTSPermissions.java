@@ -39,18 +39,13 @@ public class RTSPermissions {
 	}
 	
 	public static boolean canCompleteRequests(CommandSender sender){
-		if(ReportRTS.permission != null){
-			if(!ReportRTS.permission.has(sender, "reportrts.command.complete")){
-				sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete"));
-				return false;
-			}
-			return true;
-		}
-		if(!sender.hasPermission("reportrts.command.complete")){
-			sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete"));
-			return false;
-		}
-		return true;
+		if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.complete");
+		return sender.hasPermission("reportrts.command.complete");
+	}
+	
+	public static boolean canCompleteOwnRequests(CommandSender sender){
+		if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.complete.self");
+		return sender.hasPermission("reportrts.command.complete.self");
 	}
 	
 	public static boolean canTeleport(CommandSender sender){
