@@ -83,6 +83,7 @@ public class RTSListener implements Listener{
 	    String[] text = new String[3]; System.arraycopy(event.getLines(), 1, text, 0, 3);
 	    String message = RTSFunctions.cleanUpSign(text);
 	    if(message.length() == 0) {
+	    	event.getPlayer().sendMessage(Message.parse("generalInternalError", "Help signs can't be empty."));
 	    	block.breakNaturally();
 	    	return;
 	    }
