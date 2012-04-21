@@ -51,7 +51,7 @@ public class CompleteCommand implements CommandExecutor {
 		String comment = RTSFunctions.implode(args, " ");
 		
 		if(comment.length() <= args[0].length()){
-			comment = "None.";
+			comment = null;
 		}else{
 			comment = comment.substring(args[0].length()).trim();
 		}
