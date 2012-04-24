@@ -34,7 +34,7 @@ public class ModreqCommand implements CommandExecutor {
 			sender.sendMessage(Message.parse("modreqTooManyOpen"));
 			return true;
 		}
-		if(ReportRTS.getPlugin().requestDelay > 0){
+		if(plugin.requestDelay > 0){
 			if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))){
 				long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(sender);
 				if(timeBetweenRequest > 0){

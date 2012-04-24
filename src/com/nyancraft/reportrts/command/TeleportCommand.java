@@ -48,7 +48,7 @@ public class TeleportCommand implements CommandExecutor {
 					sender.sendMessage(Message.parse("generalRequestNotFound", args[0]));
 					return true;
 				}
-				if(ReportRTS.getPlugin().useMySQL) rs.first();
+				if(plugin.useMySQL) rs.first();
 				location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
 				rs.close();
 			} catch (SQLException e) {
