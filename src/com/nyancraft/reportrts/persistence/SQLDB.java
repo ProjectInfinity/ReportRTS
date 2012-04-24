@@ -164,20 +164,20 @@ public abstract class SQLDB implements Database{
 			}
 			ticketId = rs.getInt("id");
 			rs.close();
-		} catch (SQLException e) {
+		}catch (SQLException e){
 			e.printStackTrace();
 		}
     	return ticketId;
     }
 
 	@Override
-	public boolean setRequestStatus(int id, String player, int status, String comment, int notified) {
+	public boolean setRequestStatus(int id, String player, int status, String comment, int notified){
 		if(!isLoaded()) return false;
 		ResultSet rs = query(QueryGen.getTicketStatusById(id));
 		try{
 			if(!rs.isBeforeFirst()) return false;
 			if(ReportRTS.getPlugin().useMySQL) rs.first();
-			if(rs.getInt("status") == status) {
+			if(rs.getInt("status") == status || (status == 2 && rs.getInt("status") == 3)){
 				rs.close();
 				return false;
 			}
