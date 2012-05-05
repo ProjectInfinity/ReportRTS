@@ -9,7 +9,10 @@ public class DatabaseManager {
 	
 	public static boolean load(){
 		if(ReportRTS.getPlugin().useMySQL){
-			if(!loadMySQL()) loadSQLite();
+			if(!loadMySQL()){
+				ReportRTS.getPlugin().useMySQL = false;
+				loadSQLite();
+			}
 		}else{
 			loadSQLite();
 		}
