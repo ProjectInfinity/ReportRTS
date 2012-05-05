@@ -44,6 +44,9 @@ permissions:
   reportrts.mod:
     description: Give this to all staff members.
     default: op
+  reportrts.override:
+    description: Permission to override the actions of other staff members.
+    default: op
   reportrts.command.modreq:
     description: Permission to file a request.
     default: op

@@ -57,8 +57,19 @@ public class CompleteCommand implements CommandExecutor {
 		}
 		
 		int online = 0;
+		boolean isClaimedByOther = false;
 		
-		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) online = (RTSFunctions.isUserOnline(plugin.requestMap.get(Integer.parseInt(args[0])).getName(), sender.getServer())) ? 1 : 0;
+		if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+			online = (RTSFunctions.isUserOnline(plugin.requestMap.get(Integer.parseInt(args[0])).getName(), sender.getServer())) ? 1 : 0;
+			if(plugin.requestMap.get(Integer.parseInt(args[0])).getStatus() == 1){
+				isClaimedByOther = (!plugin.requestMap.get(Integer.parseInt(args[0])).getModName().equalsIgnoreCase(sender.getName())) ? true : false;
+			}
+		}
+		
+		if(isClaimedByOther && !sender.hasPermission("reportrts.override")){
+			sender.sendMessage(Message.parse("generalInternalError", "Request #" + args[0] + " is claimed by someone else."));
+			return true;
+		}
 		
 		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment, online)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
