@@ -25,6 +25,8 @@ public interface Database {
 	
 	public int getUserId(String player);
 	
+	public int countRequests(int status);
+	
 	public boolean fileRequest(String player, String world, Location location, String message, int userId);
 	
 	public boolean insertRequest(int modId, String world, int x, int y, int z, String message, int userId, int tstamp);
@@ -34,6 +36,8 @@ public interface Database {
 	public int getLatestTicketIdByUser(int userId);
 	
 	public ResultSet getHeldRequests(int from);
+	
+	public ResultSet getClosedRequests(int from);
 	
 	public ResultSet getHandledBy(String player);
 	

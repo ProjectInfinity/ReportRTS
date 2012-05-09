@@ -234,10 +234,30 @@ public abstract class SQLDB implements Database{
 		}
 		return true;
 	}
-	
+	@Override
+	public int countRequests(int status){
+		if(!isLoaded()) return 0;
+		ResultSet rs = query(QueryGen.countRequests(status));
+		int total = 0;
+		try{
+			if(!rs.isBeforeFirst()) return 0;
+			if(ReportRTS.getPlugin().useMySQL) rs.first();
+			total = rs.getInt(1);
+			rs.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+			return 0;
+		}
+		return total;
+	}
 	@Override
 	public ResultSet getHeldRequests(int from){
 		return query(QueryGen.getHeldRequests(from));
+	}
+	
+	@Override
+	public ResultSet getClosedRequests(int from){
+		return query(QueryGen.getClosedRequests(from));
 	}
 	
 	@Override

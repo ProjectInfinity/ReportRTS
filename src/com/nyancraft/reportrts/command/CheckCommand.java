@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.RTSFunctions;
@@ -22,10 +23,12 @@ import com.nyancraft.reportrts.RTSFunctions;
 public class CheckCommand implements CommandExecutor {
 
 	private ReportRTS plugin;
+	private Database dbManager;
 	private String substring = null;
 	
 	public CheckCommand(ReportRTS plugin){
 		this.plugin = plugin;
+		this.dbManager = DatabaseManager.getDatabase();
 	}
 	private List<Map.Entry<Integer, HelpRequest>> requestList = new ArrayList<Map.Entry<Integer, HelpRequest>>(); 
 	private SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
@@ -57,14 +60,11 @@ public class CheckCommand implements CommandExecutor {
 
 				HelpRequest currentRequest = entry.getValue();
 				if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
-				 substring = currentRequest.getMessage();
-		            if (substring.length() >= 20) {
-		                substring = substring.substring(0, 20) + "...";
-		            }
-		            date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
-		            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
-		            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-		            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
+				 substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+		         date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
+		         ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+		         substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
+		         sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
 			}
 			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 		return true;
@@ -104,6 +104,14 @@ public class CheckCommand implements CommandExecutor {
 						checkHeld("1", sender);
 					}
 					break;
+					
+				case CLOSED:
+					try{
+						checkClosed(args[1], sender);
+					}catch(ArrayIndexOutOfBoundsException e){
+						checkClosed("1", sender);
+					}
+					break;
 				}
 				if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
 				return true;
@@ -120,7 +128,8 @@ public class CheckCommand implements CommandExecutor {
 		PAGE,
 		P,
 		HELD,
-		H
+		H,
+		CLOSED
 	}
 	
 	private void checkPage(String page, CommandSender sender){
@@ -133,11 +142,8 @@ public class CheckCommand implements CommandExecutor {
 		for(int i = (pageNumber * 5) - 5; i < (pageNumber * 5) && i < requestList.size(); i++){
 			HelpRequest currentRequest = requestList.get(i).getValue();
 			if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
-			substring = currentRequest.getMessage();
-
-            if (substring.length() >= 20) {
-                substring = substring.substring(0, 20) + "...";
-            }
+			substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+			
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
             ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
             substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
@@ -149,17 +155,13 @@ public class CheckCommand implements CommandExecutor {
 		int pageNumber = Integer.parseInt(page);
 		int i = (pageNumber * 5) - 5;
 
-		ResultSet rs = DatabaseManager.getDatabase().getHeldRequests(i);
+		ResultSet rs = dbManager.getHeldRequests(i);
 		try {
-			int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
+			int heldRequests = dbManager.getNumberHeldRequests();
 			sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
 			if(heldRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
 			while(rs.next()){
-				 substring = rs.getString("text");
-
-	            if (substring.length() >= 20) {
-	                substring = substring.substring(0, 20) + "...";
-	            }
+				substring = RTSFunctions.shortenMessage(rs.getString("text"));
 	            date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
 	            ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
 	            sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);	
@@ -172,11 +174,33 @@ public class CheckCommand implements CommandExecutor {
 		}
 	}
 	
+	private void checkClosed(String page, CommandSender sender){
+		int pageNumber = Integer.parseInt(page);
+		int i = (pageNumber * 5) - 5;
+		
+		ResultSet rs = dbManager.getClosedRequests(i);
+		try{
+			int closedRequests = dbManager.countRequests(Integer.parseInt("3"));
+			sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Requests -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
+			if(closedRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
+			while(rs.next()){
+				substring = RTSFunctions.shortenMessage(rs.getString("text"));
+				date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
+				ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+				sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+			}
+			rs.close();
+		}catch(SQLException e){
+			sender.sendMessage(Message.parse("generalInternalError", "Cannot check closed requests, see console for errors."));
+			e.printStackTrace();
+		}
+	}
+	
 	private void checkId(int id, CommandSender sender){
 		HelpRequest currentRequest = plugin.requestMap.get(id);
 		
 		if(currentRequest == null) {
-			ResultSet rs = DatabaseManager.getDatabase().getTicketById(id);
+			ResultSet rs = dbManager.getTicketById(id);
 			
 			ChatColor online;
 			try {
@@ -212,7 +236,7 @@ public class CheckCommand implements CommandExecutor {
 				
 				if(rs.getInt("status") == 3){
 					rs.close();
-					rs = DatabaseManager.getDatabase().getTicketById(id);
+					rs = dbManager.getTicketById(id);
 					if(plugin.useMySQL){
 						if(rs.isBeforeFirst()) rs.first();
 					}
@@ -255,25 +279,21 @@ public class CheckCommand implements CommandExecutor {
 		for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
 			if(entry.getValue().getName().equals(sender.getName())) openRequests++;
 		}
-			int i = 0;
-			sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " open requests " + ChatColor.AQUA + "----------");
-			if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open requests at this time.");
-			for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
-				if(entry.getValue().getName().equals(sender.getName())){
-					i++;
-					if(i > 5) break;
+		int i = 0;
+		sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " open requests " + ChatColor.AQUA + "----------");
+		if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open requests at this time.");
+		for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
+			if(entry.getValue().getName().equals(sender.getName())){
+				i++;
+				if(i > 5) break;
 		
-					HelpRequest currentRequest = entry.getValue();
-					 substring = currentRequest.getMessage();
-			            if (substring.length() >= 20) {
-			                substring = substring.substring(0, 20) + "...";
-			            }
-			            date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
-			            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
-			            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-			            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
-				}
-
+				HelpRequest currentRequest = entry.getValue();
+				substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+		        date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
+		        ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+		        substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
+		        sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
 			}
+		}
 	}
 }

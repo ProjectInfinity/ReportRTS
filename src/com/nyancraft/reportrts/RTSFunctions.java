@@ -160,4 +160,11 @@ public class RTSFunctions {
     public static long getTimeSpent(long start){
     	return System.currentTimeMillis() - start;
     }
+    
+    public static String shortenMessage(String message){
+        if (message.length() >= 20) {
+            message = message.substring(0, 20) + "...";
+        }
+        return message;
+    }
 }
