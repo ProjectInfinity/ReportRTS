@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
@@ -18,6 +19,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
 	private ReportRTS plugin;
 	private ResultSet rs;
+	private Database dbManager;
 	
 	public ReportRTSCommand(ReportRTS plugin) {
 		this.plugin = plugin;
@@ -36,7 +38,7 @@ public class ReportRTSCommand implements CommandExecutor{
 				
 			case BAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
-				if(!DatabaseManager.getDatabase().setUserStatus(args[1], 1)){
+				if(!dbManager.setUserStatus(args[1], 1)){
 					sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
 					return true;
 				}
@@ -45,7 +47,7 @@ public class ReportRTSCommand implements CommandExecutor{
 			
 			case UNBAN:
 				if(!RTSPermissions.canBanUser(sender)) return true;
-				if(!DatabaseManager.getDatabase().setUserStatus(args[1], 0)){
+				if(!dbManager.setUserStatus(args[1], 0)){
 					sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
 					return true;
 				}
@@ -54,7 +56,7 @@ public class ReportRTSCommand implements CommandExecutor{
 				
 			case RESET:
 				if(!RTSPermissions.canResetPlugin(sender)) return true;
-				if(!DatabaseManager.getDatabase().resetDB()){
+				if(!dbManager.resetDB()){
 					sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to reset the plugin.");
 					return true;
 				}
@@ -66,14 +68,14 @@ public class ReportRTSCommand implements CommandExecutor{
 			case IMPORT:
 				if(!RTSPermissions.canImport(sender)) return true;
 				sender.sendMessage(ChatColor.GOLD + "[ReportRTS] Attempting to import from ModTRS (MySQL only)...");
-				if(!DatabaseManager.getDatabase().checkTable("modtrs_request") || !DatabaseManager.getDatabase().checkTable("modtrs_user")){
+				if(!dbManager.checkTable("modtrs_request") || !DatabaseManager.getDatabase().checkTable("modtrs_user")){
 					sender.sendMessage(ChatColor.RED + "[ReportRTS] Please check that the ModTRS tables exist.");
 					return true;
 				}
-				rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_user");
+				rs = dbManager.getAllFromTable("modtrs_user");
 				int imported = 0;
 				while(rs.next()){
-					if(!DatabaseManager.getDatabase().insertUser(rs.getInt("id"), rs.getString("name"), rs.getInt("banned"))){
+					if(!dbManager.insertUser(rs.getInt("id"), rs.getString("name"), rs.getInt("banned"))){
 						sender.sendMessage(ChatColor.RED + "[ReportRTS] An error occured during the insertion of users from ModTRS.");
 						return true;
 					}
@@ -82,10 +84,10 @@ public class ReportRTSCommand implements CommandExecutor{
 				rs.close();
 				sender.sendMessage(ChatColor.GREEN + "[ReportRTS] Successfully imported " + imported + " users from ModTRS.");
 				
-				rs = DatabaseManager.getDatabase().getAllFromTable("modtrs_request");
+				rs = dbManager.getAllFromTable("modtrs_request");
 				imported = 0;
 				while(rs.next()){
-					if(!DatabaseManager.getDatabase().insertRequest(0, rs.getString("world"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("text"), rs.getInt("user_id"), rs.getInt("tstamp"))){
+					if(!dbManager.insertRequest(0, rs.getString("world"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("text"), rs.getInt("user_id"), rs.getInt("tstamp"))){
 						sender.sendMessage(ChatColor.RED + "[ReportRTS] An error occured during the insertion of requests from ModTRS.");
 						return true;
 					}
@@ -99,7 +101,7 @@ public class ReportRTSCommand implements CommandExecutor{
 			case STATS:
 				if(!RTSPermissions.canCheckStats(sender)) return true;
 				try{
-					rs = DatabaseManager.getDatabase().getHandledBy(args[1]);
+					rs = dbManager.getHandledBy(args[1]);
 					int currentHeld = 0;
 					int currentClaimed = 0;
 					int totalCompleted = 0;

@@ -12,15 +12,18 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class ModreqCommand implements CommandExecutor {
 
 	private ReportRTS plugin;
+	private Database dbManager;
 	
 	public ModreqCommand(ReportRTS plugin) {
 		this.plugin = plugin;
+		this.dbManager = DatabaseManager.getDatabase();
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -48,12 +51,12 @@ public class ModreqCommand implements CommandExecutor {
 		
 		Player player = (Player)sender;
 		String message = RTSFunctions.implode(args, " ");
-		int userId = DatabaseManager.getDatabase().getUserId(player.getName());
-		if(!DatabaseManager.getDatabase().fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {	
+		int userId = dbManager.getUserId(player.getName());
+		if(!dbManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {	
 			sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
 			return true;
 		}
-		int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
+		int ticketId = dbManager.getLatestTicketIdByUser(userId);
 		
 		Location location = player.getLocation();
 		

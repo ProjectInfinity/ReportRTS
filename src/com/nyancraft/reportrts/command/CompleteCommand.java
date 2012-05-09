@@ -8,15 +8,18 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class CompleteCommand implements CommandExecutor {
 
 	private ReportRTS plugin;
+	private Database dbManager;
 	
 	public CompleteCommand(ReportRTS plugin) {
 		this.plugin = plugin;
+		this.dbManager = DatabaseManager.getDatabase();
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -33,7 +36,7 @@ public class CompleteCommand implements CommandExecutor {
 					sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
 					return true;
 				}
-				DatabaseManager.getDatabase().deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
+				dbManager.deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
 				plugin.requestMap.remove(Integer.parseInt(args[0]));
 				RTSFunctions.messageMods(Message.parse("completedReq", Integer.parseInt(args[0]),"Cancellation System"), sender.getServer().getOnlinePlayers());
 				sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
@@ -71,7 +74,7 @@ public class CompleteCommand implements CommandExecutor {
 			return true;
 		}
 		
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment, online)) {
+		if(!dbManager.setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 3, comment, online)) {
 			sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
 			return true;	
 		}
