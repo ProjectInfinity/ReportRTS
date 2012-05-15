@@ -46,7 +46,7 @@ public class UnclaimCommand implements CommandExecutor{
 		plugin.requestMap.get(Integer.parseInt(args[0])).setModName(null);
 		sender.sendMessage(Message.parse("unclaimReqSelf", args[0]));
 		
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " UnclaimCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 }

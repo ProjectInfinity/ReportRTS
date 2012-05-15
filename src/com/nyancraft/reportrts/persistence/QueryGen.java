@@ -56,6 +56,9 @@ public class QueryGen {
 	public static String getUserId(){
 		return "SELECT `id` FROM `reportrts_user` WHERE `name` = ?";
 	}
+	public static String getUserName(int userId){
+		return "SELECT `name` FROM `reportrts_user` WHERE `id` = '" + userId + "'";
+	}
 	public static String createUser(){
 		return "INSERT INTO `reportrts_user` (`name`, `banned`) VALUES (?, '0')";
 	}

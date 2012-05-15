@@ -24,7 +24,7 @@ public class ModBroadcastCommand implements CommandExecutor{
 		if(plugin.debugMode) start = System.currentTimeMillis();
 		String message = RTSFunctions.implode(args, " ");
 		RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), sender.getServer().getOnlinePlayers());
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ModBroadcastCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 }

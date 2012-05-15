@@ -355,4 +355,18 @@ public abstract class SQLDB implements Database{
 		System.out.println(QueryGen.deleteEntryById(table, id));
 		this.query(QueryGen.deleteEntryById(table, id));
 	}
+	
+	@Override
+	public String getUserName(int userId){
+		if(!isLoaded() || userId == 0) return null;
+		String username = null;
+		try{
+			ResultSet rs = this.query(QueryGen.getUserName(userId));
+			username = rs.getString("name");
+			rs.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return username;
+	}
 }

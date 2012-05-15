@@ -66,7 +66,7 @@ public class ModreqCommand implements CommandExecutor {
 		
 		plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), player.getWorld().getName()));
 		
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ModreqCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 }

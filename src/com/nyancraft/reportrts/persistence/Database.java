@@ -27,13 +27,15 @@ public interface Database {
 	
 	public int countRequests(int status);
 	
+	public int getLatestTicketIdByUser(int userId);
+	
+	public String getUserName(int userId);
+	
 	public boolean fileRequest(String player, String world, Location location, String message, int userId);
 	
 	public boolean insertRequest(int modId, String world, int x, int y, int z, String message, int userId, int tstamp);
 	
 	public boolean insertUser(int userId, String name, int banned);
-	
-	public int getLatestTicketIdByUser(int userId);
 	
 	public ResultSet getHeldRequests(int from);
 	

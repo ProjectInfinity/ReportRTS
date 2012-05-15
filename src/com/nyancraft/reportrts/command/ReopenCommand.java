@@ -34,7 +34,7 @@ public class ReopenCommand implements CommandExecutor{
 		
 		RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
 		sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " ReopenCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 }

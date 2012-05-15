@@ -46,7 +46,7 @@ public class HoldCommand implements CommandExecutor {
 		}
 			
 		RTSFunctions.messageMods(Message.parse("holdRequest", args[0], sender.getName()), sender.getServer().getOnlinePlayers());
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " HoldCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 

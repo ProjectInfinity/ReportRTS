@@ -47,7 +47,7 @@ public class CheckCommand implements CommandExecutor {
 				return true;
 			}
 			checkSelf(sender);
-			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+			if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 			return true;
 		}
 		if(args.length == 0){
@@ -66,7 +66,7 @@ public class CheckCommand implements CommandExecutor {
 		         substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
 		         sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
 			}
-			if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+			if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 		if(!RTSFunctions.isParsableToInt(args[0])){
@@ -113,7 +113,7 @@ public class CheckCommand implements CommandExecutor {
 					}
 					break;
 				}
-				if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+				if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 				return true;
 			} catch(IllegalArgumentException e){
 				return false;
@@ -121,7 +121,7 @@ public class CheckCommand implements CommandExecutor {
 		}
 		
 		checkId(Integer.parseInt(args[0]), sender);
-		if(plugin.debugMode) plugin.getLogger().info(sender.getName() + " CheckCommand took " + RTSFunctions.getTimeSpent(start) + "ms");
+		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
 	private enum SubCommands{
@@ -133,6 +133,7 @@ public class CheckCommand implements CommandExecutor {
 	}
 	
 	private void checkPage(String page, CommandSender sender){
+		// TODO: Fix page issue occurring when hideWhenOffline = true
 		requestList.clear();
 		requestList.addAll(plugin.requestMap.entrySet());
 		
@@ -235,19 +236,11 @@ public class CheckCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + rs.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + rs.getInt("x") + ", " + rs.getInt("y") + ", " + rs.getInt("z"));
 				
 				if(rs.getInt("status") == 3){
-					rs.close();
-					rs = dbManager.getTicketById(id);
-					if(plugin.useMySQL){
-						if(rs.isBeforeFirst()) rs.first();
-					}
-					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + rs.getString("name") + ".");
-					rs.close();
+					int modId = rs.getInt("mod_id");
+					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + dbManager.getUserName(modId) + ".");
 				}
 				
-				if(modComment != null){
-					sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + modComment);
-				}
-				
+				if(modComment != null) sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + modComment);
 				sender.sendMessage(ChatColor.GRAY + text);
 				
 				rs.close();
