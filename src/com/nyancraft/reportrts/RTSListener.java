@@ -28,7 +28,7 @@ public class RTSListener implements Listener{
 		this.plugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event){
 		if(plugin.notificationMap.size() > 0){
 			for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
@@ -65,7 +65,7 @@ public class RTSListener implements Listener{
 		
 	}
 	
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event){
 	
 		Block block = event.getBlock();
