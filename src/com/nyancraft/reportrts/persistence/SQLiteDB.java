@@ -71,8 +71,6 @@ public class SQLiteDB extends SQLDB {
 			rs.close();
 			if(!columns.contains("yaw") || !columns.contains("pitch")){
 				//db.query("DROP TABLE `reportrts_request`");
-				
-				System.out.println(db.getConnection().createStatement().executeUpdate("DROP TABLE reportrts_request"));
 				//if(!db.createTable(QueryGen.createTemporaryRequestTable())) return false;
 				ReportRTS.getPlugin().getLogger().severe("Due to a bug, the database structure cannot be updated on SQLite. Please delete your old ReportRTS.db file!");
 			}
