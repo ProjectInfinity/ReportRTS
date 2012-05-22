@@ -43,7 +43,7 @@ public class RTSDatabaseManager {
     	try {
         	ResultSet result = db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE `status` < 2");
 			while(result.next()){
-				ReportRTS.getPlugin().requestMap.put(result.getInt(1), new HelpRequest(result.getString("name"), result.getInt(1), result.getLong("tstamp"), result.getString("text"), result.getInt("status"), result.getInt("x"), result.getInt("y"), result.getInt("z"), result.getString("world")));
+				ReportRTS.getPlugin().requestMap.put(result.getInt(1), new HelpRequest(result.getString("name"), result.getInt(1), result.getLong("tstamp"), result.getString("text"), result.getInt("status"), result.getInt("x"), result.getInt("y"), result.getInt("z"), result.getFloat("yaw"), result.getFloat("pitch"), result.getString("world")));
 			}
 			result.close();
 		} catch (SQLException e) {

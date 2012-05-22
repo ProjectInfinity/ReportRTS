@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.QueryGen;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
 

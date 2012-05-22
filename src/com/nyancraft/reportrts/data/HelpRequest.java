@@ -9,6 +9,9 @@ public class HelpRequest {
 	private int z;
 	private int modid;
 	
+	private float yaw;
+	private float pitch;
+	
 	private long tstamp;
 	
 	private String text;
@@ -16,7 +19,7 @@ public class HelpRequest {
     private String world;
     private String modname;
     
-	public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, String world){
+	public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world){
 		this.name = name;
 		this.id = id;
 		this.tstamp = tstamp;
@@ -26,6 +29,8 @@ public class HelpRequest {
 		this.y = y;
 		this.z = z;
 		this.world = world;
+		this.yaw = yaw;
+		this.pitch = pitch;
 	}
 	
 	/**
@@ -90,6 +95,22 @@ public class HelpRequest {
 	 */
 	public long getZ(){
 		return this.z;
+	}
+	
+	/**
+	 * Retrieves Yaw where ticket was created
+	 * @return int Yaw of ticket
+	 */
+	public float getYaw(){
+		return this.yaw;
+	}
+	
+	/**
+	 * Retrieves Pitch where ticket was created
+	 * @return int Pitch of ticket
+	 */
+	public float getPitch(){
+		return this.pitch;
 	}
 	
 	/**

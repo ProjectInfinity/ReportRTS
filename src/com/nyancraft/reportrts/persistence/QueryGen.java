@@ -14,16 +14,18 @@ public class QueryGen {
 			"`mod_comment` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci'," +
 			"`tstamp` INT(10) UNSIGNED NOT NULL DEFAULT '0'," +
 			"`world` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci'," +
-			"`x` INT(10) NOT NULL," + 
-			"`y` INT(10) NOT NULL," +
-			"`z` INT(10) NOT NULL," +
+			"`x` INT(10) NOT NULL DEFAULT '0'," + 
+			"`y` INT(10) NOT NULL DEFAULT '0'," +
+			"`z` INT(10) NOT NULL DEFAULT '0'," +
+			"`yaw` SMALLINT(6) NOT NULL DEFAULT '0'," +
+			"`pitch` SMALLINT(6) NOT NULL DEFAULT '0'" +
 			"`text` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci'," +
 			"`status` TINYINT(1) UNSIGNED NULL DEFAULT '0'," +
 			"`notified_of_completion` TINYINT(1) UNSIGNED NULL DEFAULT '0'," +
 			"PRIMARY KEY (`id`))";
 		}else{
 			return "CREATE TABLE reportrts_request (id integer primary key," +
-    			   " user_id integer no null," + 
+    			   " user_id integer not null," + 
     			   " mod_id integer," +
     			   " mod_timestamp bigint," +
     			   " mod_comment varchar(255)," +
@@ -32,10 +34,29 @@ public class QueryGen {
 				   " x integer not null," +
     			   " y integer not null," +
     			   " z integer not null," +
+    			   " yaw integer not null default 0," +
+    			   " pitch integer not null default 0," +
     			   " text varchar(255) not null," +
     			   " status integer," +
     			   " notified_of_completion integer)";
 		}
+	}
+	public static String createTemporaryRequestTable(){
+		return "CREATE TABLE temp_request (id integer primary key," +
+ 			   " user_id integer not null," + 
+ 			   " mod_id integer," +
+ 			   " mod_timestamp bigint," +
+ 			   " mod_comment varchar(255)," +
+ 			   " tstamp bigint not null," +
+ 			   " world varchar(255) not null," + 
+ 			   " x integer not null," +
+ 			   " y integer not null," +
+ 			   " z integer not null," +
+ 			   " yaw integer not null default 0," +
+ 			   " pitch integer not null default 0," +
+ 			   " text varchar(255) not null," +
+ 			   " status integer," +
+ 			   " notified_of_completion integer)";
 	}
 	public static String createUserTable(){
 		if(ReportRTS.getPlugin().useMySQL){
@@ -48,6 +69,13 @@ public class QueryGen {
 			return "CREATE TABLE reportrts_user (id integer primary key," +
     			   " name varchar(255) not null," +
     			   " banned integer)";
+		}
+	}
+	public static String getColumns(String table){
+		if(ReportRTS.getPlugin().useMySQL){
+			return "show columns from `" + table + "`";
+		}else{
+			return "PRAGMA table_info(`" + table + "`)";
 		}
 	}
 	public static String getAllOpenAndClaimedRequests(){
@@ -66,9 +94,9 @@ public class QueryGen {
 		return "INSERT INTO `reportrts_user` (`id`,`name`, `banned`) VALUES (?,?,?)";
 	}
 	public static String createRequest(){
-		return "INSERT INTO `reportrts_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`," +
+		return "INSERT INTO `reportrts_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`, `yaw`, `pitch`," +
 				" `text`, `status`, `notified_of_completion`) VALUES" +
-				" (?, ?, ?, ?, ?, ?, ?, '0', '0')";
+				" (?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0')";
 	}
 	public static String getUserStatus(int userId){
 		return "SELECT `banned` FROM reportrts_user WHERE `id` = '" + userId + "'";
@@ -95,7 +123,7 @@ public class QueryGen {
 		return "SELECT `status` FROM reportrts_request WHERE `id` = " + id;
 	}
 	public static String getLocationById(int id){
-		return "SELECT `x`, `y`, `z`, `world` FROM reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
+		return "SELECT `x`, `y`, `z`, `yaw`, `pitch`, `world` FROM reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
 	}
 	public static String getAllFromTable(String table){
 		return "SELECT * FROM `" + table + "`";

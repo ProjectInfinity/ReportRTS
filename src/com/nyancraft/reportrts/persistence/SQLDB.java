@@ -97,7 +97,7 @@ public abstract class SQLDB implements Database{
 		try {
         	ResultSet rs = query(QueryGen.getAllOpenAndClaimedRequests());
         	while(rs.next()){
-				ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world")));
+				ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
 			}
 			rs.close();
 		} catch (SQLException e) {
@@ -143,7 +143,9 @@ public abstract class SQLDB implements Database{
 			ps.setInt(4, location.getBlockX());
 			ps.setInt(5, location.getBlockY());
 			ps.setInt(6, location.getBlockZ());
-			ps.setString(7, message);
+			ps.setFloat(7, location.getYaw());
+			ps.setFloat(8, location.getPitch());
+			ps.setString(9, message);
 			if(ps.executeUpdate() < 1) return false;
 			ps.close();
 		}catch(SQLException e){

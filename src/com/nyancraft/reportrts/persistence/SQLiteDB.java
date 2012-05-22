@@ -1,11 +1,9 @@
 package com.nyancraft.reportrts.persistence;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.bukkit.Location;
+import java.util.ArrayList;
 
 import com.nyancraft.reportrts.ReportRTS;
 
@@ -13,6 +11,7 @@ import lib.PatPeter.SQLibrary.SQLite;
 
 public class SQLiteDB extends SQLDB {
 	private SQLite db;
+	private ArrayList<String> columns = new ArrayList<String>();
 	
 	@Override
 	public ResultSet query(String query){
@@ -39,15 +38,16 @@ public class SQLiteDB extends SQLDB {
 		}
 		
 		try{
-			checkTables();
+			if(!checkTables()) return false;
 		}catch(Exception e){
 			ReportRTS.getPlugin().getLogger().severe("Could not access SQLite tables.");
+			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 	
-	private boolean checkTables(){
+	private boolean checkTables() throws Exception{
 		if(!this.db.checkTable("reportrts_request")){
 			if(!db.createTable(QueryGen.createRequestTable())) return false;
 			ReportRTS.getPlugin().getLogger().info("Created reportrts_request table.");
@@ -56,7 +56,31 @@ public class SQLiteDB extends SQLDB {
 			if(!db.createTable(QueryGen.createUserTable())) return false;
 			ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
 		}
+		checkColumns();
+		//if(!this.checkColumns()) return false; // TODO: Finish this. PRAGMA table_info)
 		return true;
+	}
+
+	private boolean checkColumns(){
+		ResultSet rs = db.query(QueryGen.getColumns("reportrts_request"));
+		columns.clear();
+		try{
+			while(rs.next()){
+				columns.add(rs.getString("name"));
+			}
+			rs.close();
+			if(!columns.contains("yaw") || !columns.contains("pitch")){
+				//db.query("DROP TABLE `reportrts_request`");
+				
+				System.out.println(db.getConnection().createStatement().executeUpdate("DROP TABLE reportrts_request"));
+				//if(!db.createTable(QueryGen.createTemporaryRequestTable())) return false;
+				ReportRTS.getPlugin().getLogger().severe("Due to a bug, the database structure cannot be updated on SQLite. Please delete your old ReportRTS.db file!");
+			}
+			return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public void disconnect(){

@@ -3,16 +3,15 @@ package com.nyancraft.reportrts.persistence;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.bukkit.Location;
+import java.util.ArrayList;
 
 import com.nyancraft.reportrts.ReportRTS;
 
 import lib.PatPeter.SQLibrary.MySQL;
 
-public class MySQLDB extends SQLDB {
-	
+public class MySQLDB extends SQLDB {	
 	private MySQL db;
+	private ArrayList<String> columns = new ArrayList<String>();
 	
 	public ResultSet query(String query){
 		try{
@@ -42,6 +41,7 @@ public class MySQLDB extends SQLDB {
 		
 		try{
 			checkTables();
+			checkColumns();
 		}catch(Exception e){
 			ReportRTS.getPlugin().getLogger().severe("Could not access MySQL tables.");
 			return false;
@@ -60,6 +60,28 @@ public class MySQLDB extends SQLDB {
 			ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
 		}
 		return true;
+	}
+	
+	private boolean checkColumns(){
+		ResultSet rs = db.query(QueryGen.getColumns("reportrts_request"));
+		columns.clear();
+		try{	
+			while(rs.next()){
+				columns.add(rs.getString("Field"));
+			}
+			rs.close();
+			if(!columns.contains("yaw") || !columns.contains("pitch")){
+				db.query("ALTER TABLE `reportrts_request`" +
+						" ADD COLUMN `yaw` smallint(6) NOT NULL DEFAULT 0 AFTER `z`," +
+						" ADD COLUMN `pitch` smallint(6) NOT NULL DEFAULT 0 AFTER `yaw`");
+				ReportRTS.getPlugin().getLogger().info("Successfully upgraded the database structure to v0.4.0");
+			}
+			return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 	
 	public void disconnect(){

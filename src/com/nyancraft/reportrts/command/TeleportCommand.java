@@ -49,7 +49,7 @@ public class TeleportCommand implements CommandExecutor {
 					return true;
 				}
 				if(plugin.useMySQL) rs.first();
-				location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
+				location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getFloat("yaw"), rs.getFloat("pitch"));
 				rs.close();
 			} catch (SQLException e) {
 				sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when trying to fall back upon the database.");
@@ -66,7 +66,7 @@ public class TeleportCommand implements CommandExecutor {
 		
 		HelpRequest currentRequest = plugin.requestMap.get(Integer.parseInt(args[0]));
 		
-		Location location = new Location(player.getServer().getWorld(currentRequest.getWorld()), currentRequest.getX(), currentRequest.getY(), currentRequest.getZ());
+		Location location = new Location(player.getServer().getWorld(currentRequest.getWorld()), currentRequest.getX(), currentRequest.getY(), currentRequest.getZ(), currentRequest.getYaw(), currentRequest.getPitch());
 		
 		if(!player.teleport(location)){
 			sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
