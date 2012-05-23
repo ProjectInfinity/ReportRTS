@@ -253,13 +253,13 @@ public abstract class SQLDB implements Database{
 		return total;
 	}
 	@Override
-	public ResultSet getHeldRequests(int from){
-		return query(QueryGen.getHeldRequests(from));
+	public ResultSet getHeldRequests(int from, int limit){
+		return query(QueryGen.getHeldRequests(from, limit));
 	}
 	
 	@Override
-	public ResultSet getClosedRequests(int from){
-		return query(QueryGen.getClosedRequests(from));
+	public ResultSet getClosedRequests(int from, int limit){
+		return query(QueryGen.getClosedRequests(from, limit));
 	}
 	
 	@Override

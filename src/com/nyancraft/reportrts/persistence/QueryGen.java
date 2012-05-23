@@ -107,11 +107,11 @@ public class QueryGen {
 	public static String getLatestTicketIdByUser(int userId){
 		return "SELECT `id` FROM `reportrts_request` WHERE `user_id` = '" + userId + "' ORDER BY `tstamp` DESC LIMIT 1";
 	}
-	public static String getHeldRequests(int from){
-		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + from + "' LIMIT 5";
+	public static String getHeldRequests(int from, int limit){
+		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + from + "' LIMIT " + limit;
 	}
-	public static String getClosedRequests(int from){
-		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '3' AND request.id > '" + from + "' ORDER BY request.mod_timestamp DESC LIMIT 5";
+	public static String getClosedRequests(int from, int limit){
+		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '3' AND request.id > '" + from + "' ORDER BY request.mod_timestamp DESC LIMIT " + limit;
 	}
 	public static String getTicketById(int id){
 		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.id = '" + id + "'";

@@ -37,9 +37,9 @@ public interface Database {
 	
 	public boolean insertUser(int userId, String name, int banned);
 	
-	public ResultSet getHeldRequests(int from);
+	public ResultSet getHeldRequests(int from, int limit);
 	
-	public ResultSet getClosedRequests(int from);
+	public ResultSet getClosedRequests(int from, int limit);
 	
 	public ResultSet getHandledBy(String player);
 	

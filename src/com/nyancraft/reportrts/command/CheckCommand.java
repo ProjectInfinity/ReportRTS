@@ -51,21 +51,7 @@ public class CheckCommand implements CommandExecutor {
 			return true;
 		}
 		if(args.length == 0){
-			int i = 0;
-			sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-			if(plugin.requestMap.size() == 0) sender.sendMessage(ChatColor.GOLD + "There are no requests right now.");
-			for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
-				i++;
-				if(i > 5) break;
-
-				HelpRequest currentRequest = entry.getValue();
-				if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
-				 substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
-		         date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
-		         ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
-		         substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-		         sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
-			}
+			checkPage("1", sender);
 			if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
 	}
@@ -140,7 +126,7 @@ public class CheckCommand implements CommandExecutor {
 		int pageNumber = Integer.parseInt(page);
 		sender.sendMessage(ChatColor.AQUA + "--------- " + requestList.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
 		if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
-		for(int i = (pageNumber * 5) - 5; i < (pageNumber * 5) && i < requestList.size(); i++){
+		for(int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage; i < (pageNumber * plugin.requestsPerPage) && i < requestList.size(); i++){
 			HelpRequest currentRequest = requestList.get(i).getValue();
 			if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
 			substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
@@ -153,10 +139,12 @@ public class CheckCommand implements CommandExecutor {
 	}
 	
 	private void checkHeld(String page, CommandSender sender){
+		// TODO: Configurable amount of requests per page.
 		int pageNumber = Integer.parseInt(page);
-		int i = (pageNumber * 5) - 5;
+		int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage;
 
-		ResultSet rs = dbManager.getHeldRequests(i);
+		ResultSet rs = dbManager.getHeldRequests(i, plugin.requestsPerPage);
+		
 		try {
 			int heldRequests = dbManager.getNumberHeldRequests();
 			sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
@@ -177,9 +165,9 @@ public class CheckCommand implements CommandExecutor {
 	
 	private void checkClosed(String page, CommandSender sender){
 		int pageNumber = Integer.parseInt(page);
-		int i = (pageNumber * 5) - 5;
+		int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage;
 		
-		ResultSet rs = dbManager.getClosedRequests(i);
+		ResultSet rs = dbManager.getClosedRequests(i, plugin.requestsPerPage);
 		try{
 			int closedRequests = dbManager.countRequests(Integer.parseInt("3"));
 			sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Requests -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");

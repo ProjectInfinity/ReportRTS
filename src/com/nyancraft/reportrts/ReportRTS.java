@@ -33,6 +33,7 @@ public class ReportRTS extends JavaPlugin{
 	public boolean debugMode;
 	public int maxRequests;
 	public int requestDelay;
+	public int requestsPerPage;
 	public String mysqlPort;
 	public String mysqlHostname;
 	public String mysqlDatabase;
@@ -91,6 +92,7 @@ public class ReportRTS extends JavaPlugin{
 		hideWhenOffline = getConfig().getBoolean("request.hideOffline");
 		maxRequests = getConfig().getInt("request.max");
 		requestDelay = getConfig().getInt("request.delay");
+		requestsPerPage = getConfig().getInt("request.perPage");
 		useMySQL = getConfig().getBoolean("mysql.enable");
 		mysqlPort = getConfig().getString("mysql.port");
 		mysqlHostname = getConfig().getString("mysql.hostname");
