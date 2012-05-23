@@ -169,7 +169,7 @@ public class CheckCommand implements CommandExecutor {
 		
 		ResultSet rs = dbManager.getClosedRequests(i, plugin.requestsPerPage);
 		try{
-			int closedRequests = dbManager.countRequests(Integer.parseInt("3"));
+			int closedRequests = dbManager.countRequests(3);
 			sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Requests -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
 			if(closedRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
 			while(rs.next()){

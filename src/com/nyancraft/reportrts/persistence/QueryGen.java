@@ -111,7 +111,7 @@ public class QueryGen {
 		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + from + "' LIMIT " + limit;
 	}
 	public static String getClosedRequests(int from, int limit){
-		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '3' AND request.id > '" + from + "' ORDER BY request.mod_timestamp DESC LIMIT " + limit;
+		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.status = '3' ORDER BY request.mod_timestamp DESC LIMIT " + from + ", " + limit;
 	}
 	public static String getTicketById(int id){
 		return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.id = '" + id + "'";
