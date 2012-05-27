@@ -139,7 +139,6 @@ public class CheckCommand implements CommandExecutor {
 	}
 	
 	private void checkHeld(String page, CommandSender sender){
-		// TODO: Configurable amount of requests per page.
 		int pageNumber = Integer.parseInt(page);
 		int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage;
 

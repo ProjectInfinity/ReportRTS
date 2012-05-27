@@ -57,7 +57,7 @@ public class SQLiteDB extends SQLDB {
 			ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
 		}
 		checkColumns();
-		//if(!this.checkColumns()) return false; // TODO: Finish this. PRAGMA table_info)
+		//if(!this.checkColumns()) return false;
 		return true;
 	}
 
@@ -70,8 +70,6 @@ public class SQLiteDB extends SQLDB {
 			}
 			rs.close();
 			if(!columns.contains("yaw") || !columns.contains("pitch")){
-				//db.query("DROP TABLE `reportrts_request`");
-				//if(!db.createTable(QueryGen.createTemporaryRequestTable())) return false;
 				ReportRTS.getPlugin().getLogger().severe("Due to a bug, the database structure cannot be updated on SQLite. Please delete your old ReportRTS.db file!");
 			}
 			return true;
