@@ -225,6 +225,8 @@ public class CheckCommand implements CommandExecutor {
 				if(rs.getInt("status") == 3){
 					int modId = rs.getInt("mod_id");
 					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + dbManager.getUserName(modId) + ".");
+					// Add some sort of "time spent" message? 
+					sender.sendMessage(ChatColor.LIGHT_PURPLE + "" + (rs.getInt("mod_timestamp") - rs.getInt("tstamp")) / 1000 / 1000 + " minutes spent.");
 				}
 				
 				if(modComment != null) sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + modComment);

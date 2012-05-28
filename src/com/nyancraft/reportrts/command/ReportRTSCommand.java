@@ -12,6 +12,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.persistence.Database;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
 public class ReportRTSCommand implements CommandExecutor{
@@ -22,6 +23,7 @@ public class ReportRTSCommand implements CommandExecutor{
 	
 	public ReportRTSCommand(ReportRTS plugin) {
 		this.plugin = plugin;
+		this.dbManager = DatabaseManager.getDatabase();
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
