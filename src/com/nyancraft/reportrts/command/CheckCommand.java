@@ -226,7 +226,7 @@ public class CheckCommand implements CommandExecutor {
 					int modId = rs.getInt("mod_id");
 					sender.sendMessage(ChatColor.LIGHT_PURPLE + "Handled by " + dbManager.getUserName(modId) + ".");
 					int Millis = (rs.getInt("mod_timestamp") - rs.getInt("tstamp")) * 1000;
-					sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Time spent: %d hour(s), %d minute(s), and %d second(s)",
+					sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Time spent: %d hours, %d minutes, %d seconds",
 							Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000));
 				}
 				
@@ -255,6 +255,11 @@ public class CheckCommand implements CommandExecutor {
 		sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + currentRequest.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + currentRequest.getX() + ", " + currentRequest.getY() + ", " + currentRequest.getZ());
 		sender.sendMessage(ChatColor.GRAY + currentRequest.getMessage());
 		
+		if(currentRequest.getStatus() == 1){
+			long Millis = (System.currentTimeMillis() - (currentRequest.getModTimestamp()) * 1000);
+			sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Claimed for: %d hours, %d minutes, %d seconds",
+					Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000));
+		}
 	}
 	
 	private void checkSelf(CommandSender sender){

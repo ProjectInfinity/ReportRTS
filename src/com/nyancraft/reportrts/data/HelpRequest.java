@@ -13,6 +13,7 @@ public class HelpRequest {
 	private float pitch;
 	
 	private long tstamp;
+	private long modtstamp;
 	
 	private String text;
     private String name;
@@ -31,6 +32,7 @@ public class HelpRequest {
 		this.world = world;
 		this.yaw = yaw;
 		this.pitch = pitch;
+		this.modtstamp = 0;
 	}
 	
 	/**
@@ -71,6 +73,15 @@ public class HelpRequest {
 	 */
 	public long getTimestamp(){
 		return this.tstamp;
+	}
+	
+	
+	/**
+	 * Retrieves timestamp when ticket was last interacted with by staff
+	 * @return int modtimestamp of ticket
+	 */
+	public long getModTimestamp(){
+		return this.modtstamp;
 	}
 	
 	/**
@@ -147,5 +158,14 @@ public class HelpRequest {
 	 */
 	public void setModName(String modname){
 		this.modname = modname;
+	}
+	
+	
+	/**
+	 * Sets timestamp when ticket was created
+	 * @param modtimestamp
+	 */
+	public void setModTimestamp(long modTimestamp){
+		this.modtstamp = modTimestamp;
 	}
 }

@@ -98,7 +98,8 @@ public abstract class SQLDB implements Database{
         	ResultSet rs = query(QueryGen.getAllOpenAndClaimedRequests());
         	while(rs.next()){
 				ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
-			}
+				ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModTimestamp(rs.getInt("mod_timestamp"));
+        	}
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

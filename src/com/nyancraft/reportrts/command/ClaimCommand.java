@@ -40,6 +40,7 @@ public class ClaimCommand implements CommandExecutor{
 		}
 		plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(1);
 		plugin.requestMap.get(Integer.parseInt(args[0])).setModName(sender.getName());
+		plugin.requestMap.get(Integer.parseInt(args[0])).setModTimestamp(System.currentTimeMillis()/1000);
 		RTSFunctions.messageMods(Message.parse("claimRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
 		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
 		return true;
