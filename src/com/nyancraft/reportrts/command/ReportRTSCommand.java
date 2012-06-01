@@ -13,6 +13,7 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.QueryGen;
 import com.nyancraft.reportrts.util.Message;
 
 public class ReportRTSCommand implements CommandExecutor{
@@ -87,6 +88,16 @@ public class ReportRTSCommand implements CommandExecutor{
 					return false;
 				}
 				break;
+			// TODO: Only temporary and for SQLite users. Once I fix the SQLite issue, this will no longer be needed.	
+			case UPGRADE:
+				if(!sender.isOp() || plugin.useMySQL) return true;
+				if(RTSFunctions.checkColumns()) return true;
+				DatabaseManager.getConnection().createStatement().executeUpdate("ALTER TABLE \"reportrts_request\" RENAME TO \"requests_temp\"");
+				DatabaseManager.getConnection().createStatement().executeUpdate(QueryGen.createRequestTable());
+				DatabaseManager.getConnection().createStatement().executeUpdate("INSERT INTO \"reportrts_request\" (\"id\", \"user_id\", \"mod_id\", \"mod_timestamp\", \"mod_comment\", \"tstamp\", \"world\", \"x\", \"y\", \"z\", \"text\", \"status\", \"notified_of_completion\") SELECT \"id\", \"user_id\", \"mod_id\", \"mod_timestamp\", \"mod_comment\", \"tstamp\", \"world\", \"x\", \"y\", \"z\", \"text\", \"status\", \"notified_of_completion\" FROM \"requests_temp\"");
+				DatabaseManager.getConnection().createStatement().executeUpdate("DROP TABLE requests_temp");
+				sender.sendMessage(ChatColor.YELLOW + "Hopefully everything went alright. Please double check it though! Remember to /reportrts reload !!");
+				break;
 			}
 		}catch(Exception e){
 			return false;
@@ -99,6 +110,7 @@ public class ReportRTSCommand implements CommandExecutor{
 		BAN,
 		UNBAN,
 		RESET,
-		STATS
+		STATS,
+		UPGRADE
 	}
 }

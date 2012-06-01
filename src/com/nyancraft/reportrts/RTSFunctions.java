@@ -2,6 +2,7 @@ package com.nyancraft.reportrts;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +14,12 @@ import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.QueryGen;
 
 public class RTSFunctions {
 
 	private static int openRequestsByUser;
+	private static ArrayList<String> columns = new ArrayList<String>();
 	
 	/**
 	 * Combines array and returns an imploded string.
@@ -167,4 +170,24 @@ public class RTSFunctions {
         }
         return message;
     }
+    
+	public static boolean checkColumns(){
+		if(ReportRTS.getPlugin().useMySQL) return true;
+		columns.clear();
+		try{
+			ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(QueryGen.getColumns("reportrts_request"));
+			while(rs.next()){
+				columns.add(rs.getString("name"));
+			}
+			rs.close();
+			if(!columns.contains("yaw") || !columns.contains("pitch")){
+				ReportRTS.getPlugin().getLogger().info("Noticed you don't have the database structure required. I'll try to fix that!");
+				return false;
+			}
+			return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

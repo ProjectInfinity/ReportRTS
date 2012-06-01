@@ -67,13 +67,9 @@ public class RTSListener implements Listener{
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event){
-	
+		
 		Block block = event.getBlock();
-		Sign sign = null;
-	    if (block.getState() instanceof Sign)
-	      sign = (Sign)block.getState();
-	    else
-	      return;
+	    if(!(block.getState() instanceof Sign)) return;
 	    if(!event.getLine(0).equalsIgnoreCase("[help]")) return;
 		
 	    if(!RTSPermissions.canFileRequest(event.getPlayer())) {
