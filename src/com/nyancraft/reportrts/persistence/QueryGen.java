@@ -18,7 +18,7 @@ public class QueryGen {
 			"`y` INT(10) NOT NULL DEFAULT '0'," +
 			"`z` INT(10) NOT NULL DEFAULT '0'," +
 			"`yaw` SMALLINT(6) NOT NULL DEFAULT '0'," +
-			"`pitch` SMALLINT(6) NOT NULL DEFAULT '0'" +
+			"`pitch` SMALLINT(6) NOT NULL DEFAULT '0'," +
 			"`text` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci'," +
 			"`status` TINYINT(1) UNSIGNED NULL DEFAULT '0'," +
 			"`notified_of_completion` TINYINT(1) UNSIGNED NULL DEFAULT '0'," +
