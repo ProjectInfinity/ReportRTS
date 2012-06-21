@@ -12,29 +12,29 @@ import com.nyancraft.reportrts.util.Message;
 
 public class ReopenCommand implements CommandExecutor{
 
-	private ReportRTS plugin;
-	public ReopenCommand(ReportRTS plugin) {
-		this.plugin = plugin;
-	}
+    private ReportRTS plugin;
+    public ReopenCommand(ReportRTS plugin) {
+        this.plugin = plugin;
+    }
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(!RTSPermissions.canCompleteRequests(sender)) return true;
-		if(args.length == 0) return false;
-		if(!RTSFunctions.isParsableToInt(args[0])) return false;
-		long start = 0;
-		if(plugin.debugMode) start = System.currentTimeMillis();
-		if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
-			sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
-			return true;
-		}
-		
-		// For lack of a better way of doing it. SHOULD DO SOMETHING ABOUT THIS!
-		plugin.requestMap.clear();
-		DatabaseManager.getDatabase().populateRequestMap();
-		
-		RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
-		sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
-		if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
-		return true;
-	}
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(!RTSPermissions.canCompleteRequests(sender)) return true;
+        if(args.length == 0) return false;
+        if(!RTSFunctions.isParsableToInt(args[0])) return false;
+        long start = 0;
+        if(plugin.debugMode) start = System.currentTimeMillis();
+        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
+            return true;
+        }
+
+        // For lack of a better way of doing it. SHOULD DO SOMETHING ABOUT THIS!
+        plugin.requestMap.clear();
+        DatabaseManager.getDatabase().populateRequestMap();
+
+        RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
+        sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
+        if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+        return true;
+    }
 }

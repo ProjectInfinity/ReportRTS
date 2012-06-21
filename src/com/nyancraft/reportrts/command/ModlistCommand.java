@@ -10,22 +10,22 @@ import com.nyancraft.reportrts.util.Message;
 
 public class ModlistCommand implements CommandExecutor{
 
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if(!RTSPermissions.canListStaff(sender)) return true;
-		
-		Player[] players = sender.getServer().getOnlinePlayers();
-		String staff = "";
-		
-		for(Player player : players){
-			if(RTSPermissions.isModerator(player)) staff = staff + player.getName() + ", ";
-		}
-		if(staff.length() == 0){
-			sender.sendMessage(Message.parse("modlistNoMods"));
-			return true;
-		}
-		staff = staff.substring(0, staff.length() - 2);
-		
-		sender.sendMessage(Message.parse("modlistMessage", staff));
-		return true;
-	}
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(!RTSPermissions.canListStaff(sender)) return true;
+
+        Player[] players = sender.getServer().getOnlinePlayers();
+        String staff = "";
+
+        for(Player player : players){
+            if(RTSPermissions.isModerator(player)) staff = staff + player.getName() + ", ";
+        }
+        if(staff.length() == 0){
+            sender.sendMessage(Message.parse("modlistNoMods"));
+            return true;
+        }
+        staff = staff.substring(0, staff.length() - 2);
+
+        sender.sendMessage(Message.parse("modlistMessage", staff));
+        return true;
+    }
 }
