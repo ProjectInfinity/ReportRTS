@@ -164,6 +164,10 @@ public class RTSFunctions {
         return System.currentTimeMillis() - start;
     }
 
+    public static long getTimeSpentExact(long start){
+        return System.nanoTime() - start;
+    }
+
     public static String shortenMessage(String message){
         if (message.length() >= 20) {
             message = message.substring(0, 20) + "...";
