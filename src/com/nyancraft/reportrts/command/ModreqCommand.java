@@ -47,7 +47,7 @@ public class ModreqCommand implements CommandExecutor {
             }
         }
         long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        if(plugin.debugMode) start = System.currentTimeMillis(); // Production value: System.currentTimeMillis(); Development value: System.nanoTime();
 
         Player player = (Player)sender;
         String message = RTSFunctions.implode(args, " ");
@@ -65,7 +65,6 @@ public class ModreqCommand implements CommandExecutor {
         if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), sender.getServer().getOnlinePlayers());
 
         plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName()));
-        System.out.println(location.getYaw() + " " + location.getPitch());
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
