@@ -7,6 +7,7 @@
 # request.delay - User has to wait this amount of seconds before filing another request.
 # request.hideOffline - If set to true, hides all requests in /check from offline users.
 # request.perPage - This sets the amount of requests that should be shown on each page.
+# request.nag - If above 0 (minutes), nag the online staff members about open requests.
 
 notifyStaff: true
 hideMessageIfEmpty: false
@@ -17,6 +18,7 @@ request:
   max: 5
   hideOffline: false
   perPage: 5
+  nag: 5
 
 mysql:
   enable: false

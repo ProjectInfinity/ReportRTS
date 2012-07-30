@@ -1,5 +1,6 @@
 package com.nyancraft.reportrts;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
 
+import com.nyancraft.reportrts.util.Message;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -33,6 +35,7 @@ public class ReportRTS extends JavaPlugin{
     public int maxRequests;
     public int requestDelay;
     public int requestsPerPage;
+    public long requestNagging;
     public String mysqlPort;
     public String mysqlHostname;
     public String mysqlDatabase;
@@ -70,6 +73,21 @@ public class ReportRTS extends JavaPlugin{
         getCommand("modlist").setExecutor(new ModlistCommand());
         getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
         if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
+        try{
+            MetricsLite metrics = new MetricsLite(this);
+            metrics.start();
+        }catch(IOException e){
+            log.info("Unable to submit stats!");
+        }
+        if(requestNagging > 0){
+            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+                public void run(){
+                    int openRequests = requestMap.size();
+                    System.out.println(openRequests);
+                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), getServer().getOnlinePlayers());
+                }
+            }, 120L, (requestNagging * 60) * 20);
+        }
     }
 
     public void reloadPlugin(){
@@ -92,6 +110,7 @@ public class ReportRTS extends JavaPlugin{
         maxRequests = getConfig().getInt("request.max");
         requestDelay = getConfig().getInt("request.delay");
         requestsPerPage = getConfig().getInt("request.perPage");
+        requestNagging = getConfig().getLong("request.nag");
         useMySQL = getConfig().getBoolean("mysql.enable");
         mysqlPort = getConfig().getString("mysql.port");
         mysqlHostname = getConfig().getString("mysql.hostname");
@@ -109,10 +128,9 @@ public class ReportRTS extends JavaPlugin{
         return plugin;
     }
 
-    private Boolean setupPermissions()
-    {
+    private Boolean setupPermissions(){
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
+        if(permissionProvider != null){
             permission = permissionProvider.getProvider();
             log.info("[ReportRTS] Vault and a compatible permissions manager was found. Using Vault for permissions.");
         }
