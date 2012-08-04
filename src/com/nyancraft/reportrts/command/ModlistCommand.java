@@ -15,16 +15,19 @@ public class ModlistCommand implements CommandExecutor{
 
         Player[] players = sender.getServer().getOnlinePlayers();
         String staff = "";
+        String separator = Message.parse("modlistMessageSeparator");
 
         for(Player player : players){
-            if(RTSPermissions.isModerator(player)) staff = staff + player.getName() + ", ";
+            if(RTSPermissions.isModerator(player)) staff = staff + player.getDisplayName() + separator;
         }
         if(staff.length() == 0){
             sender.sendMessage(Message.parse("modlistNoMods"));
             return true;
         }
-        staff = staff.substring(0, staff.length() - 2);
+        staff = staff.substring(0, staff.length() - separator.length());
 
+        
+        
         sender.sendMessage(Message.parse("modlistMessage", staff));
         return true;
     }
