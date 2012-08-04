@@ -60,6 +60,7 @@ messages:
   modreqTooManyOpen: '%red%You have too many requests open, please wait before filing more.'
   modreqTooFast: '%red%You need to wait {0} seconds before attempting to file another request.'
   modlistMessage: '%aqua%Staff online: %yellow%{0}'
+  modlistMessageSeparator: '%yellow%, '
   modlistNoMods: '%yellow%There are no staff members online.'
   reopenedRequest: '%gold%{0} has reopened request #{1}'
   reopenedRequestSelf: '%gold%Request #{0} has been reopened.'
