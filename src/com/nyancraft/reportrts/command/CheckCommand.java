@@ -59,6 +59,7 @@ public class CheckCommand implements CommandExecutor {
             try{
                 switch(SubCommands.valueOf(args[0].toString().toUpperCase())){
 
+                case P:
                 case PAGE:
                     try{
                         checkPage(args[1], sender);
@@ -67,14 +68,7 @@ public class CheckCommand implements CommandExecutor {
                     }
                     break;
 
-                case P:
-                    try{
-                        checkPage(args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkPage("1", sender);
-                    }
-                    break;
-
+                case H:
                 case HELD:
                     try{
                         checkHeld(args[1], sender);
@@ -83,14 +77,7 @@ public class CheckCommand implements CommandExecutor {
                     }
                     break;
 
-                case H:
-                    try{
-                        checkHeld(args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkHeld("1", sender);
-                    }
-                    break;
-
+                case C:
                 case CLOSED:
                     try{
                         checkClosed(args[1], sender);
@@ -111,10 +98,11 @@ public class CheckCommand implements CommandExecutor {
         return true;
     }
     private enum SubCommands{
-        PAGE,
         P,
-        HELD,
+        PAGE,
         H,
+        HELD,
+        C,
         CLOSED
     }
 

@@ -9,7 +9,7 @@ commands:
     usage: /<command> [message]
   check:
     description: Check all requests.
-    usage: /<command> [id | page <id> | p <id> | held <id> | closed <id>]
+    usage: /<command> [id | p,page <id> | h,held <id> | c,closed <id>]
   complete:
     description: Marks specified request as completed
     usage: /<command> [id] [comment]
