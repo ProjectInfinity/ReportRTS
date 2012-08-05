@@ -5,7 +5,10 @@
 
 # NetBeans
 /nbproject
-/build.xml
+
+# IntelliJ stuff
+/*.eml
+/*.iml
 
 # vim
 .*.sw[a-p]
