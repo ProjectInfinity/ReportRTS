@@ -41,6 +41,7 @@ messages:
   claimNotOpen: '%red%You may only claim open requests.'
   claimUser: '%gold%{0} is now handling your request.'
   claimText: '%gold%Request text: %yellow%{0}'
+  closedNoRequests: '%gold%There are no closed requests.'
   unclaimReqMod: '%gold%{0} is no longer handling request #{1}.'
   unclaimReqSelf: '%gold%Request #{0} has been unclaimed.'
   unclaimNotClaimed: '%red%You may only unclaim requests that are claimed.'

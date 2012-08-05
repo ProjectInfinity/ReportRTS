@@ -158,7 +158,7 @@ public class CheckCommand implements CommandExecutor {
         try{
             int closedRequests = dbManager.countRequests(3);
             sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Requests -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
-            if(closedRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
+            if(closedRequests == 0) sender.sendMessage(Message.parse("closedNoRequests"));
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
