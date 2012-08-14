@@ -10,6 +10,9 @@
 /*.eml
 /*.iml
 
+# using maven!
+build.xml
+
 # vim
 .*.sw[a-p]
 
