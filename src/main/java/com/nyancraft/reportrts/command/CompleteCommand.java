@@ -89,6 +89,7 @@ public class CompleteCommand implements CommandExecutor {
             if(online == 0) plugin.notificationMap.put(Integer.parseInt(args[0]), plugin.requestMap.get(Integer.parseInt(args[0])).getName());
             if(player != null){
                 player.sendMessage(Message.parse("completedUser", user));
+                if(comment == null) comment = "";
                 player.sendMessage(Message.parse("completedText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), comment));
             }
             plugin.requestMap.remove(Integer.parseInt(args[0]));
