@@ -2,8 +2,6 @@ package com.nyancraft.reportrts;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.block.Block;
@@ -22,7 +20,6 @@ import com.nyancraft.reportrts.util.Message;
 public class RTSListener implements Listener{
     private final ReportRTS plugin;
     private int openRequests;
-    private List<Integer> notificationList = new ArrayList<Integer>();
 
     public RTSListener(ReportRTS plugin){
         this.plugin = plugin;
