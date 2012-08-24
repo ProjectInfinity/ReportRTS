@@ -57,7 +57,7 @@ public class CheckCommand implements CommandExecutor {
     }
         if(!RTSFunctions.isParsableToInt(args[0])){
             try{
-                switch(SubCommands.valueOf(args[0].toString().toUpperCase())){
+                switch(SubCommands.valueOf(args[0].toUpperCase())){
 
                 case P:
                 case PAGE:

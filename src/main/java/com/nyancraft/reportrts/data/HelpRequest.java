@@ -134,7 +134,7 @@ public class HelpRequest {
 
     /**
      * Retrieves the name of the moderator that handled the ticket, if any
-     * @return
+     * @return String modname
      */
     public String getModName(){
         return this.modname;
@@ -163,7 +163,7 @@ public class HelpRequest {
 
     /**
      * Sets timestamp when ticket was created
-     * @param modtimestamp
+     * @param modTimestamp
      */
     public void setModTimestamp(long modTimestamp){
         this.modtstamp = modTimestamp;

@@ -56,8 +56,7 @@ public class SQLiteDB extends SQLDB {
             if(!db.createTable(QueryGen.createUserTable())) return false;
             ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
         }
-        if(!this.checkColumns()) return false;
-        return true;
+        return this.checkColumns();
     }
 
     private boolean checkColumns(){
@@ -96,7 +95,6 @@ public class SQLiteDB extends SQLDB {
 
     @Override
     public boolean checkTable(String table){
-        if(!db.checkTable(table)) return false;
-        return true;
+        return db.checkTable(table);
     }
 }

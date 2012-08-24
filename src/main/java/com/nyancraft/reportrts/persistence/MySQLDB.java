@@ -102,7 +102,6 @@ public class MySQLDB extends SQLDB {
 
     @Override
     public boolean checkTable(String table){
-        if(!db.checkTable(table)) return false;
-        return true;
+        return db.checkTable(table);
     }
 }

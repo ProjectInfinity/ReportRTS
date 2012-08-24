@@ -30,7 +30,7 @@ public class ReportRTSCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length == 0) return false;
         try{
-            switch(SubCommands.valueOf(args[0].toString().toUpperCase())){
+            switch(SubCommands.valueOf(args[0].toUpperCase())){
 
             case RELOAD:
                 if(!RTSPermissions.canReloadPlugin(sender)) return true;

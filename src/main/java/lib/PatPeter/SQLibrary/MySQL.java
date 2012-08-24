@@ -112,11 +112,8 @@ public class MySQL extends DatabaseHandler {
 	
 	@Override
 	public boolean checkConnection() { // http://forums.bukkit.org/threads/lib-tut-mysql-sqlite-bukkit-drivers.33849/page-4#post-701550
-		Connection connection = this.open();
-		if (connection != null)
-			return true;
-		return false;
-	}
+        return this.open() != null;
+    }
 	
 	@Override
 	public ResultSet query(String query) {
@@ -192,8 +189,7 @@ public class MySQL extends DatabaseHandler {
 		    
 		    if (result == null)
 		    	return false;
-		    if (result != null)
-		    	return true;
+            return true;
 		} catch (SQLException e) {
 			if (e.getMessage().contains("exist")) {
 				return false;
@@ -201,11 +197,8 @@ public class MySQL extends DatabaseHandler {
 				this.writeError("Error in SQL query: " + e.getMessage(), false);
 			}
 		}
-		
-		
-		if (query("SELECT * FROM " + table) == null) return true;
-		return false;
-	}
+        return query("SELECT * FROM " + table) == null;
+    }
 	
 	@Override
 	public boolean wipeTable(String table) {

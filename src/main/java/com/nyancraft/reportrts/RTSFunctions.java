@@ -18,7 +18,6 @@ import com.nyancraft.reportrts.persistence.QueryGen;
 
 public class RTSFunctions {
 
-    private static int openRequestsByUser;
     private static ArrayList<String> columns = new ArrayList<String>();
 
     /**
@@ -144,7 +143,7 @@ public class RTSFunctions {
      * @return
      */
     public static int getOpenRequestsByUser(CommandSender sender){
-        openRequestsByUser = 0;
+        int openRequestsByUser = 0;
         for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
             if(entry.getValue().getName().equals(sender.getName())) openRequestsByUser++;
         }

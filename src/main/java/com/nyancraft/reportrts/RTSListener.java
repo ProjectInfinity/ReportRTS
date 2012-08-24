@@ -19,7 +19,6 @@ import com.nyancraft.reportrts.util.Message;
 
 public class RTSListener implements Listener{
     private final ReportRTS plugin;
-    private int openRequests;
 
     public RTSListener(ReportRTS plugin){
         this.plugin = plugin;
@@ -48,7 +47,7 @@ public class RTSListener implements Listener{
 
         if(!RTSPermissions.isModerator(event.getPlayer())) return;
 
-        openRequests = plugin.requestMap.size();
+        int openRequests = plugin.requestMap.size();
 
         if(openRequests < 1 && !plugin.hideNotification)
             event.getPlayer().sendMessage(Message.parse("generalNoRequests"));

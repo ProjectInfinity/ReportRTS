@@ -42,7 +42,7 @@ public class TeleportCommand implements CommandExecutor {
         if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
 
             ResultSet rs = DatabaseManager.getDatabase().getLocationById(Integer.parseInt(args[0]));
-            Location location = null;
+            Location location;
             try {
                 if(!rs.isBeforeFirst()){
                     sender.sendMessage(Message.parse("generalRequestNotFound", args[0]));

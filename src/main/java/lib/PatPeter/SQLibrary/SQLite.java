@@ -111,11 +111,8 @@ public class SQLite extends DatabaseHandler {
 	
 	@Override
 	public boolean checkConnection() {
-		Connection connection = this.open();
-		if (connection != null)
-			return true;
-		return false;
-	}
+        return this.open() != null;
+    }
 	
 	@Override
 	public ResultSet query(String query) {
@@ -158,11 +155,8 @@ public class SQLite extends DatabaseHandler {
 	@Override
 	PreparedStatement prepare(String query) {
 		Connection connection = null;
-		try
-	    {
-	        connection = open();
-	        PreparedStatement ps = connection.prepareStatement(query);
-	        return ps;
+		try {
+	        return open().prepareStatement(query);
 	    } catch(SQLException e) {
 	        if(!e.toString().contains("not return ResultSet"))
 	        	this.writeError("Error in SQL prepare() query: " + e.getMessage(), false);
@@ -195,10 +189,7 @@ public class SQLite extends DatabaseHandler {
 		try {
 			dbm = this.open().getMetaData();
 			ResultSet tables = dbm.getTables(null, null, table, null);
-			if (tables.next())
-			  return true;
-			else
-			  return false;
+            return tables.next();
 		} catch (SQLException e) {
 			this.writeError("Failed to check if table \"" + table + "\" exists: " + e.getMessage(), true);
 			return false;
