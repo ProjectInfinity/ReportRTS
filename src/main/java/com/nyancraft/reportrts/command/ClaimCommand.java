@@ -29,20 +29,25 @@ public class ClaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("claimNotOpen"));
             return true;
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 1, "", 0)){
+        String name = sender.getName();
+        if(name == null){
+            sender.sendMessage(Message.parse("generalInternalError", "Name is null! Try again."));
+            return true;
+        }
+        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), name, 1, "", 0)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
             return true;
         }
         Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
         if(player != null){
-            player.sendMessage(Message.parse("claimUser", sender.getName()));
+            player.sendMessage(Message.parse("claimUser", name));
             player.sendMessage(Message.parse("claimText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage()));
         }
         plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(1);
-        plugin.requestMap.get(Integer.parseInt(args[0])).setModName(sender.getName());
+        plugin.requestMap.get(Integer.parseInt(args[0])).setModName(name);
         plugin.requestMap.get(Integer.parseInt(args[0])).setModTimestamp(System.currentTimeMillis()/1000);
-        RTSFunctions.messageMods(Message.parse("claimRequest", sender.getName(), args[0]), sender.getServer().getOnlinePlayers());
-        if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+        RTSFunctions.messageMods(Message.parse("claimRequest", name, args[0]), sender.getServer().getOnlinePlayers());
+        if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
 
