@@ -197,4 +197,19 @@ public class RTSPermissions {
         }
         return true;
     }
+
+    public static boolean canOverride(CommandSender sender){
+        if(ReportRTS.permission != null){
+            if(!ReportRTS.permission.has(sender, "reportrts.override")){
+                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.override"));
+                return false;
+            }
+            return true;
+        }
+        if(!sender.hasPermission("reportrts.override")){
+            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.override"));
+            return false;
+        }
+        return true;
+    }
 }

@@ -32,8 +32,12 @@ public class UnclaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
+        if(!sender.getName().equals(plugin.requestMap.get(Integer.parseInt(args[0])).getModName()) && !RTSPermissions.canOverride(sender)){
+            sender.sendMessage(Message.parse("generalPermissionError", "You cannot override that, reportrts.override is needed"));
+            return true;
+        }
         if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
         }
         Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
