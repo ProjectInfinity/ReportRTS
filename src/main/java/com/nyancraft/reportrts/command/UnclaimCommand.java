@@ -24,30 +24,31 @@ public class UnclaimCommand implements CommandExecutor{
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
         if(plugin.debugMode) start = System.currentTimeMillis();
-        if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+        int ticketId = Integer.parseInt(args[0]);
+        if(!plugin.requestMap.containsKey(ticketId)){
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
-        if(plugin.requestMap.get(Integer.parseInt(args[0])).getStatus() != 1){
+        if(plugin.requestMap.get(ticketId).getStatus() != 1){
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
-        if(!sender.getName().equals(plugin.requestMap.get(Integer.parseInt(args[0])).getModName()) && !RTSPermissions.canOverride(sender)){
+        if(!sender.getName().equals(plugin.requestMap.get(ticketId).getModName()) && !RTSPermissions.canOverride(sender)){
             sender.sendMessage(Message.parse("generalPermissionError", "You cannot override that, reportrts.override is needed"));
             return true;
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
         }
-        Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
         if(player != null){
-            player.sendMessage(Message.parse("unclaimUser", plugin.requestMap.get(Integer.parseInt(args[0])).getModName()));
-            player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage()));
+            player.sendMessage(Message.parse("unclaimUser", plugin.requestMap.get(ticketId).getModName()));
+            player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(ticketId).getMessage()));
         }
-        plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(0);
-        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(Integer.parseInt(args[0])).getModName(), args[0]), sender.getServer().getOnlinePlayers());
-        plugin.requestMap.get(Integer.parseInt(args[0])).setModName(null);
+        plugin.requestMap.get(ticketId).setStatus(0);
+        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]), sender.getServer().getOnlinePlayers());
+        plugin.requestMap.get(ticketId).setModName(null);
         sender.sendMessage(Message.parse("unclaimReqSelf", args[0]));
 
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);

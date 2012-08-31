@@ -26,8 +26,6 @@ public class ModlistCommand implements CommandExecutor{
         }
         staff = staff.substring(0, staff.length() - separator.length());
 
-        
-        
         sender.sendMessage(Message.parse("modlistMessage", staff));
         return true;
     }

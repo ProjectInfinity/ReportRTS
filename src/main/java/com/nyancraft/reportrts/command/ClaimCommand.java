@@ -25,7 +25,8 @@ public class ClaimCommand implements CommandExecutor{
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
         if(plugin.debugMode) start = System.currentTimeMillis();
-        if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+        int ticketId = Integer.parseInt(args[0]);
+        if(!plugin.requestMap.containsKey(ticketId)){
             sender.sendMessage(Message.parse("claimNotOpen"));
             return true;
         }
@@ -34,18 +35,18 @@ public class ClaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("generalInternalError", "Name is null! Try again."));
             return true;
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), name, 1, "", 0)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, name, 1, "", 0)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
             return true;
         }
-        Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
         if(player != null){
             player.sendMessage(Message.parse("claimUser", name));
-            player.sendMessage(Message.parse("claimText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage()));
+            player.sendMessage(Message.parse("claimText", plugin.requestMap.get(ticketId).getMessage()));
         }
-        plugin.requestMap.get(Integer.parseInt(args[0])).setStatus(1);
-        plugin.requestMap.get(Integer.parseInt(args[0])).setModName(name);
-        plugin.requestMap.get(Integer.parseInt(args[0])).setModTimestamp(System.currentTimeMillis()/1000);
+        plugin.requestMap.get(ticketId).setStatus(1);
+        plugin.requestMap.get(ticketId).setModName(name);
+        plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
         RTSFunctions.messageMods(Message.parse("claimRequest", name, args[0]), sender.getServer().getOnlinePlayers());
         if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;

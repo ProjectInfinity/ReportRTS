@@ -26,23 +26,23 @@ public class HoldCommand implements CommandExecutor {
         long start = 0;
         if(plugin.debugMode) start = System.currentTimeMillis();
         String reason = RTSFunctions.implode(args, " ");
-
+        int ticketId = Integer.parseInt(args[0]);
         if(reason.length() <= args[0].length()){
             reason = "None specified.";
         }else{
             reason = reason.substring(args[0].length());
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 2, reason, 0)) {
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
             return true;
         }
-        if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+        if(plugin.requestMap.containsKey(ticketId)){
+            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
             if(player != null){
                 player.sendMessage(Message.parse("holdUser", sender.getName()));
-                player.sendMessage(Message.parse("holdText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), reason.trim()));
+                player.sendMessage(Message.parse("holdText", plugin.requestMap.get(ticketId).getMessage(), reason.trim()));
             }
-            plugin.requestMap.remove(Integer.parseInt(args[0]));
+            plugin.requestMap.remove(ticketId);
         }
 
         RTSFunctions.messageMods(Message.parse("holdRequest", args[0], sender.getName()), sender.getServer().getOnlinePlayers());

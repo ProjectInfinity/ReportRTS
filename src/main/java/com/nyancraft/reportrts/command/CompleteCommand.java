@@ -28,17 +28,18 @@ public class CompleteCommand implements CommandExecutor {
                 if(!RTSFunctions.isParsableToInt(args[0])) return false;
                 long start = 0;
                 if(plugin.debugMode) start = System.currentTimeMillis();
-                if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+                int ticketId = Integer.parseInt(args[0]);
+                if(!plugin.requestMap.containsKey(ticketId)){
                     sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
                     return true;
                 }
-                if(!plugin.requestMap.get(Integer.parseInt(args[0])).getName().equalsIgnoreCase(sender.getName())){
+                if(!plugin.requestMap.get(ticketId).getName().equalsIgnoreCase(sender.getName())){
                     sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
                     return true;
                 }
-                dbManager.deleteEntryById("reportrts_request", Integer.parseInt(args[0]));
-                plugin.requestMap.remove(Integer.parseInt(args[0]));
-                RTSFunctions.messageMods(Message.parse("completedReq", Integer.parseInt(args[0]),"Cancellation System"), sender.getServer().getOnlinePlayers());
+                dbManager.deleteEntryById("reportrts_request", ticketId);
+                plugin.requestMap.remove(ticketId);
+                RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"), sender.getServer().getOnlinePlayers());
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 
                 if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
@@ -50,12 +51,13 @@ public class CompleteCommand implements CommandExecutor {
         if(args.length == 0) return false;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
+        if(plugin.debugMode) start = System.currentTimeMillis();
         String user = sender.getName();
         if(user == null){
             sender.sendMessage(Message.parse("generalInternalError", "sender.getName() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        int ticketId = Integer.parseInt(args[0]);
         String comment = RTSFunctions.implode(args, " ");
 
         if(comment.length() <= args[0].length()){
@@ -67,10 +69,10 @@ public class CompleteCommand implements CommandExecutor {
         int online = 0;
         boolean isClaimedByOther = false;
 
-        if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
-            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(Integer.parseInt(args[0])).getName(), sender.getServer())) ? 1 : 0;
-            if(plugin.requestMap.get(Integer.parseInt(args[0])).getStatus() == 1){
-                isClaimedByOther = (!plugin.requestMap.get(Integer.parseInt(args[0])).getModName().equalsIgnoreCase(user));
+        if(plugin.requestMap.containsKey(ticketId)){
+            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getName(), sender.getServer())) ? 1 : 0;
+            if(plugin.requestMap.get(ticketId).getStatus() == 1){
+                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModName().equalsIgnoreCase(user));
             }
         }
 
@@ -79,20 +81,20 @@ public class CompleteCommand implements CommandExecutor {
             return true;
         }
 
-        if(!dbManager.setRequestStatus(Integer.parseInt(args[0]), user, 3, comment, online)) {
+        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
             return true;
         }
 
-        if(plugin.requestMap.containsKey(Integer.parseInt(args[0]))) {
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(Integer.parseInt(args[0])).getName());
-            if(online == 0) plugin.notificationMap.put(Integer.parseInt(args[0]), plugin.requestMap.get(Integer.parseInt(args[0])).getName());
+        if(plugin.requestMap.containsKey(ticketId)) {
+            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
+            if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getName());
             if(player != null){
                 player.sendMessage(Message.parse("completedUser", user));
                 if(comment == null) comment = "";
-                player.sendMessage(Message.parse("completedText", plugin.requestMap.get(Integer.parseInt(args[0])).getMessage(), comment));
+                player.sendMessage(Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment));
             }
-            plugin.requestMap.remove(Integer.parseInt(args[0]));
+            plugin.requestMap.remove(ticketId);
         }
 
         RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), sender.getServer().getOnlinePlayers());

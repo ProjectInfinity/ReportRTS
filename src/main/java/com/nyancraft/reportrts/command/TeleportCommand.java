@@ -36,12 +36,12 @@ public class TeleportCommand implements CommandExecutor {
         }catch(ArrayIndexOutOfBoundsException e){
             return false;
         }
-
+        int ticketId = Integer.parseInt(args[0]);
         Player player = (Player) sender;
 
-        if(!plugin.requestMap.containsKey(Integer.parseInt(args[0]))){
+        if(!plugin.requestMap.containsKey(ticketId)){
 
-            ResultSet rs = DatabaseManager.getDatabase().getLocationById(Integer.parseInt(args[0]));
+            ResultSet rs = DatabaseManager.getDatabase().getLocationById(ticketId);
             Location location;
             try {
                 if(!rs.isBeforeFirst()){
@@ -64,7 +64,7 @@ public class TeleportCommand implements CommandExecutor {
             return true;
         }
 
-        HelpRequest currentRequest = plugin.requestMap.get(Integer.parseInt(args[0]));
+        HelpRequest currentRequest = plugin.requestMap.get(ticketId);
 
         Location location = new Location(player.getServer().getWorld(currentRequest.getWorld()), currentRequest.getX(), currentRequest.getY(), currentRequest.getZ(), currentRequest.getYaw(), currentRequest.getPitch());
 
