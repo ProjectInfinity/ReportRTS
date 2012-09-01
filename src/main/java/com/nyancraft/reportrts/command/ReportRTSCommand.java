@@ -99,9 +99,23 @@ public class ReportRTSCommand implements CommandExecutor{
                 sender.sendMessage(ChatColor.YELLOW + "Hopefully everything went alright. Please double check it though! Remember to /reportrts reload !!");
                 break;
 
-            case ROLE:
-                // TODO: Role command. /reportrts role add|delete <name>?
-
+            case HELP:
+                if(RTSPermissions.canSeeHelpPage(sender)){
+                    sender.sendMessage(Message.parse("generalPermissionError", "reportrts.mod"));
+                    return true;
+                }
+                sender.sendMessage(ChatColor.GREEN + "====[ " + ChatColor.GOLD + "ReportRTS Help " + ChatColor.GREEN + "]====");
+                sender.sendMessage(ChatColor.RED + "/check " + ChatColor.GOLD + ChatColor.BOLD + " [STATUS] [ID/PAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - See request details");
+                sender.sendMessage(ChatColor.RED + "/claim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Claim request, stops toe stepping");
+                sender.sendMessage(ChatColor.RED + "/complete " + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Mark request as complete");
+                sender.sendMessage(ChatColor.RED + "/hold " + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Put request on hold");
+                sender.sendMessage(ChatColor.RED + "/modreq " + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - File a request");
+                sender.sendMessage(ChatColor.RED + "/modlist " + ChatColor.YELLOW + " - See online staff");
+                sender.sendMessage(ChatColor.RED + "/mod-broadcast " + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - Send a message to all online staff");
+                sender.sendMessage(ChatColor.RED + "/reportrts " + ChatColor.GOLD + ChatColor.BOLD + " [ACTION]" + ChatColor.RESET + ChatColor.YELLOW + " - General command for ReportRTS");
+                sender.sendMessage(ChatColor.RED + "/reopen " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Reopen a held or closed request");
+                sender.sendMessage(ChatColor.RED + "/tp-id " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Teleports to specified request");
+                sender.sendMessage(ChatColor.RED + "/unclaim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim request");
                 break;
             }
         }catch(Exception e){
@@ -117,6 +131,6 @@ public class ReportRTSCommand implements CommandExecutor{
         RESET,
         STATS,
         UPGRADE,
-        ROLE
+        HELP
     }
 }
