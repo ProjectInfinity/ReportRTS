@@ -100,10 +100,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case HELP:
-                if(RTSPermissions.canSeeHelpPage(sender)){
-                    sender.sendMessage(Message.parse("generalPermissionError", "reportrts.mod"));
-                    return true;
-                }
+                if(!RTSPermissions.canSeeHelpPage(sender)) return true;
                 sender.sendMessage(ChatColor.GREEN + "====[ " + ChatColor.GOLD + "ReportRTS Help " + ChatColor.GREEN + "]====");
                 sender.sendMessage(ChatColor.RED + "/check " + ChatColor.GOLD + ChatColor.BOLD + " [STATUS] [ID/PAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - See request details");
                 sender.sendMessage(ChatColor.RED + "/claim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Claim request, stops toe stepping");
