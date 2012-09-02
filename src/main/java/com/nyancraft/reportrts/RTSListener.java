@@ -38,16 +38,14 @@ public class RTSListener implements Listener{
                         event.getPlayer().sendMessage(Message.parse("completedUserOffline"));
                         event.getPlayer().sendMessage(Message.parse("completedText", rs.getString("text"), rs.getString("mod_comment")));
                         rs.close();
-                        if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().severe("Unable to set notification status to 1.");
+                        if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().warning("Unable to set notification status to 1.");
                         keys.add(entry.getKey());
                     }catch(SQLException e){
                         e.printStackTrace();
                     }
                 }
             }
-            for(int key : keys){
-                plugin.notificationMap.remove(key);
-            }
+            for(int key : keys) plugin.notificationMap.remove(key);
         }
 
         if(!RTSPermissions.isModerator(event.getPlayer())) return;
