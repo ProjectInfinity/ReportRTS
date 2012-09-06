@@ -25,18 +25,11 @@ public class UnclaimCommand implements CommandExecutor{
         long start = 0;
         if(plugin.debugMode) start = System.currentTimeMillis();
         int ticketId = Integer.parseInt(args[0]);
-        if(!plugin.requestMap.containsKey(ticketId)){
+        if(!plugin.requestMap.containsKey(ticketId) || plugin.requestMap.get(ticketId).getStatus() != 1){
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
-        if(plugin.requestMap.get(ticketId).getStatus() != 1){
-            sender.sendMessage(Message.parse("unclaimNotClaimed"));
-            return true;
-        }
-        if(!sender.getName().equals(plugin.requestMap.get(ticketId).getModName()) && !RTSPermissions.canOverride(sender)){
-            sender.sendMessage(Message.parse("generalPermissionError", "You cannot override that, reportrts.override is needed"));
-            return true;
-        }
+        if(!sender.getName().equals(plugin.requestMap.get(ticketId).getModName()) && !RTSPermissions.canOverride(sender)) return true;
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
