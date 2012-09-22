@@ -11,6 +11,7 @@ import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
 
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.MessageHandler;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,9 +23,10 @@ public class ReportRTS extends JavaPlugin{
 
     private static ReportRTS plugin;
     private static final Logger log = Logger.getLogger("Minecraft");
+    private static MessageHandler messageHandler = new MessageHandler();
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
-    public Map<String, String> messageMap = new HashMap<String, String>();
+    //public Map<String, String> messageMap = new HashMap<String, String>();
     public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
 
     public boolean notifyStaffOnNewRequest;
@@ -47,6 +49,7 @@ public class ReportRTS extends JavaPlugin{
     public void onDisable(){
         DatabaseManager.getDatabase().disconnect();
         saveConfig();
+        messageHandler.saveMessageConfig();
     }
 
     public void onEnable(){
@@ -91,7 +94,6 @@ public class ReportRTS extends JavaPlugin{
 
     public void reloadPlugin(){
         requestMap.clear();
-        messageMap.clear();
         notificationMap.clear();
         reloadSettings();
         DatabaseManager.getDatabase().populateRequestMap();
@@ -103,6 +105,9 @@ public class ReportRTS extends JavaPlugin{
         reloadConfig();
         getConfig().options().copyDefaults(true);
         saveConfig();
+        messageHandler.reloadMessageConfig();
+        messageHandler.saveMessageConfig();
+        messageHandler.reloadMessageMap();
         notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
         hideWhenOffline = getConfig().getBoolean("request.hideOffline");
@@ -117,14 +122,18 @@ public class ReportRTS extends JavaPlugin{
         mysqlUsername = getConfig().getString("mysql.username");
         mysqlPassword = getConfig().getString("mysql.password");
         debugMode = getConfig().getBoolean("debug");
-        ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
+        /*ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
         for(String message : Messages.getKeys(false)){
             messageMap.put(message, Messages.getString(message));
-        }
+        }*/
     }
 
     public static ReportRTS getPlugin(){
         return plugin;
+    }
+
+    public static MessageHandler getMessageHandler(){
+        return messageHandler;
     }
 
     private Boolean setupPermissions(){

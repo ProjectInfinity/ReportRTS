@@ -10,9 +10,11 @@ import com.nyancraft.reportrts.ReportRTS;
 public class Message {
 
     public static String parse(String key, Object ... params ){
-        Object prop = ReportRTS.getPlugin().messageMap.get(key);
+        Object prop = ReportRTS.getMessageHandler().messageMap.get(key);
         if(prop == null || !(prop instanceof String)) {
-            return "Missing message <" + key + "> in ReportRTS/config.yml";
+            if(!ReportRTS.getMessageHandler().getMessageConfig().getDefaults().contains(key))
+                return "Missing message <" + key + "> in ReportRTS/messages.yml, no default found.";
+            ReportRTS.getMessageHandler().messageMap.put(key, ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key));
         }
         String message = (String) prop;
         for (ChatColor color : ChatColor.values()) {
