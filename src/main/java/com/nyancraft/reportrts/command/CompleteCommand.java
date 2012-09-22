@@ -23,7 +23,6 @@ public class CompleteCommand implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length == 0) return false;
         if(!RTSPermissions.canCompleteRequests(sender)){
             if(RTSPermissions.canCompleteOwnRequests(sender)){
                 if(!RTSFunctions.isParsableToInt(args[0])) return false;
@@ -49,6 +48,7 @@ public class CompleteCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
             return true;
         }
+        if(args.length == 0) return false;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
         if(plugin.debugMode) start = System.currentTimeMillis();
