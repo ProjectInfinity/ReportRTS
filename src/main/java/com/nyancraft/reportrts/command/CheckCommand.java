@@ -35,8 +35,8 @@ public class CheckCommand implements CommandExecutor {
     private String date = null;
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        double start = 0;
+        if(plugin.debugMode) start = System.nanoTime();
         if(!RTSPermissions.canCheckAllRequests(sender)){
             if(!RTSPermissions.canCheckOwnRequests(sender)){
                 sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check or reportrts.command.check.self"));

@@ -2,6 +2,7 @@ package com.nyancraft.reportrts;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -139,7 +140,7 @@ public class RTSFunctions {
 
     /**
      * Get number of open request by the specified user.
-     * @param player
+     * @param sender
      * @return
      */
     public static int getOpenRequestsByUser(CommandSender sender){
@@ -159,12 +160,9 @@ public class RTSFunctions {
         return 0;
     }
 
-    public static long getTimeSpent(long start){
-        return System.currentTimeMillis() - start;
-    }
-
-    public static long getTimeSpentExact(long start){
-        return System.nanoTime() - start;
+    public static String getTimeSpent(double start){
+        DecimalFormat decimal = new DecimalFormat("##.###");
+        return decimal.format((System.nanoTime() - start) / 1000000);
     }
 
     public static String shortenMessage(String message){

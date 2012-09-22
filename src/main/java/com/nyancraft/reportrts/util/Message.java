@@ -25,13 +25,8 @@ public class Message {
         return MessageFormat.format(message, params);
     }
 
-    public static void debug(String name, String className, long start, String cmd, String[] args){
+    public static void debug(String name, String className, double start, String cmd, String[] args){
         String arguments = RTSFunctions.implode(args, " ");
         ReportRTS.getPlugin().getLogger().info(name + " " + className + " took " + RTSFunctions.getTimeSpent(start) + "ms: " + cmd + " " + arguments);
-    }
-
-    public static void debugExact(String name, String className, long start, String cmd, String[] args){
-        String arguments = RTSFunctions.implode(args, " ");
-        ReportRTS.getPlugin().getLogger().info(name + " " + className + " took " + RTSFunctions.getTimeSpentExact(start) + "ns: " + cmd + " " + arguments);
     }
 }

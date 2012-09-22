@@ -27,8 +27,8 @@ public class CompleteCommand implements CommandExecutor {
         if(!RTSPermissions.canCompleteRequests(sender)){
             if(RTSPermissions.canCompleteOwnRequests(sender)){
                 if(!RTSFunctions.isParsableToInt(args[0])) return false;
-                long start = 0;
-                if(plugin.debugMode) start = System.currentTimeMillis();
+                double start = 0;
+                if(plugin.debugMode) start = System.nanoTime();
                 int ticketId = Integer.parseInt(args[0]);
                 if(!plugin.requestMap.containsKey(ticketId)){
                     sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
@@ -51,7 +51,7 @@ public class CompleteCommand implements CommandExecutor {
         }
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        if(plugin.debugMode) start = System.nanoTime();
         String user = sender.getName();
         if(user == null){
             sender.sendMessage(Message.parse("generalInternalError", "sender.getName() returned NULL! Are you using plugins to modify names?"));

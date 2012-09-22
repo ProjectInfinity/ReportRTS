@@ -23,8 +23,8 @@ public class ClaimCommand implements CommandExecutor{
         if(args.length == 0) return false;
         if(!RTSPermissions.canClaimTicket(sender)) return true;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
-        long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        double start = 0;
+        if(plugin.debugMode) start = System.nanoTime();
         int ticketId = Integer.parseInt(args[0]);
         if(!plugin.requestMap.containsKey(ticketId)){
             sender.sendMessage(Message.parse("claimNotOpen"));

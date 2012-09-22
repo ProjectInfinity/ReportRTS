@@ -20,8 +20,8 @@ public class ModBroadcastCommand implements CommandExecutor{
 
         if(!RTSPermissions.canBroadcast(sender)) return true;
         if(args.length == 0) return false;
-        long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        double start = 0;
+        if(plugin.debugMode) start = System.nanoTime();
         String message = RTSFunctions.implode(args, " ");
         RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), sender.getServer().getOnlinePlayers());
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);

@@ -23,8 +23,8 @@ public class HoldCommand implements CommandExecutor {
         if(!RTSPermissions.canPutTicketOnHold(sender)) return true;
         if(args.length == 0) return false;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
-        long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis();
+        double start = 0;
+        if(plugin.debugMode) start = System.nanoTime();
         String reason = RTSFunctions.implode(args, " ");
         int ticketId = Integer.parseInt(args[0]);
         if(reason.length() <= args[0].length()){

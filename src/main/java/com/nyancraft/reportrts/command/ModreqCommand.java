@@ -46,8 +46,8 @@ public class ModreqCommand implements CommandExecutor {
                 }
             }
         }
-        long start = 0;
-        if(plugin.debugMode) start = System.currentTimeMillis(); // Production value: System.currentTimeMillis(); Development value: System.nanoTime();
+        double start = 0;
+        if(plugin.debugMode) start = System.nanoTime(); // Production value: System.currentTimeMillis(); Development value: System.nanoTime();
 
         Player player = (Player)sender;
         String message = RTSFunctions.implode(args, " ");
