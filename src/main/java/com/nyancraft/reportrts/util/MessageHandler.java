@@ -22,6 +22,7 @@ public class MessageHandler {
         if(!configExists()){
             if(messageFile == null) messageFile = new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml");
             messageConfig = YamlConfiguration.loadConfiguration(ReportRTS.getPlugin().getResource("messages.yml"));
+            saveMessageConfig();
         }
         if(messageFile == null) messageFile = new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml");
         messageConfig = YamlConfiguration.loadConfiguration(messageFile);

@@ -15,11 +15,13 @@ public class Message {
             if(!ReportRTS.getMessageHandler().getMessageConfig().getDefaults().contains(key))
                 return "Missing message <" + key + "> in ReportRTS/messages.yml, no default found.";
             ReportRTS.getMessageHandler().messageMap.put(key, ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key));
+            ReportRTS.getMessageHandler().getMessageConfig().set(key, ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key));
+            prop = ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key);
+            ReportRTS.getMessageHandler().saveMessageConfig();
         }
         String message = (String) prop;
         for (ChatColor color : ChatColor.values()) {
             String colorKey = "%" + color.name().toLowerCase() + "%";
-
             if (message.contains(colorKey)) {
                 message = message.replaceAll(colorKey, color.toString());
             }
