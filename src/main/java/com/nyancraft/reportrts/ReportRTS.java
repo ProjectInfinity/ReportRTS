@@ -26,7 +26,6 @@ public class ReportRTS extends JavaPlugin{
     private static MessageHandler messageHandler = new MessageHandler();
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
-    //public Map<String, String> messageMap = new HashMap<String, String>();
     public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
 
     public boolean notifyStaffOnNewRequest;
@@ -122,10 +121,6 @@ public class ReportRTS extends JavaPlugin{
         mysqlUsername = getConfig().getString("mysql.username");
         mysqlPassword = getConfig().getString("mysql.password");
         debugMode = getConfig().getBoolean("debug");
-        /*ConfigurationSection Messages = getConfig().getConfigurationSection("messages");
-        for(String message : Messages.getKeys(false)){
-            messageMap.put(message, Messages.getString(message));
-        }*/
     }
 
     public static ReportRTS getPlugin(){

@@ -1,7 +1,6 @@
 # notifyStaff - Notifies staff members when a new request is filed.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # debug - If true, it will show information about actions performed.
-# messages - Change messages shown in ReportRTS.
 # mysql.enable - If true, uses MySQL instead of SQLite.
 # request.max - Maximum number of requests a user may have open at the same time.
 # request.delay - User has to wait this amount of seconds before filing another request.
