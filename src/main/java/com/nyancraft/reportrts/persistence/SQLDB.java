@@ -199,7 +199,6 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             ps.close();
-            rs.close();
             rs = query("SELECT `status` FROM `reportrts_request` WHERE `id` = " + id);
             if(ReportRTS.getPlugin().useMySQL){
                 if(rs.isBeforeFirst()) rs.next();
