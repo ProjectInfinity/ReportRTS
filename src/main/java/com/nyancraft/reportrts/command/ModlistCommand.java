@@ -16,12 +16,13 @@ public class ModlistCommand implements CommandExecutor{
 
         double start = 0;
         if(ReportRTS.getPlugin().debugMode) start = System.nanoTime();
-        Player[] players = sender.getServer().getOnlinePlayers();
         String staff = "";
         String separator = Message.parse("modlistMessageSeparator");
 
-        for(Player player : players){
-            if(RTSPermissions.isModerator(player)) staff = staff + player.getDisplayName() + separator;
+        for(String name : ReportRTS.getPlugin().moderatorMap){
+            Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
+            if(player == null) return false;
+            staff = staff + player.getDisplayName() + separator;
         }
         if(staff.length() == 0){
             sender.sendMessage(Message.parse("modlistNoMods"));

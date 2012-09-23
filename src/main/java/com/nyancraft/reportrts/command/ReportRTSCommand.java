@@ -44,7 +44,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
                     return true;
                 }
-                RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), sender.getServer().getOnlinePlayers());
+                RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]));
                 break;
 
             case UNBAN:
@@ -53,7 +53,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
                     return true;
                 }
-                RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), sender.getServer().getOnlinePlayers());
+                RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]));
                 break;
 
             case RESET:

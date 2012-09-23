@@ -62,7 +62,7 @@ public class ModreqCommand implements CommandExecutor {
 
         sender.sendMessage(Message.parse("modreqFiledUser"));
         plugin.getLogger().log(Level.INFO, "" + player.getName() + " filed a request.");
-        if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), sender.getServer().getOnlinePlayers());
+        if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId));
 
         plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName()));
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);

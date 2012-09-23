@@ -40,7 +40,7 @@ public class CompleteCommand implements CommandExecutor {
                 }
                 dbManager.deleteEntryById("reportrts_request", ticketId);
                 plugin.requestMap.remove(ticketId);
-                RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"), sender.getServer().getOnlinePlayers());
+                RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"));
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 
                 if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
@@ -97,7 +97,7 @@ public class CompleteCommand implements CommandExecutor {
             plugin.requestMap.remove(ticketId);
         }
 
-        RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), sender.getServer().getOnlinePlayers());
+        RTSFunctions.messageMods(Message.parse("completedReq", args[0], user));
         if(plugin.debugMode) Message.debug(user, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }

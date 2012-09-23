@@ -1,6 +1,7 @@
 package com.nyancraft.reportrts;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class ReportRTS extends JavaPlugin{
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
     public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
+    public ArrayList<String> moderatorMap = new ArrayList<String>();
 
     public boolean notifyStaffOnNewRequest;
     public boolean hideNotification;
@@ -85,7 +87,7 @@ public class ReportRTS extends JavaPlugin{
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
                     int openRequests = requestMap.size();
-                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), getServer().getOnlinePlayers());
+                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests));
                 }
             }, 120L, (requestNagging * 60) * 20);
         }

@@ -66,11 +66,12 @@ public class RTSFunctions {
     /***
      * Messages all online moderators on the server
      * @param message - message to be displayed
-     * @param players - Player[] array
      */
-    public static void messageMods(String message, Player[] players){
-        for(Player player : players){
-            if(RTSPermissions.isModerator(player)) player.sendMessage(message);
+    public static void messageMods(String message){
+        for(String name : ReportRTS.getPlugin().moderatorMap){
+            Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
+            if(player == null) return;
+            player.sendMessage(message);
         }
     }
 

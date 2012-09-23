@@ -17,6 +17,7 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class RTSListener implements Listener{
     private final ReportRTS plugin;
@@ -36,7 +37,9 @@ public class RTSListener implements Listener{
                     try{
                         if(plugin.useMySQL) rs.first();
                         event.getPlayer().sendMessage(Message.parse("completedUserOffline"));
-                        event.getPlayer().sendMessage(Message.parse("completedText", rs.getString("text"), rs.getString("mod_comment")));
+                        String comment = rs.getString("mod_comment");
+                        if(comment == null) comment = "";
+                        event.getPlayer().sendMessage(Message.parse("completedText", rs.getString("text"), comment));
                         rs.close();
                         if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().warning("Unable to set notification status to 1.");
                         keys.add(entry.getKey());
@@ -49,6 +52,8 @@ public class RTSListener implements Listener{
         }
 
         if(!RTSPermissions.isModerator(event.getPlayer())) return;
+
+        if(!plugin.moderatorMap.contains(event.getPlayer().getName())) plugin.moderatorMap.add(event.getPlayer().getName());
 
         int openRequests = plugin.requestMap.size();
 
@@ -88,7 +93,12 @@ public class RTSListener implements Listener{
             int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
             plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName()));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
-            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), event.getPlayer().getServer().getOnlinePlayers());
+            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId));
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerQuit(PlayerQuitEvent event){
+        if(plugin.moderatorMap.contains(event.getPlayer().getName())) plugin.moderatorMap.remove(event.getPlayer().getName());
     }
 }
