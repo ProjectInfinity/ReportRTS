@@ -14,7 +14,7 @@
         </repository>
         <repository>
             <id>regularbox-repo</id>
-            <url>http://repo.regularbox.com/artifactory/repo</url>
+            <url>http://repo.regularbox.com/artifactory/repo/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -37,5 +37,17 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
