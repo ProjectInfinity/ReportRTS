@@ -78,14 +78,14 @@ public abstract class SQLDB implements Database{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getUserId());
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
+            if(!ps.isClosed()) ps.close();
             if(!rs.isBeforeFirst()){
                 userId = createUser(player);
             }else{
                 if(ReportRTS.getPlugin().useMySQL) rs.next();
                 userId = rs.getInt("id");
             }
-            ps.close();
-            rs.close();
+            if(!rs.isClosed()) rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -181,10 +181,10 @@ public abstract class SQLDB implements Database{
             if(!rs.isBeforeFirst()) return false;
             if(ReportRTS.getPlugin().useMySQL) rs.first();
             if(rs.getInt("status") == status || (status == 2 && rs.getInt("status") == 3)){
-                rs.close();
+                if(!rs.isClosed()) rs.close();
                 return false;
             }
-            rs.close();
+            if(!rs.isClosed()) rs.close();
             int modId = getUserId(player);
 
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
@@ -195,10 +195,10 @@ public abstract class SQLDB implements Database{
             ps.setInt(5, notified);
             ps.setInt(6, id);
             if(ps.executeUpdate() < 1) {
-                ps.close();
+                if(!ps.isClosed()) ps.close();
                 return false;
             }
-            ps.close();
+            if(!ps.isClosed()) ps.close();
             rs = query("SELECT `status` FROM `reportrts_request` WHERE `id` = " + id);
             if(ReportRTS.getPlugin().useMySQL){
                 if(rs.isBeforeFirst()) rs.next();
@@ -207,7 +207,7 @@ public abstract class SQLDB implements Database{
                 rs.close();
                 return false;
             }
-            rs.close();
+            if(!rs.isClosed()) rs.close();
         }catch(SQLException e){
             e.printStackTrace();
             return false;
