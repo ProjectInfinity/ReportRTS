@@ -363,6 +363,7 @@ public abstract class SQLDB implements Database{
         String username = null;
         try{
             ResultSet rs = this.query(QueryGen.getUserName(userId));
+            if(ReportRTS.getPlugin().useMySQL) rs.first();
             username = rs.getString("name");
             rs.close();
         }catch(SQLException e){
