@@ -370,14 +370,4 @@ public abstract class SQLDB implements Database{
         }
         return username;
     }
-    /*
-    @Override
-    public boolean addRole(){
-
-    }
-
-    @Override
-    public boolean removeRole(){
-
-    } */
 }
