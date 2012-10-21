@@ -78,7 +78,6 @@ public abstract class SQLDB implements Database{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getUserId());
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
-            ps.close();
             if(!rs.isBeforeFirst()){
                 userId = createUser(player);
             }else{
@@ -86,6 +85,7 @@ public abstract class SQLDB implements Database{
                 userId = rs.getInt("id");
             }
             rs.close();
+            ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
