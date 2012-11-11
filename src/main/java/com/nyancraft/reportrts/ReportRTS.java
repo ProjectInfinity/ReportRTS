@@ -1,7 +1,6 @@
 package com.nyancraft.reportrts;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,7 +15,6 @@ import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.MessageHandler;
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;

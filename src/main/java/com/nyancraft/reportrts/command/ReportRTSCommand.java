@@ -114,6 +114,18 @@ public class ReportRTSCommand implements CommandExecutor{
                 sender.sendMessage(ChatColor.RED + "/tp-id " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Teleports to specified request");
                 sender.sendMessage(ChatColor.RED + "/unclaim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim request");
                 break;
+
+            case NOTIFICATIONS:
+                if(!RTSPermissions.canManageNotifications(sender)) return true;
+                if(args.length <= 1){
+                    sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notificationMap.size() + " players left to notify.");
+                    sender.sendMessage("Reset them using /reportrts notifications reset");
+                    return true;
+                }
+                DatabaseManager.getConnection().createStatement().executeUpdate("UPDATE `reportrts_request` SET `notified_of_completion` = 1 WHERE `notified_of_completion` = 0");
+                plugin.notificationMap.clear();
+                sender.sendMessage(ChatColor.GREEN + "Notifications have been reset.");
+                break;
             }
         }catch(Exception e){
             return false;
@@ -128,6 +140,7 @@ public class ReportRTSCommand implements CommandExecutor{
         RESET,
         STATS,
         UPGRADE,
-        HELP
+        HELP,
+        NOTIFICATIONS
     }
 }

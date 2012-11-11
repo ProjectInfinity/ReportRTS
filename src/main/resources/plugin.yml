@@ -95,3 +95,6 @@ permissions:
   reportrts.command.help:
     description: Permission to see the help page.
     default: op
+  reportrts.command.notifications:
+    description: Permission to manage notifications.
+    default: op

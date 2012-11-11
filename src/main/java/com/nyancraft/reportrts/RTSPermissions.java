@@ -227,4 +227,19 @@ public class RTSPermissions {
         }
         return true;
     }
+
+    public static boolean canManageNotifications(CommandSender sender){
+        if(ReportRTS.permission != null){
+            if(!ReportRTS.permission.has(sender, "reportrts.command.notifications")){
+                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.notifications"));
+                return false;
+            }
+            return true;
+        }
+        if(!sender.hasPermission("reportrts.command.notifications")){
+            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.notifications"));
+            return false;
+        }
+        return true;
+    }
 }
