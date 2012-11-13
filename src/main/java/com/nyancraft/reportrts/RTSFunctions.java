@@ -192,4 +192,10 @@ public class RTSFunctions {
             return false;
         }
     }
+
+    public static void populateModeratorMapWithData(){
+        for(Player player: ReportRTS.getPlugin().getServer().getOnlinePlayers()){
+            if(RTSPermissions.isModerator(player)) ReportRTS.getPlugin().moderatorMap.add(player.getName());
+        }
+    }
 }

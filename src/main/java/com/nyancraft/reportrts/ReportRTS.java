@@ -54,7 +54,7 @@ public class ReportRTS extends JavaPlugin{
 
     public void onEnable(){
         plugin = this;
-        reloadSettings();
+        reloadPlugin();
         final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new RTSListener(plugin), plugin);
         if(!DatabaseManager.load()){
@@ -95,10 +95,12 @@ public class ReportRTS extends JavaPlugin{
     public void reloadPlugin(){
         requestMap.clear();
         notificationMap.clear();
+        moderatorMap.clear();
         reloadSettings();
         DatabaseManager.getDatabase().populateRequestMap();
         RTSFunctions.populateHeldRequestsWithData();
         RTSFunctions.populateNotificationMapWithData();
+        RTSFunctions.populateModeratorMapWithData();
     }
 
     public void reloadSettings(){
