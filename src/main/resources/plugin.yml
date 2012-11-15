@@ -1,6 +1,6 @@
 name: ${name}
 main: com.nyancraft.reportrts.ReportRTS
-version: ${version}
+version: maven-version-number
 author: ProjectInfinity
 softdepend: [Vault]
 commands:

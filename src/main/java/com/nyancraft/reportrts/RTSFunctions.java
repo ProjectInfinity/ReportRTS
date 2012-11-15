@@ -141,8 +141,8 @@ public class RTSFunctions {
 
     /**
      * Get number of open request by the specified user.
-     * @param sender
-     * @return
+     * @param sender - sender of command
+     * @return amount of open requests by a specific user
      */
     public static int getOpenRequestsByUser(CommandSender sender){
         int openRequestsByUser = 0;
