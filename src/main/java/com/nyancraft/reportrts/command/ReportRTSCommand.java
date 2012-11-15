@@ -118,9 +118,13 @@ public class ReportRTSCommand implements CommandExecutor{
 
             case NOTIFICATIONS:
                 if(!RTSPermissions.canManageNotifications(sender)) return true;
-                if(args.length <= 1){
+                if(args.length < 1){
                     sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notificationMap.size() + " players left to notify.");
                     sender.sendMessage("Reset them using /reportrts notifications reset");
+                    return true;
+                }
+                if(!args[1].equalsIgnoreCase("reset")){
+                    sender.sendMessage(ChatColor.RED + "Syntax is /reportrts notifications reset");
                     return true;
                 }
                 DatabaseManager.getConnection().createStatement().executeUpdate("UPDATE `reportrts_request` SET `notified_of_completion` = 1 WHERE `notified_of_completion` = 0");
