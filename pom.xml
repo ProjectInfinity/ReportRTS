@@ -78,8 +78,8 @@
                     <file>target/classes/plugin.yml</file>
                     <replacements>
                         <replacement>
-                            <token>${project.version}</token>
-                            <value>${project.version}-b${project.build.number}</value>
+                            <token>version: ${project.version}</token>
+                            <value>version: ${project.version}-b${project.build.number}</value>
                         </replacement>
                     </replacements>
                 </configuration>
