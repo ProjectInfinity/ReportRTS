@@ -78,7 +78,7 @@
                     <file>target/classes/plugin.yml</file>
                     <replacements>
                         <replacement>
-                            <token>maven-version-number</token>
+                            <token>${project.version}</token>
                             <value>${project.version}-b${project.build.number}</value>
                         </replacement>
                     </replacements>
