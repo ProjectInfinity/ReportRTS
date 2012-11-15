@@ -134,7 +134,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
             case DUTY:
                 if(!(sender instanceof Player)){
-                    sender.sendMessage("[ReportRTS] You change your duty status from the console.");
+                    sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                 }
                 if(!RTSPermissions.isModerator((Player)sender)) return true;
                 if(args.length < 1){
