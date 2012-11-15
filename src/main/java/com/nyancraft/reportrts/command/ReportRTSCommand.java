@@ -15,6 +15,7 @@ import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.persistence.QueryGen;
 import com.nyancraft.reportrts.util.Message;
+import org.bukkit.entity.Player;
 
 public class ReportRTSCommand implements CommandExecutor{
 
@@ -126,6 +127,32 @@ public class ReportRTSCommand implements CommandExecutor{
                 plugin.notificationMap.clear();
                 sender.sendMessage(ChatColor.GREEN + "Notifications have been reset.");
                 break;
+
+            case DUTY:
+                if(!(sender instanceof Player)){
+                    sender.sendMessage("[ReportRTS] You change your duty status from the console.");
+                }
+                if(!RTSPermissions.isModerator((Player)sender)) return true;
+                if(args.length < 1){
+                    if(plugin.moderatorMap.contains(sender.getName()))
+                        sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
+                    else
+                        sender.sendMessage(ChatColor.RED + "You are currently off duty.");
+                    return true;
+                }
+                String duty = args[1];
+                if(!duty.equalsIgnoreCase("on") || !duty.equalsIgnoreCase("off")){
+                    sender.sendMessage(ChatColor.RED + "Syntax is /reportrts duty on|off");
+                    return true;
+                }
+                if(duty.equalsIgnoreCase("on")){
+                    if(plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
+                    sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
+                }else{
+                    if(!plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
+                    sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
+                }
+                break;
             }
         }catch(Exception e){
             return false;
@@ -141,6 +168,7 @@ public class ReportRTSCommand implements CommandExecutor{
         STATS,
         UPGRADE,
         HELP,
-        NOTIFICATIONS
+        NOTIFICATIONS,
+        DUTY
     }
 }
