@@ -20,7 +20,7 @@ commands:
     aliases: [tpid]
   reportrts:
     description: General commands for ReportRTS
-    usage: /<command> [reload | ban | unban | reset | stats <player> | help]
+    usage: /<command> [reload | ban | unban | reset | stats <player> | help | notifications | duty]
   hold:
     description: Puts the specified ticket on hold
     usage: /<command> [id]
