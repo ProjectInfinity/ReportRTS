@@ -54,16 +54,14 @@ public class ReportRTS extends JavaPlugin{
 
     public void onEnable(){
         plugin = this;
-        reloadPlugin();
+        reloadSettings();
         final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new RTSListener(plugin), plugin);
         if(!DatabaseManager.load()){
             log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
             pm.disablePlugin(this);
         }
-        DatabaseManager.getDatabase().populateRequestMap();
-        RTSFunctions.populateHeldRequestsWithData();
-        RTSFunctions.populateNotificationMapWithData();
+        reloadPlugin();
         getCommand("modreq").setExecutor(new ModreqCommand(plugin));
         getCommand("check").setExecutor(new CheckCommand(plugin));
         getCommand("complete").setExecutor(new CompleteCommand(plugin));
