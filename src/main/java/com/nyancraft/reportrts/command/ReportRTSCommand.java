@@ -118,7 +118,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
             case NOTIFICATIONS:
                 if(!RTSPermissions.canManageNotifications(sender)) return true;
-                if(args.length < 1){
+                if(args.length <= 1){
                     sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notificationMap.size() + " players left to notify.");
                     sender.sendMessage("Reset them using /reportrts notifications reset");
                     return true;
@@ -137,7 +137,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                 }
                 if(!RTSPermissions.isModerator((Player)sender)) return true;
-                if(args.length < 1){
+                if(args.length <= 1){
                     if(plugin.moderatorMap.contains(sender.getName()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
                     else
@@ -145,15 +145,15 @@ public class ReportRTSCommand implements CommandExecutor{
                     return true;
                 }
                 String duty = args[1];
-                if(!duty.equalsIgnoreCase("on") || !duty.equalsIgnoreCase("off")){
+                if(!duty.equalsIgnoreCase("on") && !duty.equalsIgnoreCase("off")){
                     sender.sendMessage(ChatColor.RED + "Syntax is /reportrts duty on|off");
                     return true;
                 }
                 if(duty.equalsIgnoreCase("on")){
-                    if(plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
+                    if(!plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.add(sender.getName());
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 }else{
-                    if(!plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
+                    if(plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;
