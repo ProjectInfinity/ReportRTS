@@ -160,7 +160,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 
             case UPDATE:
                  if(!RTSPermissions.canReceiveUpdateNotifications(sender)) return true;
-                 if(!versionChecker.upToDate){
+                 if(plugin.outdated){
                      sender.sendMessage(Message.parse("outdatedPlugin", plugin.versionString);
                      sender.sendMessage(ChatColor.RED + "The latest build can be found at http://dev.bukkit.org/server-mods/reportrts/");
                  }else{
