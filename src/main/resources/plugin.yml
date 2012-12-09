@@ -98,3 +98,6 @@ permissions:
   reportrts.command.notifications:
     description: Permission to manage notifications.
     default: op
+  reportrts.command.update:
+    description: Permission to check for updates.
+    default: op

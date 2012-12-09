@@ -157,6 +157,15 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;
+                
+            case UPDATE:
+                 if(!RTSPermissions.canReceiveUpdateNotifications(sender)) return true;
+                 if(plugin.outdated){
+                     sender.sendMessage(Message.parse("outdatedPlugin", plugin.versionString);
+                     sender.sendMessage(ChatColor.RED + "The latest build can be found at http://dev.bukkit.org/server-mods/reportrts/");
+                 }else{
+                     sender.sendMessage(ChatColor.YELLOW + "ReportRTS is up to date.");
+                 }
             }
         }catch(Exception e){
             return false;
@@ -173,6 +182,7 @@ public class ReportRTSCommand implements CommandExecutor{
         UPGRADE,
         HELP,
         NOTIFICATIONS,
-        DUTY
+        DUTY,
+        UPDATE
     }
 }
