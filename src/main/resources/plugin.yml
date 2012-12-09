@@ -100,3 +100,4 @@ permissions:
     default: op
   reportrts.command.update:
     description: Permission to check for updates.
+    default: op
