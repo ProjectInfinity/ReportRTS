@@ -22,9 +22,10 @@ public class VersionChecker {
             connection.setRequestProperty("User-agent", "ReportRTS");
             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String version;
+            String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("b") + 1);
             if ((version = bufferedReader.readLine()) != null) {
                 ReportRTS.getPlugin().versionString = version;
-                if (!ReportRTS.getPlugin().getDescription().getVersion().equals(version)) {
+                if (!currentVersion.equals(version)) {
                     ReportRTS.getPlugin().getLogger().info("Found a different version available: " + version);
                     ReportRTS.getPlugin().getLogger().info("Check http://dev.bukkit.org/server-mods/reportrts/ for a new version.");
                     return false;
@@ -34,7 +35,7 @@ public class VersionChecker {
             bufferedReader.close();
             connection.getInputStream().close();
         } catch (final Exception e) {
-            e.printStackTrace();
+            return true;
         }
         return true;
     }
