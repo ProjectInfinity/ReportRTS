@@ -13,6 +13,7 @@ import com.nyancraft.reportrts.data.HelpRequest;
 
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.MessageHandler;
+import com.nyancraft.reportrts.util.VersionChecker;
 import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.plugin.PluginManager;
@@ -22,8 +23,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ReportRTS extends JavaPlugin{
 
     private static ReportRTS plugin;
-    private static final Logger log = Logger.getLogger("Minecraft");
+    private final Logger log = Logger.getLogger("Minecraft");
     private static MessageHandler messageHandler = new MessageHandler();
+    private VersionChecker versionChecker = new VersionChecker();
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
     public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
@@ -34,6 +36,7 @@ public class ReportRTS extends JavaPlugin{
     public boolean hideWhenOffline;
     public boolean useMySQL;
     public boolean debugMode;
+    public boolean outdated;
     public int maxRequests;
     public int requestDelay;
     public int requestsPerPage;
@@ -43,6 +46,7 @@ public class ReportRTS extends JavaPlugin{
     public String mysqlDatabase;
     public String mysqlUsername;
     public String mysqlPassword;
+    public String versionString;
 
     public static Permission permission = null;
 
@@ -62,6 +66,7 @@ public class ReportRTS extends JavaPlugin{
             pm.disablePlugin(this);
         }
         reloadPlugin();
+        outdated = !versionChecker.upToDate();
         getCommand("modreq").setExecutor(new ModreqCommand(plugin));
         getCommand("check").setExecutor(new CheckCommand(plugin));
         getCommand("complete").setExecutor(new CompleteCommand(plugin));
