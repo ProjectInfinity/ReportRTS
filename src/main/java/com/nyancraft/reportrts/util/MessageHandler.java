@@ -16,7 +16,7 @@ public class MessageHandler {
     private FileConfiguration messageConfig = null;
     private File messageFile = null;
 
-    public static Map<String, String> messageMap = new HashMap<String, String>();
+    public Map<String, String> messageMap = new HashMap<String, String>();
 
     public void reloadMessageConfig() {
         if(!configExists()){
