@@ -46,3 +46,5 @@ reopenedRequestSelf: '%gold%Request #{0} has been reopened.'
 
 teleportToRequest: '%blue%Teleported to request #{0}.'
 outdatedPlugin: '[ReportRTS] %red%You are not running the latest recommended version! Recommended version is: %gold%{0}'
+
+oldToNewVersion: '%aqua%Current version: %gold%{0}%aqua%. Latest version: %gold%{1}%aqua%.'
