@@ -162,7 +162,7 @@ public class ReportRTSCommand implements CommandExecutor{
                  if(!RTSPermissions.canCheckVersion(sender)) return true;
                  if(plugin.outdated){
                      sender.sendMessage(Message.parse("oldToNewVersion", plugin.getDescription.getVersion(), plugin.versionString);
-                     sender.sendMessage(ChatColor.AQUA + "ReportRTS version" + plugin.versionString + " can be found at" + ChatColor.GOLD + plugin.getDescription.getWebsite());
+                     sender.sendMessage(ChatColor.AQUA + "ReportRTS version" + plugin.versionString + " can be found at " + ChatColor.GOLD + plugin.getDescription.getWebsite());
                  }else{
                      sender.sendMessage(ChatColor.AQUA + "ReportRTS version " + plugin.getDescription.getVersion() + " by " + plugin.getDescription.getAuthors());
                  }
