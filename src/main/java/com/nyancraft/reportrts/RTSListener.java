@@ -63,7 +63,7 @@ public class RTSListener implements Listener{
         if(openRequests > 0)
             event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests));
 
-        if(event.getPlayer().hasPermission("reportrts.command.update") && plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));
+        if(event.getPlayer().hasPermission("reportrts.command.version") && plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
