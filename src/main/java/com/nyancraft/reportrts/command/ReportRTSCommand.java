@@ -158,14 +158,17 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
                 break;
                 
-            case UPDATE:
-                 if(!RTSPermissions.canReceiveUpdateNotifications(sender)) return true;
+            case VERSION:
+                 if(!RTSPermissions.canCheckVersion(sender)) return true;
                  if(plugin.outdated){
-                     sender.sendMessage(Message.parse("outdatedPlugin", plugin.versionString);
-                     sender.sendMessage(ChatColor.RED + "The latest build can be found at http://dev.bukkit.org/server-mods/reportrts/");
+                     sender.sendMessage(Message.parse("oldToNewVersion", plugin.getDescription.getVersion(), plugin.versionString);
+                     sender.sendMessage(ChatColor.AQUA + "ReportRTS version" + plugin.versionString + " can be found at http://dev.bukkit.org/server-mods/reportrts/");
                  }else{
-                     sender.sendMessage(ChatColor.YELLOW + "ReportRTS is up to date.");
+                     sender.sendMessage(ChatColor.AQUA + "ReportRTS version " + plugin.getDescription.getVersion() + " by ProjectInfinity");
                  }
+                 sender.sendMessage(ChatColor.AQUA + "ReportRTS is a simple server mod that makes helping your players easier by letting them create tickets for help.");
+                 sender.sendMessage(ChatColor.AQUA + "Visit " + ChatColor.GOLD + "http://bit.ly/ReportRTS" + ChatColor.AQUA + " for more information.")
+                 sender.sendMessage(ChatColor.AQUA + "Type " + ChatColor.YELLOW + "/reportrts help" + ChatColor.AQUA + "for help with commands.");
             }
         }catch(Exception e){
             return false;
@@ -183,6 +186,6 @@ public class ReportRTSCommand implements CommandExecutor{
         HELP,
         NOTIFICATIONS,
         DUTY,
-        UPDATE
+        VERSION
     }
 }
