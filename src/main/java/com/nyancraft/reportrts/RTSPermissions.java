@@ -228,16 +228,16 @@ public class RTSPermissions {
         return true;
     }
     
-    public static boolean canReceiveUpdateNotifications(CommandSender sender){
+    public static boolean canCheckVersion(CommandSender sender){
         if(ReportRTS.permission != null){
-            if(!ReportRTS.permission.has(sender, "reportrts.command.update")){
-                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.update"));
+            if(!ReportRTS.permission.has(sender, "reportrts.command.version")){
+                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.version"));
                 return false;
             }
             return true;
         }
-        if(!sender.hasPermission("reportrts.command.update")){
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.update"));
+        if(!sender.hasPermission("reportrts.command.version")){
+            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.version"));
             return false;
         }
         return true;
