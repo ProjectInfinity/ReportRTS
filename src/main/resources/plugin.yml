@@ -3,6 +3,8 @@ main: com.nyancraft.reportrts.ReportRTS
 version: ${version}
 author: ProjectInfinity
 softdepend: [Vault]
+description: ReportRTS is a simple server mod that makes helping your players easier by letting them create tickets for help.
+website: http://bit.ly/ReportRTS
 commands:
   modreq:
     description: Request help from staff
