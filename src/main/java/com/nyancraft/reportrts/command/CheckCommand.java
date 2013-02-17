@@ -180,7 +180,7 @@ public class CheckCommand implements CommandExecutor {
 
             ChatColor online;
             try {
-                if(plugin.useMySQL){
+                if(plugin.storageType.equalsIgnoreCase("mysql")){
                     if(rs.isBeforeFirst()) rs.first();
                 }
                 online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;

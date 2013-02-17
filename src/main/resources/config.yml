@@ -1,17 +1,18 @@
 # notifyStaff - Notifies staff members when a new request is filed.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # debug - If true, it will show information about actions performed.
+# VanishSupport - If true, hide staff from /modlist when vanished.
 # versionCheck - If true, ReportRTS will alert you of new recommended versions.
-# mysql.enable - If true, uses MySQL instead of SQLite.
 # request.max - Maximum number of requests a user may have open at the same time.
 # request.delay - User has to wait this amount of seconds before filing another request.
 # request.hideOffline - If set to true, hides all requests in /check from offline users.
 # request.perPage - This sets the amount of requests that should be shown on each page.
 # request.nag - If above 0 (minutes), nag the online staff members about open requests.
-
+# storage - Setup for storage in ReportRTS. Supported types: SQLite, MySQL.
 notifyStaff: true
 hideMessageIfEmpty: false
 debug: false
+VanishSupport: false
 versionCheck: true
 
 request:
@@ -21,8 +22,8 @@ request:
   perPage: 5
   nag: 5
 
-mysql:
-  enable: false
+storage:
+  type: sqlite
   hostname: 'localhost'
   port: 3306
   database: 'minecraft'

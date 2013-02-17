@@ -35,7 +35,7 @@ public class RTSListener implements Listener{
                 if(entry.getValue().equals(event.getPlayer().getName())){
                     ResultSet rs = DatabaseManager.getDatabase().getTicketById(entry.getKey());
                     try{
-                        if(plugin.useMySQL) rs.first();
+                        if(plugin.storageType.equalsIgnoreCase("mysql")) rs.first();
                         event.getPlayer().sendMessage(Message.parse("completedUserOffline"));
                         String comment = rs.getString("mod_comment");
                         if(comment == null) comment = "";

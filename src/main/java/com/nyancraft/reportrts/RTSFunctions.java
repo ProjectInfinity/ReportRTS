@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
-import com.nyancraft.reportrts.persistence.QueryGen;
 
 public class RTSFunctions {
 
@@ -108,7 +107,7 @@ public class RTSFunctions {
                 int ticketId = entry.getValue().getId();
                 ResultSet rs = DatabaseManager.getDatabase().getHeldTicketById(ticketId);
                 try {
-                    if(ReportRTS.getPlugin().useMySQL){
+                    if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                         if(rs.isBeforeFirst()) rs.next();
                     }
                     entry.getValue().setModName(rs.getString("name"));
@@ -127,7 +126,7 @@ public class RTSFunctions {
         try{
             ResultSet rs = DatabaseManager.getDatabase().getUnnotifiedUsers();
             if(!rs.isBeforeFirst()) return;
-            if(ReportRTS.getPlugin().useMySQL){
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 rs.first();
             }
             while(rs.next()){
@@ -174,10 +173,10 @@ public class RTSFunctions {
     }
 
     public static boolean checkColumns(){
-        if(ReportRTS.getPlugin().useMySQL) return true;
+        if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) return true;
         columns.clear();
         try{
-            ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(QueryGen.getColumns("reportrts_request"));
+            ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(DatabaseManager.getQueryGen().getColumns("reportrts_request"));
             while(rs.next()){
                 columns.add(rs.getString("name"));
             }

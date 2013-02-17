@@ -34,25 +34,25 @@ public class ReportRTS extends JavaPlugin{
     public boolean notifyStaffOnNewRequest;
     public boolean hideNotification;
     public boolean hideWhenOffline;
-    public boolean useMySQL;
     public boolean debugMode;
     public boolean outdated;
+    public boolean vanishSupport;
     public int maxRequests;
     public int requestDelay;
     public int requestsPerPage;
+    public int storagePort;
     public long requestNagging;
-    public String mysqlPort;
-    public String mysqlHostname;
-    public String mysqlDatabase;
-    public String mysqlUsername;
-    public String mysqlPassword;
+    public String storageType;
+    public String storageHostname;
+    public String storageDatabase;
+    public String storageUsername;
+    public String storagePassword;
     public String versionString;
 
     public static Permission permission = null;
 
     public void onDisable(){
         DatabaseManager.getDatabase().disconnect();
-        saveConfig();
         messageHandler.saveMessageConfig();
     }
 
@@ -120,13 +120,14 @@ public class ReportRTS extends JavaPlugin{
         requestDelay = getConfig().getInt("request.delay");
         requestsPerPage = getConfig().getInt("request.perPage");
         requestNagging = getConfig().getLong("request.nag");
-        useMySQL = getConfig().getBoolean("mysql.enable");
-        mysqlPort = getConfig().getString("mysql.port");
-        mysqlHostname = getConfig().getString("mysql.hostname");
-        mysqlDatabase = getConfig().getString("mysql.database");
-        mysqlUsername = getConfig().getString("mysql.username");
-        mysqlPassword = getConfig().getString("mysql.password");
+        storageType = getConfig().getString("storage.type", "sqlite");
+        storagePort = getConfig().getInt("storage.port");
+        storageHostname = getConfig().getString("storage.hostname");
+        storageDatabase = getConfig().getString("storage.database");
+        storageUsername = getConfig().getString("storage.username");
+        storagePassword = getConfig().getString("storage.password");
         debugMode = getConfig().getBoolean("debug");
+        vanishSupport = getConfig().getBoolean("VanishSupport", false);
     }
 
     public static ReportRTS getPlugin(){

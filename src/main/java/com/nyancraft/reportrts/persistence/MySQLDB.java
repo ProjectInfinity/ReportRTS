@@ -6,12 +6,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.query.Query;
 
-import lib.PatPeter.SQLibrary.MySQL;
+import lib.PatPeter.RE_SQLibrary.MySQL;
 
 public class MySQLDB extends SQLDB {
     private MySQL db;
     private ArrayList<String> columns = new ArrayList<String>();
+
+    public Query queryGen;
 
     public ResultSet query(String query){
         try{
@@ -23,19 +26,15 @@ public class MySQLDB extends SQLDB {
 
     public boolean connect(){
         ReportRTS.getPlugin().getLogger().info("Connecting to MySQL.");
-        db = new MySQL(
-                ReportRTS.getPlugin().getLogger(),
-                "[MySQL]",
-                ReportRTS.getPlugin().mysqlHostname,
-                ReportRTS.getPlugin().mysqlPort,
-                ReportRTS.getPlugin().mysqlDatabase,
-                ReportRTS.getPlugin().mysqlUsername,
-                ReportRTS.getPlugin().mysqlPassword);
+        db = new MySQL(ReportRTS.getPlugin().getLogger(), "[MySQL]", ReportRTS.getPlugin().storageHostname,
+                ReportRTS.getPlugin().storagePort, ReportRTS.getPlugin().storageDatabase,
+                ReportRTS.getPlugin().storageUsername, ReportRTS.getPlugin().storagePassword);
+        queryGen = DatabaseManager.getQueryGen();
         try{
             db.open();
             if(!db.checkConnection()) return false;
         }catch(Exception e){
-            ReportRTS.getPlugin().getLogger().severe("Failed to connect to the MySQL database.");
+            ReportRTS.getPlugin().getLogger().warning("Failed to connect to the MySQL database.");
             return false;
         }
 
@@ -43,7 +42,7 @@ public class MySQLDB extends SQLDB {
             checkTables();
             checkColumns();
         }catch(Exception e){
-            ReportRTS.getPlugin().getLogger().severe("Could not access MySQL tables.");
+            ReportRTS.getPlugin().getLogger().warning("Could not access MySQL tables.");
             return false;
         }
         ReportRTS.getPlugin().getLogger().info("Successfully connected and checked tables, will use MySQL.");
@@ -51,21 +50,21 @@ public class MySQLDB extends SQLDB {
     }
 
     private boolean checkTables() throws Exception{
-        if(!this.db.checkTable("reportrts_request")){
-            if(!db.createTable(QueryGen.createRequestTable())) return false;
+        if(!this.db.isTable("reportrts_request")){
+            if(!db.createTable(queryGen.createRequestTable())) return false;
             ReportRTS.getPlugin().getLogger().info("Created reportrts_request table.");
         }
-        if(!this.db.checkTable("reportrts_user")){
-            if(!db.createTable(QueryGen.createUserTable())) return false;
+        if(!this.db.isTable("reportrts_user")){
+            if(!db.createTable(queryGen.createUserTable())) return false;
             ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
         }
         return true;
     }
 
     private boolean checkColumns(){
-        ResultSet rs = db.query(QueryGen.getColumns("reportrts_request"));
-        columns.clear();
         try{
+            ResultSet rs = db.query(queryGen.getColumns("reportrts_request"));
+            columns.clear();
             while(rs.next()){
                 columns.add(rs.getString("Field"));
             }
@@ -95,13 +94,18 @@ public class MySQLDB extends SQLDB {
 
     @Override
     public boolean resetDB() {
-        db.query("TRUNCATE TABLE reportrts_request");
-        db.query("TRUNCATE TABLE reportrts_user");
+        try {
+            db.query("TRUNCATE TABLE reportrts_request");
+            db.query("TRUNCATE TABLE reportrts_user");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean checkTable(String table){
-        return db.checkTable(table);
+        return db.isTable(table);
     }
 }

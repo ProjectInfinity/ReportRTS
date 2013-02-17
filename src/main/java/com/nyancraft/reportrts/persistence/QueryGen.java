@@ -5,7 +5,7 @@ import com.nyancraft.reportrts.ReportRTS;
 public class QueryGen {
 
     public static String createRequestTable(){
-        if(ReportRTS.getPlugin().useMySQL){
+        if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
             return "CREATE TABLE `reportrts_request` (" +
             "`id` INT(10) UNSIGNED NULL AUTO_INCREMENT," +
             "`user_id` INT(10) UNSIGNED NULL DEFAULT '0'," +
@@ -59,7 +59,7 @@ public class QueryGen {
                 " notified_of_completion integer)";
     }
     public static String createUserTable(){
-        if(ReportRTS.getPlugin().useMySQL){
+        if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
             return "CREATE TABLE `reportrts_user` (" +
                     "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
                     "`name` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci'," +
@@ -72,7 +72,7 @@ public class QueryGen {
         }
     }
     public static String getColumns(String table){
-        if(ReportRTS.getPlugin().useMySQL){
+        if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
             return "show columns from `" + table + "`";
         }else{
             return "PRAGMA table_info(`" + table + "`)";

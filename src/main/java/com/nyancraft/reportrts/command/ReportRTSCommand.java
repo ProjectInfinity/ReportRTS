@@ -13,7 +13,6 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
-import com.nyancraft.reportrts.persistence.QueryGen;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.entity.Player;
 
@@ -91,10 +90,10 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
             // TODO: Only temporary and for SQLite users. Once I fix the SQLite issue, this will no longer be needed.
             case UPGRADE:
-                if(!sender.isOp() || plugin.useMySQL) return true;
+                if(!sender.isOp() || plugin.storageType.equalsIgnoreCase("mysql")) return true;
                 if(RTSFunctions.checkColumns()) return true;
                 DatabaseManager.getConnection().createStatement().executeUpdate("ALTER TABLE \"reportrts_request\" RENAME TO \"requests_temp\"");
-                DatabaseManager.getConnection().createStatement().executeUpdate(QueryGen.createRequestTable());
+                DatabaseManager.getConnection().createStatement().executeUpdate(DatabaseManager.getQueryGen().createRequestTable());
                 DatabaseManager.getConnection().createStatement().executeUpdate("INSERT INTO \"reportrts_request\" (\"id\", \"user_id\", \"mod_id\", \"mod_timestamp\", \"mod_comment\", \"tstamp\", \"world\", \"x\", \"y\", \"z\", \"text\", \"status\", \"notified_of_completion\") SELECT \"id\", \"user_id\", \"mod_id\", \"mod_timestamp\", \"mod_comment\", \"tstamp\", \"world\", \"x\", \"y\", \"z\", \"text\", \"status\", \"notified_of_completion\" FROM \"requests_temp\"");
                 DatabaseManager.getConnection().createStatement().executeUpdate("DROP TABLE requests_temp");
                 sender.sendMessage(ChatColor.YELLOW + "Hopefully everything went alright. Please double check it though! Remember to /reportrts reload !!");

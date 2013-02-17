@@ -10,7 +10,6 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.util.Message;
 
 public class ModlistCommand implements CommandExecutor{
-
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(!RTSPermissions.canListStaff(sender)) return true;
 
@@ -22,6 +21,9 @@ public class ModlistCommand implements CommandExecutor{
         for(String name : ReportRTS.getPlugin().moderatorMap){
             Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
             if(player == null) return false;
+            if(ReportRTS.getPlugin().vanishSupport && sender instanceof Player){
+                if(!((Player) sender).canSee(player)) continue;
+            }
             staff = staff + player.getDisplayName() + separator;
         }
         if(staff.length() == 0){

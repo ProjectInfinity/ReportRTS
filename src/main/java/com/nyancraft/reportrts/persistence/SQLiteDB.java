@@ -6,12 +6,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.nyancraft.reportrts.ReportRTS;
-
-import lib.PatPeter.SQLibrary.SQLite;
+import com.nyancraft.reportrts.persistence.query.Query;
+import lib.PatPeter.RE_SQLibrary.SQLite;
 
 public class SQLiteDB extends SQLDB {
     private SQLite db;
     private ArrayList<String> columns = new ArrayList<String>();
+
+    public Query queryGen;
 
     @Override
     public ResultSet query(String query){
@@ -27,20 +29,20 @@ public class SQLiteDB extends SQLDB {
         db = new SQLite(
                 ReportRTS.getPlugin().getLogger(),
                 "[SQLite]",
-                ReportRTS.getPlugin().getDescription().getName(),
-                ReportRTS.getPlugin().getDataFolder().getPath());
-
+                ReportRTS.getPlugin().getDataFolder().getPath(),
+                ReportRTS.getPlugin().getDescription().getName());
+        queryGen = DatabaseManager.getQueryGen();
         try{
             db.open();
             if(!db.checkConnection()) return false;
         } catch(Exception e){
-            ReportRTS.getPlugin().getLogger().severe("Failed to connect to the SQLite database.");
+            ReportRTS.getPlugin().getLogger().warning("Failed to connect to the SQLite database.");
         }
 
         try{
             if(!checkTables()) return false;
         }catch(Exception e){
-            ReportRTS.getPlugin().getLogger().severe("Could not access SQLite tables.");
+            ReportRTS.getPlugin().getLogger().warning("Could not access SQLite tables.");
             e.printStackTrace();
             return false;
         }
@@ -48,21 +50,21 @@ public class SQLiteDB extends SQLDB {
     }
 
     private boolean checkTables() throws Exception{
-        if(!this.db.checkTable("reportrts_request")){
-            if(!db.createTable(QueryGen.createRequestTable())) return false;
+        if(!db.isTable("reportrts_request")){
+            if(!db.createTable(queryGen.createRequestTable())) return false;
             ReportRTS.getPlugin().getLogger().info("Created reportrts_request table.");
         }
-        if(!this.db.checkTable("reportrts_user")){
-            if(!db.createTable(QueryGen.createUserTable())) return false;
+        if(!db.isTable("reportrts_user")){
+            if(!db.createTable(queryGen.createUserTable())) return false;
             ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
         }
         return this.checkColumns();
     }
 
     private boolean checkColumns(){
-        ResultSet rs = db.query(QueryGen.getColumns("reportrts_request"));
-        columns.clear();
         try{
+            ResultSet rs = db.query(queryGen.getColumns("reportrts_request"));
+            columns.clear();
             while(rs.next()){
                 columns.add(rs.getString("name"));
             }
@@ -88,13 +90,18 @@ public class SQLiteDB extends SQLDB {
 
     @Override
     public boolean resetDB() {
-        db.query("DELETE FROM reportrts_request");
-        db.query("DELETE FROM reportrts_user");
+        try {
+            db.query("DELETE FROM reportrts_request");
+            db.query("DELETE FROM reportrts_user");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean checkTable(String table){
-        return db.checkTable(table);
+        return db.isTable(table);
     }
 }

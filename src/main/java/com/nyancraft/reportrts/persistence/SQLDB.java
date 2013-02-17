@@ -51,16 +51,16 @@ public abstract class SQLDB implements Database{
         if(!isLoaded()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((QueryGen.createUser()));
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((DatabaseManager.getQueryGen().createUser()));
             ps.setString(1, player);
             if(ps.executeUpdate() < 1) return 0;
             ps.close();
-            ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getUserId());
+            ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
 
             if(!rs.isBeforeFirst()) return 0;
-            if(ReportRTS.getPlugin().useMySQL) rs.next();
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
             userId = rs.getInt(1);
             ps.close();
             rs.close();
@@ -75,13 +75,13 @@ public abstract class SQLDB implements Database{
         if(!isLoaded()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getUserId());
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
             if(!rs.isBeforeFirst()){
                 userId = createUser(player);
             }else{
-                if(ReportRTS.getPlugin().useMySQL) rs.next();
+                if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
                 userId = rs.getInt("id");
             }
             rs.close();
@@ -95,7 +95,7 @@ public abstract class SQLDB implements Database{
     @Override
     public void populateRequestMap() {
         try {
-            ResultSet rs = query(QueryGen.getAllOpenAndClaimedRequests());
+            ResultSet rs = query(DatabaseManager.getQueryGen().getAllOpenAndClaimedRequests());
             while(rs.next()){
                 ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
                 ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModTimestamp(rs.getInt("mod_timestamp"));
@@ -128,8 +128,8 @@ public abstract class SQLDB implements Database{
         if(!isLoaded() || userId == 0) return false;
         try{
             long tstamp = System.currentTimeMillis()/1000;
-            ResultSet rs = query(QueryGen.getUserStatus(userId));
-            if(ReportRTS.getPlugin().useMySQL){
+            ResultSet rs = query(DatabaseManager.getQueryGen().getUserStatus(userId));
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 if(rs.isBeforeFirst()) rs.next();
             }
             if(rs.getInt("banned") == 1){
@@ -137,7 +137,7 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             rs.close();
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.createRequest());
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().createRequest());
             ps.setInt(1, userId);
             ps.setLong(2, tstamp);
             ps.setString(3, world);
@@ -161,8 +161,8 @@ public abstract class SQLDB implements Database{
         if(!isLoaded() || userId == 0) return 0;
         int ticketId = 0;
         try {
-            ResultSet rs = query(QueryGen.getLatestTicketIdByUser(userId));
-            if(ReportRTS.getPlugin().useMySQL){
+            ResultSet rs = query(DatabaseManager.getQueryGen().getLatestTicketIdByUser(userId));
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 if(rs.isBeforeFirst()) rs.next();
             }
             ticketId = rs.getInt("id");
@@ -176,10 +176,10 @@ public abstract class SQLDB implements Database{
     @Override
     public boolean setRequestStatus(int id, String player, int status, String comment, int notified){
         if(!isLoaded()) return false;
-        ResultSet rs = query(QueryGen.getTicketStatusById(id));
+        ResultSet rs = query(DatabaseManager.getQueryGen().getTicketStatusById(id));
         try{
             if(!rs.isBeforeFirst()) return false;
-            if(ReportRTS.getPlugin().useMySQL) rs.first();
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.first();
             if(rs.getInt("status") == status || (status == 2 && rs.getInt("status") == 3)){
                 rs.close();
                 return false;
@@ -200,7 +200,7 @@ public abstract class SQLDB implements Database{
             }
             ps.close();
             rs = query("SELECT `status` FROM `reportrts_request` WHERE `id` = " + id);
-            if(ReportRTS.getPlugin().useMySQL){
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 if(rs.isBeforeFirst()) rs.next();
             }
             if(rs.getInt("status") != status){
@@ -218,15 +218,15 @@ public abstract class SQLDB implements Database{
     @Override
     public boolean setUserStatus(String player, int status) {
         int userId = getUserId(player);
-        ResultSet rs = query(QueryGen.getUserStatus(userId));
+        ResultSet rs = query(DatabaseManager.getQueryGen().getUserStatus(userId));
         try {
-            if(ReportRTS.getPlugin().useMySQL){
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 if(rs.isBeforeFirst()) rs.next();
             }
             int banned = rs.getInt("banned");
             rs.close();
             if(banned == status) return false;
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.setUserStatus(status));
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().setUserStatus(status));
             ps.setInt(1, userId);
             if(ps.executeUpdate() < 1) return false;
             ps.close();
@@ -239,11 +239,11 @@ public abstract class SQLDB implements Database{
     @Override
     public int countRequests(int status){
         if(!isLoaded()) return 0;
-        ResultSet rs = query(QueryGen.countRequests(status));
+        ResultSet rs = query(DatabaseManager.getQueryGen().countRequests(status));
         int total = 0;
         try{
             if(!rs.isBeforeFirst()) return 0;
-            if(ReportRTS.getPlugin().useMySQL) rs.first();
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.first();
             total = rs.getInt(1);
             rs.close();
         }catch(SQLException e){
@@ -254,38 +254,38 @@ public abstract class SQLDB implements Database{
     }
     @Override
     public ResultSet getHeldRequests(int from, int limit){
-        return query(QueryGen.getHeldRequests(from, limit));
+        return query(DatabaseManager.getQueryGen().getHeldRequests(from, limit));
     }
 
     @Override
     public ResultSet getClosedRequests(int from, int limit){
-        return query(QueryGen.getClosedRequests(from, limit));
+        return query(DatabaseManager.getQueryGen().getClosedRequests(from, limit));
     }
 
     @Override
     public ResultSet getTicketById(int id){
-        return query(QueryGen.getTicketById(id));
+        return query(DatabaseManager.getQueryGen().getTicketById(id));
     }
 
     @Override
     public ResultSet getHeldTicketById(int ticketId){
-        return query(QueryGen.getHeldByTicketId(ticketId));
+        return query(DatabaseManager.getQueryGen().getHeldByTicketId(ticketId));
     }
 
     @Override
     public ResultSet getLocationById(int id){
-        return query(QueryGen.getLocationById(id));
+        return query(DatabaseManager.getQueryGen().getLocationById(id));
     }
 
     @Override
     public ResultSet getUnnotifiedUsers(){
-        return query(QueryGen.getUnnotifiedUsers());
+        return query(DatabaseManager.getQueryGen().getUnnotifiedUsers());
     }
 
     @Override
     public void deleteRequestsByTime(String table, int lessThanThis){
         try {
-            query(QueryGen.deleteRequestOlderThan(table, lessThanThis)).close();
+            query(DatabaseManager.getQueryGen().deleteRequestOlderThan(table, lessThanThis)).close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -293,7 +293,7 @@ public abstract class SQLDB implements Database{
 
     @Override
     public boolean setNotificationStatus(int id, int status){
-        query(QueryGen.setNotificationStatus(id, status));
+        query(DatabaseManager.getQueryGen().setNotificationStatus(id, status));
         return true;
     }
 
@@ -301,7 +301,7 @@ public abstract class SQLDB implements Database{
     public boolean insertRequest(int modId, String world, int x, int y, int z, String message, int userId, int tstamp) {
         if(!isLoaded() || userId == 0) return false;
         try{
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.createRequest());
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().createRequest());
             ps.setInt(1, userId);
             ps.setLong(2, tstamp);
             ps.setString(3, world);
@@ -322,7 +322,7 @@ public abstract class SQLDB implements Database{
     public boolean insertUser(int userId, String name, int banned){
         if(!isLoaded() || userId == 0) return false;
         try{
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.createExactUser());
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().createExactUser());
             ps.setInt(1, userId);
             ps.setString(2, name);
             ps.setInt(3, banned);
@@ -337,13 +337,13 @@ public abstract class SQLDB implements Database{
 
     @Override
     public ResultSet getAllFromTable(String table){
-        return query(QueryGen.getAllFromTable(table));
+        return query(DatabaseManager.getQueryGen().getAllFromTable(table));
     }
 
     @Override
     public ResultSet getHandledBy(String player){
         try{
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(QueryGen.getHandledBy());
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getHandledBy());
             ps.setInt(1, getUserId(player));
             return ps.executeQuery();
         }catch(SQLException e){
@@ -354,7 +354,7 @@ public abstract class SQLDB implements Database{
 
     @Override
     public void deleteEntryById(String table, int id){
-        this.query(QueryGen.deleteEntryById(table, id));
+        this.query(DatabaseManager.getQueryGen().deleteEntryById(table, id));
     }
 
     @Override
@@ -362,8 +362,8 @@ public abstract class SQLDB implements Database{
         if(!isLoaded() || userId == 0) return null;
         String username = null;
         try{
-            ResultSet rs = this.query(QueryGen.getUserName(userId));
-            if(ReportRTS.getPlugin().useMySQL) rs.first();
+            ResultSet rs = this.query(DatabaseManager.getQueryGen().getUserName(userId));
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.first();
             username = rs.getString("name");
             rs.close();
         }catch(SQLException e){
