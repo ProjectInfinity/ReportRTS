@@ -208,7 +208,7 @@ public class CheckCommand implements CommandExecutor {
                 String modComment = rs.getString("mod_comment");
 
                 sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + rs.getInt(1) + " - " + statusColor + status + ChatColor.AQUA + " ---------");
-                sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + rs.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + rs.getInt("x") + ", " + rs.getInt("y") + ", " + rs.getInt("z"));
+                sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + rs.getString("name") + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + rs.getInt("x") + ", Y:" + rs.getInt("y") + ", Z:" + rs.getInt("z"));
 
                 if(rs.getInt("status") == 3){
                     int modId = rs.getInt("mod_id");
@@ -240,7 +240,7 @@ public class CheckCommand implements CommandExecutor {
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + " Request #" + currentRequest.getId() + " -" + ChatColor.YELLOW + " " + status + " " + ChatColor.AQUA + "---------");
-        sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + currentRequest.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at " + ChatColor.GREEN + currentRequest.getX() + ", " + currentRequest.getY() + ", " + currentRequest.getZ());
+        sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + currentRequest.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + currentRequest.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + currentRequest.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + currentRequest.getZ());
         sender.sendMessage(ChatColor.GRAY + currentRequest.getMessage());
 
         if(currentRequest.getStatus() == 1){
