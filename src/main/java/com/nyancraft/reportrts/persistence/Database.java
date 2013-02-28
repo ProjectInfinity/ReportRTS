@@ -23,7 +23,7 @@ public interface Database {
 
     public int getNumberHeldRequests();
 
-    public int getUserId(String player);
+    public int getUserId(String player, boolean createIfNotExists);
 
     public int countRequests(int status);
 

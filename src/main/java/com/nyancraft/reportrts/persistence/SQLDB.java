@@ -71,21 +71,22 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
-    public int getUserId(String player) {
+    public int getUserId(String player, boolean createIfNotExists) {
         if(!isLoaded()) return 0;
         int userId = 0;
         try {
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
-            if(!rs.isBeforeFirst()){
-                userId = createUser(player);
-            }else{
+            if(rs.isBeforeFirst()){
                 if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
                 userId = rs.getInt("id");
             }
             rs.close();
             ps.close();
+            if(userId == 0 && createIfNotExists){
+                userId = createUser(player);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -185,7 +186,7 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             rs.close();
-            int modId = getUserId(player);
+            int modId = getUserId(player, true);
 
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
             ps.setInt(1, status);
@@ -217,7 +218,7 @@ public abstract class SQLDB implements Database{
 
     @Override
     public boolean setUserStatus(String player, int status) {
-        int userId = getUserId(player);
+        int userId = getUserId(player, true);
         ResultSet rs = query(DatabaseManager.getQueryGen().getUserStatus(userId));
         try {
             if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
@@ -344,7 +345,7 @@ public abstract class SQLDB implements Database{
     public ResultSet getHandledBy(String player){
         try{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getHandledBy());
-            ps.setInt(1, getUserId(player));
+            ps.setInt(1, getUserId(player, true));
             return ps.executeQuery();
         }catch(SQLException e){
             e.printStackTrace();

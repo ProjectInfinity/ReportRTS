@@ -51,7 +51,7 @@ public class ModreqCommand implements CommandExecutor {
 
         Player player = (Player)sender;
         String message = RTSFunctions.implode(args, " ");
-        int userId = dbManager.getUserId(player.getName());
+        int userId = dbManager.getUserId(player.getName(), true);
         if(!dbManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
             sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
             return true;

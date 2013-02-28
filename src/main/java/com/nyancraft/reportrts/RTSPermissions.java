@@ -242,4 +242,19 @@ public class RTSPermissions {
         }
         return true;
     }
+
+    public static boolean canAssignRequests(CommandSender sender){
+        if(ReportRTS.permission != null){
+            if(!ReportRTS.permission.has(sender, "reportrts.command.assign")){
+                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.assign"));
+                return false;
+            }
+            return true;
+        }
+        if(!sender.hasPermission("reportrts.command.assign")){
+            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.assign"));
+            return false;
+        }
+        return true;
+    }
 }

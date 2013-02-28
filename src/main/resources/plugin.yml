@@ -40,6 +40,9 @@ commands:
     description: Broadcasts a message to staff
     usage: /<command> [message]
     aliases: [mb]
+  assign:
+    description: Assigns a ticket to specified staff member
+    usage: /<command> [ticket id] [staff member]
 permissions:
   reportrts.mod:
     description: Give this to all staff members.
@@ -97,4 +100,7 @@ permissions:
     default: op
   reportrts.command.notifications:
     description: Permission to manage notifications.
+    default: op
+  reportrts.command.assign:
+    description: Permissions to assign requests.
     default: op

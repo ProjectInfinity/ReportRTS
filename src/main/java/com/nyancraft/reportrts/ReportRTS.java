@@ -78,6 +78,7 @@ public class ReportRTS extends JavaPlugin{
         getCommand("unclaim").setExecutor(new UnclaimCommand(plugin));
         getCommand("modlist").setExecutor(new ModlistCommand());
         getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
+        getCommand("assign").setExecutor(new AssignCommand(plugin));
         if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
         try{
             MetricsLite metrics = new MetricsLite(this);
