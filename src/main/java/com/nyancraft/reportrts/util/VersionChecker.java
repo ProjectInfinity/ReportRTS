@@ -22,7 +22,7 @@ public class VersionChecker {
             connection.setRequestProperty("User-agent", "ReportRTS");
             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String version;
-            String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("b") + 1);
+            String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(0,ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("-"));
             if ((version = bufferedReader.readLine()) != null) {
                 ReportRTS.getPlugin().versionString = version;
                 if (!currentVersion.equals(version)) {

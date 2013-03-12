@@ -9,7 +9,8 @@
 # IntelliJ stuff
 /*.eml
 /*.iml
-
+/.idea
+/target
 # using maven!
 build.xml
 
