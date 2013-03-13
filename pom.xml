@@ -24,11 +24,6 @@
             <artifactId>bukkit</artifactId>
             <version>1.4.7-R1.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.2.22-SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <profiles>
         <profile>

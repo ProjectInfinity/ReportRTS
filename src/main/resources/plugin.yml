@@ -2,7 +2,7 @@ name: ${name}
 main: com.nyancraft.reportrts.ReportRTS
 version: ${version}
 author: ProjectInfinity
-softdepend: [Vault]
+
 commands:
   modreq:
     description: Request help from staff
@@ -102,5 +102,5 @@ permissions:
     description: Permission to manage notifications.
     default: op
   reportrts.command.assign:
-    description: Permissions to assign requests.
+    description: Permission to assign requests.
     default: op
