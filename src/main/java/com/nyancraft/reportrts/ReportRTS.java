@@ -14,10 +14,8 @@ import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.MessageHandler;
 import com.nyancraft.reportrts.util.VersionChecker;
-import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ReportRTS extends JavaPlugin{
@@ -49,8 +47,6 @@ public class ReportRTS extends JavaPlugin{
     public String storagePassword;
     public String versionString;
 
-    public static Permission permission = null;
-
     public void onDisable(){
         DatabaseManager.getDatabase().disconnect();
         messageHandler.saveMessageConfig();
@@ -79,7 +75,6 @@ public class ReportRTS extends JavaPlugin{
         getCommand("modlist").setExecutor(new ModlistCommand());
         getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
         getCommand("assign").setExecutor(new AssignCommand(plugin));
-        if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
         try{
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
@@ -137,14 +132,5 @@ public class ReportRTS extends JavaPlugin{
 
     public static MessageHandler getMessageHandler(){
         return messageHandler;
-    }
-
-    private Boolean setupPermissions(){
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if(permissionProvider != null){
-            permission = permissionProvider.getProvider();
-            log.info("[ReportRTS] Vault and a compatible permissions manager was found. Using Vault for permissions.");
-        }
-        return (permission != null);
     }
 }
