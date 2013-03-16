@@ -31,6 +31,10 @@ public class ModreqCommand implements CommandExecutor {
             sender.sendMessage("[ReportRTS] You cannot file requests through the console.");
             return true;
         }
+        if(plugin.requestMinimumWords > args.length) {
+            sender.sendMessage("[ReportRTS] report must be more than "+ plugin.requestMinimumWords +" words");
+            return true;
+        }
         if(!RTSPermissions.canFileRequest(sender)) return true;
         if(args.length == 0) return false;
         if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
