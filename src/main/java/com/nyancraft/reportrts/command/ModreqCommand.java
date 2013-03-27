@@ -27,12 +27,23 @@ public class ModreqCommand implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(args.length == 0) return false;
         if(!(sender instanceof Player)) {
-            sender.sendMessage("[ReportRTS] You cannot file requests through the console.");
+            sender.sendMessage("[ReportRTS] Some information will not be correct, such as location.");
+            int userId = dbManager.getUserId("CONSOLE", true);
+            String message = RTSFunctions.implode(args, " ");
+            Location location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
+            String world = plugin.getServer().getWorlds().get(0).getName();
+            if(!dbManager.fileRequest("CONSOLE", world, location, message, userId)){
+                sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
+                return true;
+            }
+            int ticketId = dbManager.getLatestTicketIdByUser(userId);
+            plugin.requestMap.put(ticketId, new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world));
+            if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId));
             return true;
         }
         if(!RTSPermissions.canFileRequest(sender)) return true;
-        if(args.length == 0) return false;
         if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
             sender.sendMessage(Message.parse("modreqTooManyOpen"));
             return true;
