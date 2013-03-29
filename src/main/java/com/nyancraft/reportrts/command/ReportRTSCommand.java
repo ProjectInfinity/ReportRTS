@@ -1,6 +1,7 @@
 package com.nyancraft.reportrts.command;
 
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
@@ -68,8 +69,8 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case STATS:
+                if(args.length < 1) return false;
                 if(!RTSPermissions.canCheckStats(sender)) return true;
-                try{
                     rs = dbManager.getHandledBy(args[1]);
                     int currentHeld = 0;
                     int currentClaimed = 0;
@@ -84,10 +85,52 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(ChatColor.YELLOW + "Currently claimed requests: " + currentClaimed);
                     sender.sendMessage(ChatColor.YELLOW + "Currently held requests: " + currentHeld);
                     sender.sendMessage(ChatColor.YELLOW + "Total completed requests: " + totalCompleted);
-                }catch(ArrayIndexOutOfBoundsException e){
-                    return false;
+                break;
+
+            case SEARCH:
+            case FIND:
+                if(args.length < 3) return false;
+                if(!RTSPermissions.canCheckStats(sender)) return true;
+                String action = args[2];
+                if(!action.equalsIgnoreCase("completed") && !action.equalsIgnoreCase("created")) return false;
+                String player = args[1];
+                int pageNumber = 1;
+
+                if(action.equalsIgnoreCase("completed")){
+                    if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
+                    ResultSet result = dbManager.getLimitedHandledBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
+                    sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Completed by " + player + ChatColor.AQUA + " ------");
+                    String substring = null;
+                    SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
+                    String date = null;
+                    if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
+                    while(result.next()){
+                        substring = RTSFunctions.shortenMessage(result.getString("text"));
+                        date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
+                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                        sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+                    }
+                    result.close();
+                }
+
+                if(action.equalsIgnoreCase("created")){
+                    if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
+                    ResultSet result = dbManager.getLimitedCreatedBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
+                    sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Created by " + player + ChatColor.AQUA + " ------");
+                    String substring = null;
+                    SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
+                    String date = null;
+                    if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
+                    while(result.next()){
+                        substring = RTSFunctions.shortenMessage(result.getString("text"));
+                        date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
+                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                        sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+                    }
+                    result.close();
                 }
                 break;
+
             // TODO: Only temporary and for SQLite users. Once I fix the SQLite issue, this will no longer be needed.
             case UPGRADE:
                 if(!sender.isOp() || plugin.storageType.equalsIgnoreCase("mysql")) return true;
@@ -173,6 +216,8 @@ public class ReportRTSCommand implements CommandExecutor{
         UPGRADE,
         HELP,
         NOTIFICATIONS,
-        DUTY
+        DUTY,
+        SEARCH,
+        FIND
     }
 }

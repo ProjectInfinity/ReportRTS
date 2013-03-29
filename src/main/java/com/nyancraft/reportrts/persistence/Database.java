@@ -43,6 +43,10 @@ public interface Database {
 
     public ResultSet getHandledBy(String player);
 
+    public ResultSet getLimitedHandledBy(String player, int from, int limit);
+
+    public ResultSet getLimitedCreatedBy(String player, int from, int limit);
+
     public ResultSet getTicketById(int id);
 
     public ResultSet getHeldTicketById(int id);
@@ -62,10 +66,6 @@ public interface Database {
     public boolean resetDB();
 
     public boolean checkTable(String table);
-
-    /* public boolean addRole();
-
-    public boolean removeRole(); */
 
     public Connection connection();
 }

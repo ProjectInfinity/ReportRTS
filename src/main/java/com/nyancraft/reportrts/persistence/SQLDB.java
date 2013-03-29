@@ -354,6 +354,34 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
+    public ResultSet getLimitedHandledBy(String player, int from, int limit){
+        try{
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getLimitedHandledBy());
+            ps.setInt(1, getUserId(player, true));
+            ps.setInt(2, from);
+            ps.setInt(3, limit);
+            return ps.executeQuery();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public ResultSet getLimitedCreatedBy(String player, int from, int limit){
+        try{
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getLimitedCreatedBy());
+            ps.setInt(1, getUserId(player, true));
+            ps.setInt(2, from);
+            ps.setInt(3, limit);
+            return ps.executeQuery();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public void deleteEntryById(String table, int id){
         this.query(DatabaseManager.getQueryGen().deleteEntryById(table, id));
     }

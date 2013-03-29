@@ -67,6 +67,14 @@ public abstract class Query {
         return "SELECT * FROM reportrts_request WHERE mod_id = ?";
     }
 
+    public String getLimitedHandledBy(){
+        return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.mod_id = ? ORDER BY request.mod_timestamp DESC LIMIT ?, ? ";
+    }
+
+    public String getLimitedCreatedBy(){
+        return "SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE request.user_id = ? ORDER BY request.tstamp DESC LIMIT ?, ? ";
+    }
+
     public String countRequests(int status){
         return "SELECT COUNT(`id`) FROM reportrts_request WHERE `status` = '" + status + "'";
     }
