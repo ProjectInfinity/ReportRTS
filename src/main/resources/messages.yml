@@ -40,6 +40,7 @@ modreqFiledUser: '%gold%Your request has been filed. A staff member should be wi
 modreqFiledMod: '%green%A new request has been filed by {0}, id assigned #{1}.'
 modreqTooManyOpen: '%red%You have too many requests open, please wait before filing more.'
 modreqTooFast: '%red%You need to wait {0} seconds before attempting to file another request.'
+modreqTooShort: '%red%Your request needs to contain at least {0} words.'
 
 modlistMessage: '%aqua%Staff online: %yellow%{0}'
 modlistMessageSeparator: '%yellow%, '
