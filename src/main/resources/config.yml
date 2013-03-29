@@ -21,6 +21,7 @@ request:
   hideOffline: false
   perPage: 5
   nag: 5
+  minimumWords: 3
 
 storage:
   type: sqlite
