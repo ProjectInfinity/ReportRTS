@@ -39,6 +39,7 @@ public class ReportRTS extends JavaPlugin{
     public boolean vanishSupport;
     public int maxRequests;
     public int requestDelay;
+    public int requestMinimumWords;
     public int requestsPerPage;
     public int storagePort;
     public long requestNagging;
@@ -119,6 +120,7 @@ public class ReportRTS extends JavaPlugin{
         hideWhenOffline = getConfig().getBoolean("request.hideOffline");
         maxRequests = getConfig().getInt("request.max");
         requestDelay = getConfig().getInt("request.delay");
+        requestMinimumWords = getConfig().getInt("request.minimumWords");
         requestsPerPage = getConfig().getInt("request.perPage");
         requestNagging = getConfig().getLong("request.nag");
         storageType = getConfig().getString("storage.type", "sqlite");
