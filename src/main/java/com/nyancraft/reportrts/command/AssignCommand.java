@@ -30,6 +30,10 @@ public class AssignCommand implements CommandExecutor {
 
         String name = sender.getName();
         int ticketId = Integer.parseInt(args[0]);
+        if(!plugin.requestMap.containsKey(ticketId)){
+            sender.sendMessage(Message.parse("assignNotOpen"));
+            return true;
+        }
         String assignee = args[1];
         if(name == null || assignee == null){
             sender.sendMessage(Message.parse("generalInternalError", "Your name or assignee is null! Try again."));
