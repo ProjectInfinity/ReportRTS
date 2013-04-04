@@ -107,16 +107,20 @@ public class CheckCommand implements CommandExecutor {
     }
 
     private void checkPage(String page, CommandSender sender){
-        // TODO: Fix page issue occurring when hideWhenOffline = true
         requestList.clear();
         requestList.addAll(plugin.requestMap.entrySet());
 
         int pageNumber = Integer.parseInt(page);
-        sender.sendMessage(ChatColor.AQUA + "--------- " + requestList.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
+        if(pageNumber < 0) pageNumber = 0;
+        int a = pageNumber * plugin.requestsPerPage;
+        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
-        for(int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage; i < (pageNumber * plugin.requestsPerPage) && i < requestList.size(); i++){
+        for(int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage; i < a && i < requestList.size(); i++){
             HelpRequest currentRequest = requestList.get(i).getValue();
-            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName())) continue;
+            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName())){
+                a++;
+                continue;
+            }
             substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
 
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
