@@ -107,7 +107,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
                         date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
                         sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
                     }
                     result.close();
@@ -124,7 +124,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
                         date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
                         sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
                     }
                     result.close();

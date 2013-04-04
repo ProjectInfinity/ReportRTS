@@ -70,7 +70,7 @@ public class CompleteCommand implements CommandExecutor {
         boolean isClaimedByOther = false;
 
         if(plugin.requestMap.containsKey(ticketId)){
-            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getName(), sender.getServer())) ? 1 : 0;
+            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getName())) ? 1 : 0;
             if(plugin.requestMap.get(ticketId).getStatus() == 1){
                 isClaimedByOther = (!plugin.requestMap.get(ticketId).getModName().equalsIgnoreCase(user));
             }

@@ -116,11 +116,11 @@ public class CheckCommand implements CommandExecutor {
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
         for(int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage; i < (pageNumber * plugin.requestsPerPage) && i < requestList.size(); i++){
             HelpRequest currentRequest = requestList.get(i).getValue();
-            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) continue;
+            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName())) continue;
             substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
 
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
-            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
             substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
             sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
         }
@@ -139,7 +139,7 @@ public class CheckCommand implements CommandExecutor {
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
-                ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
                 sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
             }
             rs.close();
@@ -162,7 +162,7 @@ public class CheckCommand implements CommandExecutor {
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
-                ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
                 sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
             }
             rs.close();
@@ -183,7 +183,7 @@ public class CheckCommand implements CommandExecutor {
                 if(plugin.storageType.equalsIgnoreCase("mysql")){
                     if(rs.isBeforeFirst()) rs.first();
                 }
-                online = (RTSFunctions.isUserOnline(rs.getString("name"), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                online = (RTSFunctions.isUserOnline(rs.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
                 String status = null;
                 ChatColor statusColor = null;
@@ -230,7 +230,7 @@ public class CheckCommand implements CommandExecutor {
 
         }
 
-        ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+        ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
         date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
         String status;
         if (currentRequest.getStatus() == 1){
@@ -266,7 +266,7 @@ public class CheckCommand implements CommandExecutor {
                 HelpRequest currentRequest = entry.getValue();
                 substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
                 date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
-                ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName(), sender.getServer())) ? ChatColor.GREEN : ChatColor.RED;
+                ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
                 substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
                 sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
             }

@@ -77,11 +77,10 @@ public class RTSFunctions {
     /**
      * Returns true if the person is online.
      * @param username - String name of player
-     * @param server - server object
      * @return boolean
      */
-    public static boolean isUserOnline(String username, Server server) {
-        return server.getOfflinePlayer(username).isOnline();
+    public static boolean isUserOnline(String username) {
+        return ReportRTS.getPlugin().getServer().getOfflinePlayer(username).isOnline();
     }
 
     /***
