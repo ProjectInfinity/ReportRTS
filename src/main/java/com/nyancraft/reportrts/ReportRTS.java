@@ -23,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ReportRTS extends JavaPlugin{
 
     private static ReportRTS plugin;
-    private final Logger log = Logger.getLogger("Minecraft");
+    private final Logger log = getLogger();
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
 
