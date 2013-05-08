@@ -145,7 +145,6 @@ public class ReportRTS extends JavaPlugin{
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if(permissionProvider != null){
             permission = permissionProvider.getProvider();
-            log.info("[ReportRTS] Vault and a compatible permissions manager was found. Using Vault for permissions.");
         }
         return (permission != null);
     }
