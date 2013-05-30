@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
+import com.nyancraft.reportrts.ReportCreateEvent;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.Database;
@@ -39,7 +40,9 @@ public class ModreqCommand implements CommandExecutor {
                 return true;
             }
             int ticketId = dbManager.getLatestTicketIdByUser(userId);
-            plugin.requestMap.put(ticketId, new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world));
+            HelpRequest request = new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world);
+            plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
+            plugin.requestMap.put(ticketId, request);
             if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId));
             return true;
         }
@@ -79,7 +82,9 @@ public class ModreqCommand implements CommandExecutor {
         plugin.getLogger().log(Level.INFO, "" + player.getName() + " filed a request.");
         if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId));
 
-        plugin.requestMap.put(ticketId, new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName()));
+        HelpRequest request = new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName());
+        plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
+        plugin.requestMap.put(ticketId, request);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
