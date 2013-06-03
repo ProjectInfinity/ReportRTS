@@ -32,7 +32,7 @@ public class ReopenCommand implements CommandExecutor{
         plugin.requestMap.clear();
         DatabaseManager.getDatabase().populateRequestMap();
 
-        RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]));
+        RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), true);
         sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
