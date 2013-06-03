@@ -43,7 +43,7 @@ public class ModreqCommand implements CommandExecutor {
             HelpRequest request = new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world);
             plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
             plugin.requestMap.put(ticketId, request);
-            if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId));
+            if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId), true);
             return true;
         }
         if(!RTSPermissions.canFileRequest(sender)) return true;
@@ -80,7 +80,7 @@ public class ModreqCommand implements CommandExecutor {
 
         sender.sendMessage(Message.parse("modreqFiledUser"));
         plugin.getLogger().log(Level.INFO, "" + player.getName() + " filed a request.");
-        if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId));
+        if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), true);
 
         HelpRequest request = new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName());
         plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));

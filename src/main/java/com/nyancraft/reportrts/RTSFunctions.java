@@ -66,6 +66,7 @@ public class RTSFunctions {
     /***
      * Messages all online moderators on the server
      * @param message - message to be displayed
+     * @param playSound - boolean play sound or not.
      */
     public static void messageMods(String message, boolean playSound){
         for(String name : ReportRTS.getPlugin().moderatorMap){
