@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Server;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -66,11 +67,12 @@ public class RTSFunctions {
      * Messages all online moderators on the server
      * @param message - message to be displayed
      */
-    public static void messageMods(String message){
+    public static void messageMods(String message, boolean playSound){
         for(String name : ReportRTS.getPlugin().moderatorMap){
             Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
             if(player == null) return;
             player.sendMessage(message);
+            if(playSound) player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0);
         }
     }
 

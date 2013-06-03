@@ -55,7 +55,7 @@ public class AssignCommand implements CommandExecutor {
         plugin.requestMap.get(ticketId).setStatus(1);
         plugin.requestMap.get(ticketId).setModName(assignee);
         plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
-        RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId));
+        RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId), false);
 
         if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
