@@ -23,7 +23,7 @@ public class ModBroadcastCommand implements CommandExecutor{
         double start = 0;
         if(plugin.debugMode) start = System.nanoTime();
         String message = RTSFunctions.implode(args, " ");
-        RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message));
+        RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), false);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }

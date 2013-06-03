@@ -91,7 +91,7 @@ public class ReportRTS extends JavaPlugin{
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
                     int openRequests = requestMap.size();
-                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests));
+                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
                 }
             }, 120L, (requestNagging * 60) * 20);
         }

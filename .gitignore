@@ -11,6 +11,7 @@
 /*.iml
 /.idea
 /target
+/out
 # using maven!
 build.xml
 

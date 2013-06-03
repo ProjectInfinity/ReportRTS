@@ -40,7 +40,7 @@ public class UnclaimCommand implements CommandExecutor{
             player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(ticketId).getMessage()));
         }
         plugin.requestMap.get(ticketId).setStatus(0);
-        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]));
+        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]), false);
         plugin.requestMap.get(ticketId).setModName(null);
         sender.sendMessage(Message.parse("unclaimReqSelf", args[0]));
 
