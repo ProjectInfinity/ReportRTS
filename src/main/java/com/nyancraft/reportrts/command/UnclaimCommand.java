@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.events.ReportUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
@@ -41,9 +42,12 @@ public class UnclaimCommand implements CommandExecutor{
         }
         plugin.requestMap.get(ticketId).setStatus(0);
         RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]), false);
+        String modname = plugin.requestMap.get(ticketId).getModName();
         plugin.requestMap.get(ticketId).setModName(null);
         sender.sendMessage(Message.parse("unclaimReqSelf", args[0]));
-
+        
+        plugin.getServer().getPluginManager().callEvent(new ReportUnclaimEvent(plugin.requestMap.get(ticketId), modname, sender));
+        
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }

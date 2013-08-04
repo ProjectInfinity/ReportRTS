@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.events.ReportCompleteEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
@@ -98,6 +99,9 @@ public class CompleteCommand implements CommandExecutor {
         }
 
         RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), false);
+        
+        plugin.getServer().getPluginManager().callEvent(new ReportCompleteEvent(plugin.requestMap.get(ticketId), sender));
+        
         if(plugin.debugMode) Message.debug(user, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
