@@ -16,7 +16,9 @@ public class ReportUnclaimEvent extends ReportEvent {
 	private CommandSender sender;
 	
 	public ReportUnclaimEvent(HelpRequest request, String modName, CommandSender sender) {
-		super(request);
+            super(request);
+            this.sender = sender;
+            this.modName = modName;
 	}
 	
 	/**
@@ -37,5 +39,4 @@ public class ReportUnclaimEvent extends ReportEvent {
 	public CommandSender getUnclaimer(){
 		return sender;
 	}
-
 }

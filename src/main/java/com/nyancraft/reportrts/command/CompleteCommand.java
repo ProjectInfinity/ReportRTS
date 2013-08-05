@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.events.ReportCompleteEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
@@ -86,7 +87,7 @@ public class CompleteCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
             return true;
         }
-
+        HelpRequest data = null;
         if(plugin.requestMap.containsKey(ticketId)) {
             Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
             if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getName());
@@ -95,13 +96,14 @@ public class CompleteCommand implements CommandExecutor {
                 if(comment == null) comment = "";
                 player.sendMessage(Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment));
             }
+            data = plugin.requestMap.get(ticketId);
             plugin.requestMap.remove(ticketId);
         }
 
         RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), false);
-        
-        plugin.getServer().getPluginManager().callEvent(new ReportCompleteEvent(plugin.requestMap.get(ticketId), sender));
-        
+        if(data != null){
+            plugin.getServer().getPluginManager().callEvent(new ReportCompleteEvent(data, sender));
+        }
         if(plugin.debugMode) Message.debug(user, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }

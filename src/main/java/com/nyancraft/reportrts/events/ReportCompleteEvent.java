@@ -16,7 +16,8 @@ public class ReportCompleteEvent extends ReportEvent {
 	private CommandSender sender;
 	
 	public ReportCompleteEvent(HelpRequest request, CommandSender sender) {
-		super(request);
+            super(request);
+            this.sender = sender;
 	}
 	
 	/**
