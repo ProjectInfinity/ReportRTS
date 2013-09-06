@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.persistence.query.Query;
 
-import lib.PatPeter.RE_SQLibrary.MySQL;
+import com.nyancraft.reportrts.persistence.database.MySQL;
 
 public class MySQLDB extends SQLDB {
     private MySQL db;
@@ -16,19 +16,10 @@ public class MySQLDB extends SQLDB {
 
     public Query queryGen;
 
-    public ResultSet query(String query){
-        try{
-            return db.query(query);
-        }catch(Exception e){
-            return null;
-        }
-    }
-
     public boolean connect(){
         ReportRTS.getPlugin().getLogger().info("Connecting to MySQL.");
-        db = new MySQL(ReportRTS.getPlugin().getLogger(), "[MySQL]", ReportRTS.getPlugin().storageHostname,
-                ReportRTS.getPlugin().storagePort, ReportRTS.getPlugin().storageDatabase,
-                ReportRTS.getPlugin().storageUsername, ReportRTS.getPlugin().storagePassword);
+        db = new MySQL(ReportRTS.getPlugin().getLogger(), ReportRTS.getPlugin().storageDatabase, ReportRTS.getPlugin().storageUsername,
+                ReportRTS.getPlugin().storagePassword, ReportRTS.getPlugin().storageHostname, ReportRTS.getPlugin().storagePort, ReportRTS.getPlugin().storagePrefix);
         queryGen = DatabaseManager.getQueryGen();
         try{
             db.open();
@@ -47,6 +38,14 @@ public class MySQLDB extends SQLDB {
         }
         ReportRTS.getPlugin().getLogger().info("Successfully connected and checked tables, will use MySQL.");
         return true;
+    }
+
+    public ResultSet query(String query){
+        try {
+            return db.query(query);
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
     private boolean checkTables() throws Exception{

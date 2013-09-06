@@ -68,4 +68,7 @@ public interface Database {
     public boolean checkTable(String table);
 
     public Connection connection();
+
+    public ResultSet query(String query);
+
 }

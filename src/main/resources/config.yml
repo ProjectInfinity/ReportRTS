@@ -8,7 +8,7 @@
 # request.hideOffline - If set to true, hides all requests in /check from offline users.
 # request.perPage - This sets the amount of requests that should be shown on each page.
 # request.nag - If above 0 (minutes), nag the online staff members about open requests.
-# storage - Setup for storage in ReportRTS. Supported types: SQLite, MySQL.
+# storage - Setup for storage in ReportRTS. Supported types: MySQL.
 notifyStaff: true
 hideMessageIfEmpty: false
 debug: false
@@ -24,9 +24,10 @@ request:
   minimumWords: 3
 
 storage:
-  type: sqlite
+  type: mysql
   hostname: 'localhost'
   port: 3306
   database: 'minecraft'
   username: 'username'
   password: 'password'
+  prefix: ''

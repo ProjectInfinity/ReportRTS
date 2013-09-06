@@ -23,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ReportRTS extends JavaPlugin{
 
     private static ReportRTS plugin;
-    private final Logger log = getLogger();
+    private final Logger log = Logger.getLogger("Minecraft");
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
 
@@ -48,6 +48,7 @@ public class ReportRTS extends JavaPlugin{
     public String storageDatabase;
     public String storageUsername;
     public String storagePassword;
+    public String storagePrefix;
     public String versionString;
 
     public static Permission permission = null;
@@ -123,12 +124,13 @@ public class ReportRTS extends JavaPlugin{
         requestMinimumWords = getConfig().getInt("request.minimumWords");
         requestsPerPage = getConfig().getInt("request.perPage");
         requestNagging = getConfig().getLong("request.nag");
-        storageType = getConfig().getString("storage.type", "sqlite");
+        storageType = getConfig().getString("storage.type", "mysql");
         storagePort = getConfig().getInt("storage.port");
         storageHostname = getConfig().getString("storage.hostname");
         storageDatabase = getConfig().getString("storage.database");
         storageUsername = getConfig().getString("storage.username");
         storagePassword = getConfig().getString("storage.password");
+        storagePrefix = getConfig().getString("storage.prefix");
         debugMode = getConfig().getBoolean("debug");
         vanishSupport = getConfig().getBoolean("VanishSupport", false);
     }

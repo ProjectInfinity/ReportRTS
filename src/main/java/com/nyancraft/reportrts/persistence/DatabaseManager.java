@@ -3,7 +3,8 @@ package com.nyancraft.reportrts.persistence;
 import java.sql.Connection;
 
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.persistence.query.*;
+import com.nyancraft.reportrts.persistence.query.MySQLQuery;
+import com.nyancraft.reportrts.persistence.query.Query;
 
 public class DatabaseManager {
     private static Database database;
@@ -12,37 +13,17 @@ public class DatabaseManager {
     public static boolean load(){
         String type = ReportRTS.getPlugin().storageType;
         if(type.equalsIgnoreCase("mysql")){
-            if(!loadMySQL()) loadSQLite();
-        }
-        if(type.equalsIgnoreCase("sqlite")) loadSQLite();
-        /*if(type.equalsIgnoreCase("h2")){
-            if(!loadH2()){
-                File h2File = new File("lib/h2-1.3.164.jar");
-                if(!h2File.exists()){
-                    ReportRTS.getPlugin().getLogger().warning("-------------------------------");
-                    ReportRTS.getPlugin().getLogger().warning("H2 library not found!");
-                    ReportRTS.getPlugin().getLogger().warning("Either change the storage type");
-                    ReportRTS.getPlugin().getLogger().warning("or install the required H2 library to your lib folder.");
-                    ReportRTS.getPlugin().getLogger().warning("See http://dev.bukkit.org/server-mods/reportrts/pages/h2/ for more info.");
-                    ReportRTS.getPlugin().getLogger().warning("-------------------------------");
-                    ReportRTS.getPlugin().getServer().getPluginManager().disablePlugin(ReportRTS.getPlugin());
-                    return false;
-                }
+            if(loadMySQL()){
+                database.setLoaded();
+                return true;
             }
-        } */
-        database.setLoaded();
-        return true;
+        }
+        return false;
     }
 
     private static boolean loadMySQL(){
         database = new MySQLDB();
         queryGen = new MySQLQuery();
-        return database.connect();
-    }
-
-    private static boolean loadSQLite(){
-        database = new SQLiteDB();
-        queryGen = new SQLiteQuery();
         return database.connect();
     }
 
