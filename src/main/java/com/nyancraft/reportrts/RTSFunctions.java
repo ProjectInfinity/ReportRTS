@@ -178,7 +178,7 @@ public class RTSFunctions {
         if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) return true;
         columns.clear();
         try{
-            ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(DatabaseManager.getQueryGen().getColumns("reportrts_request"));
+            ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(DatabaseManager.getQueryGen().getColumns(ReportRTS.getPlugin().storagePrefix + "reportrts_request"));
             while(rs.next()){
                 columns.add(rs.getString("name"));
             }

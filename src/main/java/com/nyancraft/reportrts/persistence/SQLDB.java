@@ -113,7 +113,7 @@ public abstract class SQLDB implements Database{
         int heldRequests = 0;
 
         try {
-            ResultSet result = query("SELECT `id` FROM `reportrts_request` WHERE `status` = 2");
+            ResultSet result = query("SELECT `id` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` WHERE `status` = 2");
             while(result.next()){
                 heldRequests++;
             }
@@ -188,7 +188,7 @@ public abstract class SQLDB implements Database{
             rs.close();
             int modId = getUserId(player, true);
 
-            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE " + ReportRTS.getPlugin().storagePrefix + "reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
             ps.setInt(1, status);
             ps.setInt(2, modId);
             ps.setLong(3, System.currentTimeMillis() / 1000);
@@ -200,7 +200,7 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             ps.close();
-            rs = query("SELECT `status` FROM `reportrts_request` WHERE `id` = " + id);
+            rs = query("SELECT `status` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` WHERE `id` = " + id);
             if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                 if(rs.isBeforeFirst()) rs.next();
             }

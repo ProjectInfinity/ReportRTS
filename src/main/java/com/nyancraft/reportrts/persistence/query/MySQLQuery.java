@@ -1,9 +1,11 @@
 package com.nyancraft.reportrts.persistence.query;
 
+import com.nyancraft.reportrts.ReportRTS;
+
 public class MySQLQuery extends Query{
     @Override
     public String createRequestTable() {
-        return "CREATE TABLE `reportrts_request` (" +
+        return "CREATE TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` (" +
                 "`id` INT(10) UNSIGNED NULL AUTO_INCREMENT," +
                 "`user_id` INT(10) UNSIGNED NULL DEFAULT '0'," +
                 "`mod_id` INT(10) UNSIGNED NULL DEFAULT '0'," +
@@ -29,7 +31,7 @@ public class MySQLQuery extends Query{
 
     @Override
     public String createUserTable() {
-        return "CREATE TABLE `reportrts_user` (" +
+        return "CREATE TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (" +
                 "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
                 "`name` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci'," +
                 "`banned` TINYINT(1) UNSIGNED NULL DEFAULT NULL," +

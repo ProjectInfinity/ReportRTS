@@ -38,7 +38,7 @@ public class CompleteCommand implements CommandExecutor {
                     sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
                     return true;
                 }
-                dbManager.deleteEntryById("reportrts_request", ticketId);
+                dbManager.deleteEntryById(plugin.storagePrefix + "reportrts_request", ticketId);
                 plugin.requestMap.remove(ticketId);
                 RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"), false);
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));

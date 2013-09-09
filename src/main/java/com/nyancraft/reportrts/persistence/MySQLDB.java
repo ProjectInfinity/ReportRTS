@@ -49,27 +49,27 @@ public class MySQLDB extends SQLDB {
     }
 
     private boolean checkTables() throws Exception{
-        if(!this.db.isTable("reportrts_request")){
+        if(!this.db.isTable(ReportRTS.getPlugin().storagePrefix + "reportrts_request")){
             if(!db.createTable(queryGen.createRequestTable())) return false;
-            ReportRTS.getPlugin().getLogger().info("Created reportrts_request table.");
+            ReportRTS.getPlugin().getLogger().info("Created " + ReportRTS.getPlugin().storagePrefix + "reportrts_request table.");
         }
-        if(!this.db.isTable("reportrts_user")){
+        if(!this.db.isTable(ReportRTS.getPlugin().storagePrefix + "reportrts_user")){
             if(!db.createTable(queryGen.createUserTable())) return false;
-            ReportRTS.getPlugin().getLogger().info("Created reportrts_user table.");
+            ReportRTS.getPlugin().getLogger().info("Created " + ReportRTS.getPlugin().storagePrefix + "reportrts_user table.");
         }
         return true;
     }
 
     private boolean checkColumns(){
         try{
-            ResultSet rs = db.query(queryGen.getColumns("reportrts_request"));
+            ResultSet rs = db.query(queryGen.getColumns(ReportRTS.getPlugin().storagePrefix + "reportrts_request"));
             columns.clear();
             while(rs.next()){
                 columns.add(rs.getString("Field"));
             }
             rs.close();
             if(!columns.contains("yaw") || !columns.contains("pitch")){
-                db.query("ALTER TABLE `reportrts_request`" +
+                db.query("ALTER TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`" +
                         " ADD COLUMN `yaw` smallint(6) NOT NULL DEFAULT 0 AFTER `z`," +
                         " ADD COLUMN `pitch` smallint(6) NOT NULL DEFAULT 0 AFTER `yaw`");
                 ReportRTS.getPlugin().getLogger().info("Successfully upgraded the database structure to v0.4.0");
@@ -94,8 +94,8 @@ public class MySQLDB extends SQLDB {
     @Override
     public boolean resetDB() {
         try {
-            db.query("TRUNCATE TABLE reportrts_request");
-            db.query("TRUNCATE TABLE reportrts_user");
+            db.query("TRUNCATE TABLE " + ReportRTS.getPlugin().storagePrefix + "reportrts_request");
+            db.query("TRUNCATE TABLE " + ReportRTS.getPlugin().storagePrefix + "reportrts_user");
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
