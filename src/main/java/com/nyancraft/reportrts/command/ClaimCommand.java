@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.events.ReportClaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
@@ -48,6 +49,10 @@ public class ClaimCommand implements CommandExecutor{
         plugin.requestMap.get(ticketId).setModName(name);
         plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
         RTSFunctions.messageMods(Message.parse("claimRequest", name, args[0]), false);
+        
+        // Let other plugins know the request was claimed
+        plugin.getServer().getPluginManager().callEvent(new ReportClaimEvent(plugin.requestMap.get(ticketId)));
+        
         if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }

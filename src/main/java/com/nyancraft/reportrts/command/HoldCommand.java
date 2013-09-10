@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.events.ReportHoldEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
@@ -36,12 +37,17 @@ public class HoldCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
             return true;
         }
+        
         if(plugin.requestMap.containsKey(ticketId)){
+        	
             Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
             if(player != null){
                 player.sendMessage(Message.parse("holdUser", sender.getName()));
                 player.sendMessage(Message.parse("holdText", plugin.requestMap.get(ticketId).getMessage(), reason.trim()));
             }
+            
+            plugin.getServer().getPluginManager().callEvent(new ReportHoldEvent(plugin.requestMap.get(ticketId), reason, sender));
+            
             plugin.requestMap.remove(ticketId);
         }
 
