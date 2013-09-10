@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.events.ReportUnclaimEvent;
+import com.nyancraft.reportrts.event.ReportUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 

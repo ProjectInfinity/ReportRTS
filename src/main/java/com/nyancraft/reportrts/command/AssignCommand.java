@@ -3,7 +3,7 @@ package com.nyancraft.reportrts.command;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.events.ReportAssignEvent;
+import com.nyancraft.reportrts.event.ReportAssignEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;

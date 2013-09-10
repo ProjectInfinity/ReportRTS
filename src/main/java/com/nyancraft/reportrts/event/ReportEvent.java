@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.events;
+package com.nyancraft.reportrts.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
- * Base class for all events regarding Reports.
+ * Base class for all event regarding Reports.
  *
  */
 public abstract class ReportEvent extends Event {

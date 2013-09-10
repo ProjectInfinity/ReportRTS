@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.events;
+package com.nyancraft.reportrts.event;
 
 import org.bukkit.command.CommandSender;
 
