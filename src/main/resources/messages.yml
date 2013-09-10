@@ -28,7 +28,7 @@ unclaimText: '%gold%Request text: %yellow%{0}'
 
 completedReq: '%gold%Request #{0} was completed by {1}.'
 completedUser: '%gold%{0} completed your request.'
-completedUserOffline: '%gold%One of your requests have been completed.'
+completedUserOffline: '%gold%One of your requests have been completed while you were offline.'
 completedText: '%gold%Request text: %yellow%{0} %gold%Comment: %yellow%{1}'
 
 holdRequest: '%gold%Request #{0} was put on hold by {1}'

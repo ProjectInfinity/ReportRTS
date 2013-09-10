@@ -1,7 +1,5 @@
 package com.nyancraft.reportrts;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -31,21 +29,9 @@ public class RTSListener implements Listener{
         if(plugin.notificationMap.size() > 0){
             ArrayList<Integer> keys = new ArrayList();
             for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
-
                 if(entry.getValue().equals(event.getPlayer().getName())){
-                    ResultSet rs = DatabaseManager.getDatabase().getTicketById(entry.getKey());
-                    try{
-                        if(plugin.storageType.equalsIgnoreCase("mysql")) rs.first();
-                        event.getPlayer().sendMessage(Message.parse("completedUserOffline"));
-                        String comment = rs.getString("mod_comment");
-                        if(comment == null) comment = "";
-                        event.getPlayer().sendMessage(Message.parse("completedText", rs.getString("text"), comment));
-                        rs.close();
-                        if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().warning("Unable to set notification status to 1.");
-                        keys.add(entry.getKey());
-                    }catch(SQLException e){
-                        e.printStackTrace();
-                    }
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+                    keys.add(entry.getKey());
                 }
             }
             for(int key : keys) plugin.notificationMap.remove(key);
