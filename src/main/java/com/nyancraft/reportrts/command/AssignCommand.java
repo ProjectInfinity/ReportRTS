@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.events.ReportAssignEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
@@ -56,7 +57,10 @@ public class AssignCommand implements CommandExecutor {
         plugin.requestMap.get(ticketId).setModName(assignee);
         plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
         RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId), false);
-
+        
+        // Let other plugins know the request was assigned.
+        plugin.getServer().getPluginManager().callEvent(new ReportAssignEvent(plugin.requestMap.get(ticketId), sender));
+        
         if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
