@@ -23,7 +23,7 @@ public class LoginTask extends BukkitRunnable {
     public void run() {
         ResultSet rs = DatabaseManager.getDatabase().getTicketById(entry.getKey());
         try{
-            plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedUserOffline"));
+            if(plugin.getServer().getOfflinePlayer(player).isOnline()) plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedUserOffline"));
             rs.first();
             String comment = rs.getString("mod_comment");
             if(comment == null) comment = "";
