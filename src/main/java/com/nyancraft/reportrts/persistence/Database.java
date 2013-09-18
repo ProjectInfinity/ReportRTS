@@ -71,4 +71,6 @@ public interface Database {
 
     public ResultSet query(String query);
 
+    public void refresh();
+
 }

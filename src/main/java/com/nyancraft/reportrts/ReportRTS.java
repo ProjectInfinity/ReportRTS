@@ -43,6 +43,7 @@ public class ReportRTS extends JavaPlugin{
     public int requestsPerPage;
     public int storagePort;
     public long requestNagging;
+    public long storageRefreshTime;
     public String storageType;
     public String storageHostname;
     public String storageDatabase;
@@ -96,6 +97,14 @@ public class ReportRTS extends JavaPlugin{
                 }
             }, 120L, (requestNagging * 60) * 20);
         }
+
+        if(plugin.storageRefreshTime > 0){
+            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+                public void run(){
+                    DatabaseManager.getDatabase().refresh();
+                }
+            }, 4000L, plugin.storageRefreshTime * 20);
+        }
     }
 
     public void reloadPlugin(){
@@ -124,6 +133,7 @@ public class ReportRTS extends JavaPlugin{
         requestMinimumWords = getConfig().getInt("request.minimumWords");
         requestsPerPage = getConfig().getInt("request.perPage");
         requestNagging = getConfig().getLong("request.nag");
+        storageRefreshTime = getConfig().getLong("storage.refreshTime");
         storageType = getConfig().getString("storage.type", "mysql");
         storagePort = getConfig().getInt("storage.port");
         storageHostname = getConfig().getString("storage.hostname");

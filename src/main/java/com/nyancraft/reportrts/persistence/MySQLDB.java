@@ -107,4 +107,9 @@ public class MySQLDB extends SQLDB {
     public boolean checkTable(String table){
         return db.isTable(table);
     }
+
+    @Override
+    public void refresh(){
+        this.query("SELECT 1");
+    }
 }

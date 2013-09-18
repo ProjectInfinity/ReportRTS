@@ -31,3 +31,4 @@ storage:
   username: 'username'
   password: 'password'
   prefix: ''
+  refreshTime: 600

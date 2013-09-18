@@ -40,7 +40,7 @@ public class MySQL extends Database {
     public boolean open(){
         if(!initialize()) return false;
         try{
-            this.connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username, password);
+            this.connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database + "?autoReconnect=true", username, password);
             this.connected = true;
             return true;
         }catch(SQLException e){
