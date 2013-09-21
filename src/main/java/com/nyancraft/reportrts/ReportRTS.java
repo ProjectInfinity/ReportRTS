@@ -1,6 +1,5 @@
 package com.nyancraft.reportrts;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -83,12 +82,6 @@ public class ReportRTS extends JavaPlugin{
         getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
         getCommand("assign").setExecutor(new AssignCommand(plugin));
         if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
-        try{
-            MetricsLite metrics = new MetricsLite(this);
-            metrics.start();
-        }catch(IOException e){
-            log.info("Unable to submit stats!");
-        }
         if(requestNagging > 0){
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
