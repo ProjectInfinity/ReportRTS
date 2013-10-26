@@ -22,19 +22,22 @@ public class ReopenCommand implements CommandExecutor{
         if(args.length == 0) return false;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         double start = 0;
+        int ticketId = Integer.parseInt(args[0]);
         if(plugin.debugMode) start = System.nanoTime();
         if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
             return true;
         }
 
-        // For lack of a better way of doing it. SHOULD DO SOMETHING ABOUT THIS!
-        plugin.requestMap.clear();
-        DatabaseManager.getDatabase().populateRequestMap();
-
-        RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), true);
-        sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
-        if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
-        return true;
+       if(RTSFunctions.syncTicket(ticketId)){
+           // TODO: Implement BungeeCord specific code here.
+           RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), true);
+           sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
+           if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+           return true;
+       }else{
+           sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
+           return true;
+       }
     }
 }

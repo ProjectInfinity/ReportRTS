@@ -21,6 +21,8 @@ public interface Database {
 
     public void deleteEntryById(String table, int id);
 
+    public int updateTicket(int ticketId);
+
     public int getNumberHeldRequests();
 
     public int getUserId(String player, boolean createIfNotExists);

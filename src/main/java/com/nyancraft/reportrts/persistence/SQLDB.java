@@ -400,4 +400,25 @@ public abstract class SQLDB implements Database{
         }
         return username;
     }
+
+    public int updateTicket(int ticketId) {
+        try {
+            ResultSet rs = query(DatabaseManager.getQueryGen().getTicketById(ticketId));
+            int results = 0;
+            while (rs.next()) {
+                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
+                if (rs.getInt("status") > 0) {
+                    ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModName(getUserName(rs.getInt("mod_id")));
+                }
+                ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModTimestamp(rs.getInt("mod_timestamp"));
+                results++;
+                break; // This will force only one ticket to be synchronized.
+            }
+            rs.close();
+            return results;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }

@@ -78,6 +78,16 @@ public class RTSFunctions {
     }
 
     /**
+     * Synchronizes ticket data from the given ticket ID.
+     *
+     * @param ticketId - ticket ID to be synchronized.
+     */
+    public static boolean syncTicket(int ticketId) {
+        int updateResult = DatabaseManager.getDatabase().updateTicket(ticketId);
+        return updateResult > 0;
+    }
+
+    /**
      * Returns true if the person is online.
      * @param username - String name of player
      * @return boolean
