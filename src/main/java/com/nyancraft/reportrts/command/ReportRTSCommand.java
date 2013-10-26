@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +23,13 @@ public class ReportRTSCommand implements CommandExecutor{
     private ReportRTS plugin;
     private ResultSet rs;
     private Database dbManager;
+
+    private boolean storageHostname = false;
+    private boolean storagePort = false;
+    private boolean storageDatabase = false;
+    private boolean storageUsername = false;
+    private boolean storagePassword = false;
+    private boolean storageRefresh = false;
 
     public ReportRTSCommand(ReportRTS plugin) {
         this.plugin = plugin;
@@ -189,6 +197,161 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;
+
+            case SETUP:
+                if(args.length <= 1){
+                    sender.sendMessage(ChatColor.RED + "Missing argument! Arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("HOSTNAME")){
+                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
+                        sender.sendMessage(ChatColor.RED + "Hostname cannot be empty or null! Default is localhost or 127.0.0.1");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.hostname", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storageHostname = true;
+                    sender.sendMessage(ChatColor.GREEN + "Hostname set to " + args[2] + ", you should configure PORT next.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("PORT")){
+                    if(args.length < 3 || args[2] == null || !StringUtils.isNumeric(args[2])){
+                        sender.sendMessage(ChatColor.RED + "Port can only contain numbers and may not be left blank! Default is 3306.");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.port", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storagePort = true;
+                    sender.sendMessage(ChatColor.GREEN + "Port set to " + args[2] + ", you should configure DATABASE next.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("DATABASE")){
+                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
+                        sender.sendMessage(ChatColor.RED + "Database cannot be empty or null!");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.database", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storageDatabase = true;
+                    sender.sendMessage(ChatColor.GREEN + "Database set to " + args[2] + ", you should configure USERNAME next.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("USERNAME")){
+                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
+                        sender.sendMessage(ChatColor.RED + "Username cannot be empty or null!");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.username", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storageUsername = true;
+                    sender.sendMessage(ChatColor.GREEN + "Username set to " + args[2] + ", you should configure PASSWORD next.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("PASSWORD")){
+                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
+                        sender.sendMessage(ChatColor.RED + "Password cannot be empty or null!");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.password", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storagePassword = true;
+                    sender.sendMessage(ChatColor.GREEN + "Password set to " + args[2] + ", next up is PREFIX. Prefix is optional, if you want to have no prefix, do NOT configure it! You may skip PREFIX and jump straight to REFRESH.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("PREFIX")){
+                    if(args.length < 3 || args[2] == null || args[2].isEmpty()){
+                        plugin.getConfig().set("storage.prefix", "");
+                    }else{
+                        plugin.getConfig().set("storage.prefix", args[2]);
+                    }
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    sender.sendMessage(ChatColor.GREEN + "Prefix set to " + args[2] + ", you should configure REFRESH next.");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+                if(args[1].equalsIgnoreCase("REFRESH")){
+                    if(args.length < 3 || args[2] == null || !StringUtils.isNumeric(args[2])){
+                        sender.sendMessage(ChatColor.RED + "Refresh time can only contain numbers and may not be left blank! Default is 600 seconds.");
+                        return true;
+                    }
+                    plugin.getConfig().set("storage.refreshTime", args[2]);
+                    plugin.saveConfig();
+                    plugin.reloadConfig();
+                    this.storageRefresh = true;
+                    sender.sendMessage(ChatColor.GREEN + "Refresh set to " + args[2] + ", if you have followed the instructions you should now be done!");
+
+                    if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
+                        plugin.setupDone = true;
+                        plugin.reloadSettings();
+                        if(DatabaseManager.load()){
+                            sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
+                            plugin.getServer().getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+                    return true;
+                }
+
+                sender.sendMessage(ChatColor.RED + "Wrong argument! Valid arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
+                break;
             }
         }catch(Exception e){
             return false;
@@ -206,6 +369,7 @@ public class ReportRTSCommand implements CommandExecutor{
         NOTIFICATIONS,
         DUTY,
         SEARCH,
-        FIND
+        FIND,
+        SETUP
     }
 }

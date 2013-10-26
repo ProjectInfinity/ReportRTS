@@ -49,7 +49,10 @@ public class RTSListener implements Listener{
         if(openRequests > 0)
             event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests));
 
-        if(event.getPlayer().isOp() && plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));
+        if(event.getPlayer().isOp()){
+            if(plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));
+            if(!plugin.setupDone) event.getPlayer().sendMessage(Message.parse("generalSetupNotDone"));
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

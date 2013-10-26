@@ -5,6 +5,7 @@ generalInternalError: '%red%An error occurred. Reference: {0}'
 generalOpenRequests: '%green%There are {0} open requests. Type /check to see them.'
 generalNoRequests: '%white%There are no requests at this time.'
 generalRequestNotFound: '%red%Request #{0} was not found.'
+generalSetupNotDone: '%red%ReportRTS has not been set up! Use /reportrts setup.'
 
 banUser: '%gold%{0} has banned {1} from filing requests.'
 unbanUser: '%gold%{0} has unbanned {1} from filing requests.'

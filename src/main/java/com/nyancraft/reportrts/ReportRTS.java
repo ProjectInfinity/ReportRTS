@@ -37,6 +37,7 @@ public class ReportRTS extends JavaPlugin{
     public boolean debugMode;
     public boolean outdated;
     public boolean vanishSupport;
+    public boolean setupDone = true;
     public int maxRequests;
     public int requestDelay;
     public int requestMinimumWords;
@@ -64,11 +65,17 @@ public class ReportRTS extends JavaPlugin{
         reloadSettings();
         final PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new RTSListener(plugin), plugin);
-        if(!DatabaseManager.load()){
-            log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
-            pm.disablePlugin(this);
+        if(!(storageHostname.equalsIgnoreCase("localhost") && storagePort == 3306 && storageDatabase.equalsIgnoreCase("minecraft")
+        && storageUsername.equalsIgnoreCase("username") && storagePassword.equalsIgnoreCase("password")
+        && storagePrefix.equalsIgnoreCase("") && storageRefreshTime == 600)){
+            if(!DatabaseManager.load()){
+                log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
+                pm.disablePlugin(this);
+            }
+            reloadPlugin();
+        }else{
+            setupDone = false;
         }
-        reloadPlugin();
         outdated = !versionChecker.upToDate();
         getCommand("modreq").setExecutor(new ModreqCommand(plugin));
         getCommand("check").setExecutor(new CheckCommand(plugin));
