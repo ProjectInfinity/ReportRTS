@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.event.ReportReopenEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 
@@ -32,6 +33,8 @@ public class ReopenCommand implements CommandExecutor{
        if(RTSFunctions.syncTicket(ticketId)){
            // TODO: Implement BungeeCord specific code here.
            RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), true);
+           // Let other plugins know the request was assigned.
+           plugin.getServer().getPluginManager().callEvent(new ReportReopenEvent(plugin.requestMap.get(ticketId), sender));
            sender.sendMessage(Message.parse("reopenedRequestSelf", args[0]));
            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
            return true;
