@@ -33,5 +33,5 @@ public class ReportCompleteEvent extends ReportEvent {
 	public CommandSender getCompleter(){
 		return sender;
 	}
-
+        
 }

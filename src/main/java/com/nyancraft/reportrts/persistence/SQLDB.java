@@ -98,7 +98,19 @@ public abstract class SQLDB implements Database{
         try {
             ResultSet rs = query(DatabaseManager.getQueryGen().getAllOpenAndClaimedRequests());
             while(rs.next()){
-                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
+                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
+                        rs.getString("name"), 
+                        rs.getInt(1), 
+                        rs.getLong("tstamp"), 
+                        rs.getString("text"), 
+                        rs.getInt("status"), 
+                        rs.getInt("x"), 
+                        rs.getInt("y"), 
+                        rs.getInt("z"), 
+                        rs.getInt("yaw"), 
+                        rs.getInt("pitch"), 
+                        rs.getString("world"), 
+                        rs.getString("mod_comment")));
                 ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModTimestamp(rs.getInt("mod_timestamp"));
             }
             rs.close();
@@ -406,7 +418,19 @@ public abstract class SQLDB implements Database{
             ResultSet rs = query(DatabaseManager.getQueryGen().getTicketById(ticketId));
             int results = 0;
             while (rs.next()) {
-                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(rs.getString("name"), rs.getInt(1), rs.getLong("tstamp"), rs.getString("text"), rs.getInt("status"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getInt("yaw"), rs.getInt("pitch"), rs.getString("world")));
+                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
+                        rs.getString("name"), 
+                        rs.getInt(1), 
+                        rs.getLong("tstamp"), 
+                        rs.getString("text"), 
+                        rs.getInt("status"), 
+                        rs.getInt("x"), 
+                        rs.getInt("y"), 
+                        rs.getInt("z"), 
+                        rs.getInt("yaw"), 
+                        rs.getInt("pitch"), 
+                        rs.getString("world"), 
+                        rs.getString("mod_comment")));
                 if (rs.getInt("status") > 0) {
                     ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModName(getUserName(rs.getInt("mod_id")));
                 }

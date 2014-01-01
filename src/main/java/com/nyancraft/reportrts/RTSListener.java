@@ -81,7 +81,7 @@ public class RTSListener implements Listener{
         int userId = DatabaseManager.getDatabase().getUserId(event.getPlayer().getName(), true);
         if(DatabaseManager.getDatabase().fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
             int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
-            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName()));
+            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), ""));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
             RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), true);
         }
