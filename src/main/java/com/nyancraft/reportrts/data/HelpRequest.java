@@ -1,15 +1,5 @@
 package com.nyancraft.reportrts.data;
 
-import com.nyancraft.reportrts.RTSFunctions;
-import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.persistence.Database;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
-import com.nyancraft.reportrts.util.Message;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 public class HelpRequest {
     
     private int id;
