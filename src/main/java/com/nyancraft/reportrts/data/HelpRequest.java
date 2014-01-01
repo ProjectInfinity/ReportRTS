@@ -1,7 +1,17 @@
 package com.nyancraft.reportrts.data;
 
-public class HelpRequest {
+import com.nyancraft.reportrts.RTSFunctions;
+import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.persistence.Database;
+import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.util.Message;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
+public class HelpRequest {
+    
     private int id;
     private int status;
     private int x;
@@ -19,8 +29,9 @@ public class HelpRequest {
     private String name;
     private String world;
     private String modname;
+    private String modcomment;
 
-    public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world){
+    public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String modcomment){        
         this.name = name;
         this.id = id;
         this.tstamp = tstamp;
@@ -33,6 +44,7 @@ public class HelpRequest {
         this.yaw = yaw;
         this.pitch = pitch;
         this.modtstamp = 0;
+        this.modcomment = modcomment;
     }
 
     /**
@@ -168,4 +180,20 @@ public class HelpRequest {
     public void setModTimestamp(long modTimestamp){
         this.modtstamp = modTimestamp;
     }
+    
+    /**
+     * Sets timestamp when ticket was created
+     * @param modcomment
+     */
+    public void setModComment(String modcomment){
+        this.modcomment = modcomment;
+    }
+    
+    /**
+     * Sets timestamp when ticket was created
+     * @return 
+     */
+    public String getModComment(){
+        return this.modcomment;
+    }    
 }
