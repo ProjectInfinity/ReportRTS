@@ -182,7 +182,7 @@ public class HelpRequest {
     }
     
     /**
-     * Sets timestamp when ticket was created
+     * Sets the mod comment on the ticket
      * @param modcomment
      */
     public void setModComment(String modcomment){
@@ -190,7 +190,7 @@ public class HelpRequest {
     }
     
     /**
-     * Sets timestamp when ticket was created
+     * Retrieves the mod comment on the ticket
      * @return 
      */
     public String getModComment(){
