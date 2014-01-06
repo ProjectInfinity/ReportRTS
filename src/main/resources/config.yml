@@ -8,6 +8,7 @@
 # request.hideOffline - If set to true, hides all requests in /check from offline users.
 # request.perPage - This sets the amount of requests that should be shown on each page.
 # request.nag - If above 0 (minutes), nag the online staff members about open requests.
+# request.nagHeld - If true, the nag feature will mention requests on hold. !!This will run a DB query!!
 # storage - Setup for storage in ReportRTS. Supported types: MySQL.
 notifyStaff: true
 hideMessageIfEmpty: false
@@ -21,6 +22,7 @@ request:
   hideOffline: false
   perPage: 5
   nag: 5
+  nagHeld: false
   minimumWords: 3
 
 storage:

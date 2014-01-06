@@ -38,6 +38,7 @@ public class ReportRTS extends JavaPlugin{
     public boolean outdated;
     public boolean vanishSupport;
     public boolean setupDone = true;
+    public boolean requestNagHeld;
     public int maxRequests;
     public int requestDelay;
     public int requestMinimumWords;
@@ -100,7 +101,16 @@ public class ReportRTS extends JavaPlugin{
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
                     int openRequests = requestMap.size();
-                    if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                    if(requestNagHeld){
+                        int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
+                        if(heldRequests > 0){
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests), false);
+                        }else{
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                        }
+                    }else{
+                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                    }
                 }
             }, 120L, (requestNagging * 60) * 20);
         }
@@ -140,6 +150,7 @@ public class ReportRTS extends JavaPlugin{
         requestMinimumWords = getConfig().getInt("request.minimumWords");
         requestsPerPage = getConfig().getInt("request.perPage");
         requestNagging = getConfig().getLong("request.nag");
+        requestNagHeld = getConfig().getBoolean("request.nagHeld", false);
         storageRefreshTime = getConfig().getLong("storage.refreshTime");
         storageType = getConfig().getString("storage.type", "mysql");
         storagePort = getConfig().getInt("storage.port");
