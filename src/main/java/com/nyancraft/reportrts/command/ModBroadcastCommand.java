@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.event.ModBroadcastEvent;
 import com.nyancraft.reportrts.util.Message;
 
 public class ModBroadcastCommand implements CommandExecutor{
@@ -24,6 +25,8 @@ public class ModBroadcastCommand implements CommandExecutor{
         if(plugin.debugMode) start = System.nanoTime();
         String message = RTSFunctions.implode(args, " ");
         RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), false);
+        // Let other plugins know about the broadcast
+        plugin.getServer().getPluginManager().callEvent(new ModBroadcastEvent(sender, message));
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
