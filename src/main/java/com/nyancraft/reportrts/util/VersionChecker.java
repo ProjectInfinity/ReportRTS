@@ -1,10 +1,9 @@
-/****************************************************************************************************
- ** Thanks to mbaxter for the base source code for the VersionChecker.                             **
- ** https://github.com/mbax/VanishNoPacket/blob/master/src/org/kitteh/vanish/VanishPlugin.java#L32 **
- ****************************************************************************************************/
 package com.nyancraft.reportrts.util;
 
 import com.nyancraft.reportrts.ReportRTS;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,27 +15,33 @@ public class VersionChecker {
     public boolean upToDate(){
         if(!ReportRTS.getPlugin().getConfig().getBoolean("versionCheck")) return true;
         try {
-            final URLConnection connection = new URL("http://regularbox.com/api/check.php").openConnection();
+            final String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(0,ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("-"));
+            final URLConnection connection = new URL("https://api.curseforge.com/servermods/files?projectIds=36853").openConnection();
             connection.setConnectTimeout(3000);
             connection.setReadTimeout(5000);
-            connection.setRequestProperty("User-agent", "ReportRTS");
-            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String version;
-            String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(0,ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("-"));
-            if ((version = bufferedReader.readLine()) != null) {
-                ReportRTS.getPlugin().versionString = version;
-                if (!currentVersion.equals(version)) {
-                    ReportRTS.getPlugin().getLogger().info("Found a different version available: " + version);
-                    ReportRTS.getPlugin().getLogger().info("Check http://dev.bukkit.org/server-mods/reportrts/ for a new version.");
+            connection.setRequestProperty("User-agent", "ReportRTS version " + currentVersion + " (By ProjectInfinity)");
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String response = reader.readLine();
+            reader.close();
+            connection.getInputStream().close();
+            JSONArray array = (JSONArray) JSONValue.parse(response);
+            if(array.size() > 0){
+                JSONObject latest = (JSONObject) array.get(array.size() - 1);
+                String version = (String) latest.get("name");
+                String download = (String) latest.get("downloadUrl");
+                if(Integer.parseInt(currentVersion.replace("v", "").replaceAll("[^A-Za-z0-9]", "")) < Integer.parseInt(version.replace("v", "").replaceAll("[^A-Za-z0-9]", ""))){
+                    ReportRTS.getPlugin().getLogger().info("Version " + version + " is available for download.");
+                    ReportRTS.getPlugin().getLogger().info("Download it at " + download);
+                    ReportRTS.getPlugin().versionString = version;
                     return false;
+                }else{
+                    return true;
                 }
+            }else{
                 return true;
             }
-            bufferedReader.close();
-            connection.getInputStream().close();
         } catch (final Exception e) {
             return true;
         }
-        return true;
     }
 }
