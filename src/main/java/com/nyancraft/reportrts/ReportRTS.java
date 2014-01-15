@@ -32,6 +32,7 @@ public class ReportRTS extends JavaPlugin{
     public ArrayList<String> moderatorMap = new ArrayList<String>();
 
     public boolean notifyStaffOnNewRequest;
+    public boolean notificationSound;
     public boolean hideNotification;
     public boolean hideWhenOffline;
     public boolean debugMode;
@@ -143,6 +144,7 @@ public class ReportRTS extends JavaPlugin{
         messageHandler.saveMessageConfig();
         messageHandler.reloadMessageMap();
         notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
+        notificationSound = getConfig().getBoolean("notifySound");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
         hideWhenOffline = getConfig().getBoolean("request.hideOffline");
         maxRequests = getConfig().getInt("request.max");

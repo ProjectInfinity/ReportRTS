@@ -1,4 +1,5 @@
 # notifyStaff - Notifies staff members when a new request is filed.
+# notifySound - If true, a notification sound will be played when requests are created.
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # debug - If true, it will show information about actions performed.
 # VanishSupport - If true, hide staff from /modlist when vanished.
@@ -11,6 +12,7 @@
 # request.nagHeld - If true, the nag feature will mention requests on hold. !!This will run a DB query!!
 # storage - Setup for storage in ReportRTS. Supported types: MySQL.
 notifyStaff: true
+notifySound: true
 hideMessageIfEmpty: false
 debug: false
 VanishSupport: false

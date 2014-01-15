@@ -73,7 +73,7 @@ public class RTSFunctions {
             Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
             if(player == null) return;
             player.sendMessage(message);
-            if(playSound) player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0);
+            if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 0);
         }
     }
 
