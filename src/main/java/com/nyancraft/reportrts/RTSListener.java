@@ -1,8 +1,11 @@
 package com.nyancraft.reportrts;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -12,6 +15,8 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.nyancraft.reportrts.RTSPermissions;
+import com.nyancraft.reportrts.util.BungeeCord;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
@@ -26,15 +31,45 @@ public class RTSListener implements Listener{
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event){
+        BungeeCord.triggerAutoSync();
+        BungeeCord.processPendingRequests();
+        if(BungeeCord.getServer().equals("")){
+            Bukkit.getScheduler().runTaskLaterAsynchronously(ReportRTS.getPlugin(), new Runnable(){
+                public void run(){
+                    BungeeCord.getServer();
+                }
+            }, 60L);
+        }
+
         if(plugin.notificationMap.size() > 0){
-            ArrayList<Integer> keys = new ArrayList();
+            Map<Integer, String> keys = new HashMap<Integer, String>();
             for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
                 if(entry.getValue().equals(event.getPlayer().getName())){
                     plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
-                    keys.add(entry.getKey());
+                    keys.put(entry.getKey(), entry.getValue());
                 }
             }
-            for(int key : keys) plugin.notificationMap.remove(key);
+            if(keys.size() >= 2){
+                event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size()));
+                for(Map.Entry<Integer, String> entry : keys.entrySet()){
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+                }
+            }else{
+                for(Map.Entry<Integer, String> entry : keys.entrySet()){
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+                }
+            }
+
+            for(int key : keys.keySet()) plugin.notificationMap.remove(key);
+
+            if(!plugin.teleportMap.isEmpty()){
+                Integer g = plugin.teleportMap.get(event.getPlayer().getName());
+                if(g != null){
+                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(g)));
+                    Bukkit.dispatchCommand(event.getPlayer(), "tp-id" + Integer.toString(g));
+                    plugin.teleportMap.remove(event.getPlayer().getName());
+                }
+            }
         }
 
         if(!RTSPermissions.isModerator(event.getPlayer())) return;
@@ -81,14 +116,20 @@ public class RTSListener implements Listener{
         int userId = DatabaseManager.getDatabase().getUserId(event.getPlayer().getName(), true);
         if(DatabaseManager.getDatabase().fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
             int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
-            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), ""));
+            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
+            try{
+                BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), ticketId, NotificationType.NEW);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
             RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), true);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event){
+        BungeeCord.triggerAutoSync();
         if(plugin.moderatorMap.contains(event.getPlayer().getName())) plugin.moderatorMap.remove(event.getPlayer().getName());
     }
 }

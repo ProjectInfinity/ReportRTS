@@ -8,9 +8,13 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.ReportUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
+
+import java.io.IOException;
 
 public class UnclaimCommand implements CommandExecutor{
 
@@ -31,7 +35,8 @@ public class UnclaimCommand implements CommandExecutor{
             return true;
         }
         if(!sender.getName().equals(plugin.requestMap.get(ticketId).getModName()) && !RTSPermissions.canOverride(sender)) return true;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0)){
+        long timestamp = System.currentTimeMillis() / 1000;
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
         }
@@ -41,6 +46,11 @@ public class UnclaimCommand implements CommandExecutor{
             player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(ticketId).getMessage()));
         }
         plugin.requestMap.get(ticketId).setStatus(0);
+        try{
+            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]), ticketId, NotificationType.MODIFICATION);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[0]), false);
         String modname = plugin.requestMap.get(ticketId).getModName();
         plugin.requestMap.get(ticketId).setModName(null);

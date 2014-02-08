@@ -14,8 +14,8 @@ public abstract class Query {
     }
     public String createRequest(){
         return "INSERT INTO `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`, `yaw`, `pitch`," +
-                " `text`, `status`, `notified_of_completion`) VALUES" +
-                " (?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0')";
+                " `text`, `status`, `notified_of_completion`, `bc_server`) VALUES" +
+                " (?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0', ?)";
     }
 
     public String setUserStatus(int status){
@@ -57,7 +57,7 @@ public abstract class Query {
         return "SELECT `status` FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request WHERE `id` = " + id;
     }
     public String getLocationById(int id){
-        return "SELECT `x`, `y`, `z`, `yaw`, `pitch`, `world` FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
+        return "SELECT `x`, `y`, `z`, `yaw`, `pitch`, `world`, `bc_server` FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request WHERE `id` = '" + id + "' LIMIT 1";
     }
     public String getAllFromTable(String table){
         return "SELECT * FROM `" + table + "`";

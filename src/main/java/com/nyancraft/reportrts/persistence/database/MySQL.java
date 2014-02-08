@@ -65,6 +65,9 @@ public class MySQL extends Database {
     @Override
     public ResultSet query(String query) throws SQLException{
         try{
+            if(this.connection == null){
+                throw new IllegalStateException("Connection is null!");
+            }
             Statement statement = this.connection.createStatement();
             if(statement.execute(query)){
                 statement.executeQuery(query);

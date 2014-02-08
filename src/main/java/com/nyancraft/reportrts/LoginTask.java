@@ -25,6 +25,9 @@ public class LoginTask extends BukkitRunnable {
         try{
             if(plugin.getServer().getOfflinePlayer(player).isOnline()) plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedUserOffline"));
             rs.first();
+            // Prevent duplicate notifications (especially across multiple servers)
+            int notifStatus = rs.getInt("notified_of_completion");
+            if(notifStatus == 1) return;
             String comment = rs.getString("mod_comment");
             if(comment == null) comment = "";
             plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedText", rs.getString("text"), comment));

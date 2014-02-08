@@ -20,8 +20,9 @@ public class HelpRequest {
     private String world;
     private String modname;
     private String modcomment;
+    private String bc_server;
 
-    public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String modcomment){        
+    public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
         this.name = name;
         this.id = id;
         this.tstamp = tstamp;
@@ -31,6 +32,7 @@ public class HelpRequest {
         this.y = y;
         this.z = z;
         this.world = world;
+        this.bc_server = bc_server;
         this.yaw = yaw;
         this.pitch = pitch;
         this.modtstamp = 0;
@@ -133,6 +135,12 @@ public class HelpRequest {
     public String getWorld(){
         return this.world;
     }
+
+    /**
+     * Retrieves the BungeeCord server where the ticket was created
+     * @return String BungeeCord server name
+     */
+    public String getBungeeCordServer() { return this.bc_server; }
 
     /**
      * Retrieves the name of the moderator that handled the ticket, if any

@@ -11,6 +11,10 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.event.ReportClaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
+import com.nyancraft.reportrts.data.NotificationType;
+
+import java.io.IOException;
 
 public class ClaimCommand implements CommandExecutor{
 
@@ -36,7 +40,8 @@ public class ClaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("generalInternalError", "Name is null! Try again."));
             return true;
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, name, 1, "", 0)){
+        long timestamp = System.currentTimeMillis() / 1000;
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, name, 1, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
             return true;
         }
@@ -47,7 +52,12 @@ public class ClaimCommand implements CommandExecutor{
         }
         plugin.requestMap.get(ticketId).setStatus(1);
         plugin.requestMap.get(ticketId).setModName(name);
-        plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
+        plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
+        try{
+            BungeeCord.globalNotify(Message.parse("claimRequest", name, args[0]), ticketId, NotificationType.MODIFICATION);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         RTSFunctions.messageMods(Message.parse("claimRequest", name, args[0]), false);
         
         // Let other plugins know the request was claimed

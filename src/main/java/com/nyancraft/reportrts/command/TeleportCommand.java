@@ -1,5 +1,6 @@
 package com.nyancraft.reportrts.command;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
 
 public class TeleportCommand implements CommandExecutor {
 
@@ -49,10 +51,20 @@ public class TeleportCommand implements CommandExecutor {
                     return true;
                 }
                 if(plugin.storageType.equalsIgnoreCase("mysql")) rs.first();
+
+                String bungeeServer = rs.getString("bc_server");
+                if(plugin.bungeeCordSupport && !bungeeServer.equals(BungeeCord.getServer())){
+                    try{
+                        BungeeCord.teleportUser(player, bungeeServer, ticketId);
+                    }catch(IOException e){
+                        sender.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
+                    }
+                    return true;
+                }
                 location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getFloat("yaw"), rs.getFloat("pitch"));
                 rs.close();
             } catch (SQLException e) {
-                sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when trying to fall back upon the database.");
+                sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occurred when trying to fall back upon the database.");
                 e.printStackTrace();
                 return true;
             }
@@ -65,6 +77,15 @@ public class TeleportCommand implements CommandExecutor {
         }
 
         HelpRequest currentRequest = plugin.requestMap.get(ticketId);
+
+        if(plugin.bungeeCordSupport && !currentRequest.getBungeeCordServer().equals(BungeeCord.getServer())){
+            try{
+                BungeeCord.teleportUser(player, currentRequest.getBungeeCordServer(), currentRequest.getId());
+            }catch(IOException e){
+                sender.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
+            }
+            return true;
+        }
 
         Location location = new Location(player.getServer().getWorld(currentRequest.getWorld()), currentRequest.getX(), currentRequest.getY(), currentRequest.getZ(), currentRequest.getYaw(), currentRequest.getPitch());
 

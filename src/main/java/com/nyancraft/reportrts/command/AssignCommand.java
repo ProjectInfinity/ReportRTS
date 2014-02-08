@@ -3,14 +3,18 @@ package com.nyancraft.reportrts.command;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.ReportAssignEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.io.IOException;
 
 public class AssignCommand implements CommandExecutor {
 
@@ -44,7 +48,8 @@ public class AssignCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalInternalError", "That user does not exist!"));
             return true;
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0)){
+        long timestamp = System.currentTimeMillis()/1000;
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to assign request #" + ticketId + " to " + assignee));
             return true;
         }
@@ -55,7 +60,12 @@ public class AssignCommand implements CommandExecutor {
         }
         plugin.requestMap.get(ticketId).setStatus(1);
         plugin.requestMap.get(ticketId).setModName(assignee);
-        plugin.requestMap.get(ticketId).setModTimestamp(System.currentTimeMillis()/1000);
+        plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
+        try{
+            BungeeCord.globalNotify(Message.parse("assignRequest", assignee, ticketId), ticketId, NotificationType.MODIFICATION);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId), false);
         
         // Let other plugins know the request was assigned.

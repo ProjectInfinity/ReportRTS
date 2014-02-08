@@ -10,6 +10,10 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.event.ReportReopenEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
+import com.nyancraft.reportrts.data.NotificationType;
+
+import java.io.IOException;
 
 public class ReopenCommand implements CommandExecutor{
 
@@ -25,13 +29,18 @@ public class ReopenCommand implements CommandExecutor{
         double start = 0;
         int ticketId = Integer.parseInt(args[0]);
         if(plugin.debugMode) start = System.nanoTime();
-        if(!DatabaseManager.getDatabase().setRequestStatus(Integer.parseInt(args[0]), sender.getName(), 0, "", 0)){
+        long timestamp = System.currentTimeMillis() / 1000;
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
             return true;
         }
 
        if(RTSFunctions.syncTicket(ticketId)){
-           // TODO: Implement BungeeCord specific code here.
+           try{
+               BungeeCord.globalNotify(Message.parse("reopenedRequest", sender.getName(), args[0]), ticketId, NotificationType.NEW);
+           }catch(IOException e){
+               e.printStackTrace();
+           }
            RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[0]), true);
            // Let other plugins know the request was assigned.
            plugin.getServer().getPluginManager().callEvent(new ReportReopenEvent(plugin.requestMap.get(ticketId), sender));

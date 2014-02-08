@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.persistence.query.Query;
 
+import com.nyancraft.reportrts.persistence.query.Query;
 import com.nyancraft.reportrts.persistence.database.MySQL;
 
 public class MySQLDB extends SQLDB {
@@ -68,6 +68,7 @@ public class MySQLDB extends SQLDB {
                 columns.add(rs.getString("Field"));
             }
             rs.close();
+            // TODO: Add check for bc_server column!
             if(!columns.contains("yaw") || !columns.contains("pitch")){
                 db.query("ALTER TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`" +
                         " ADD COLUMN `yaw` smallint(6) NOT NULL DEFAULT 0 AFTER `z`," +

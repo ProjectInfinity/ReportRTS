@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts;
+package com.nyancraft.reportrts.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;

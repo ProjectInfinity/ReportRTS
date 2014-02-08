@@ -11,6 +11,10 @@
 # request.nag - If above 0 (minutes), nag the online staff members about open requests.
 # request.nagHeld - If true, the nag feature will mention requests on hold. !!This will run a DB query!!
 # storage - Setup for storage in ReportRTS. Supported types: MySQL.
+# bungeecord.enable - If true, BungeeCord support will be enabled.
+# bungeecord.sync - Sync timer in seconds.
+# bungeecord.serverPrefix - Sets a prefix for the current server.
+# bungeecord.serverName - Sets the server name for the current server.
 notifyStaff: true
 notifySound: true
 hideMessageIfEmpty: false
@@ -36,3 +40,9 @@ storage:
   password: 'password'
   prefix: ''
   refreshTime: 600
+
+bungeecord:
+  enable: false
+  sync: 300
+  serverPrefix: ''
+  serverName: ''

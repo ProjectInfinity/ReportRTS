@@ -5,12 +5,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.event.ReportHoldEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
+
+import java.io.IOException;
 
 public class HoldCommand implements CommandExecutor {
 
@@ -33,7 +37,8 @@ public class HoldCommand implements CommandExecutor {
         }else{
             reason = reason.substring(args[0].length());
         }
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0)) {
+        long timestamp = System.currentTimeMillis() / 1000;
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0, timestamp)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
             return true;
         }
@@ -51,6 +56,11 @@ public class HoldCommand implements CommandExecutor {
             plugin.requestMap.remove(ticketId);
         }
 
+        try{
+            BungeeCord.globalNotify(Message.parse("holdRequest", args[0], sender.getName()), ticketId, NotificationType.HOLD);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         RTSFunctions.messageMods(Message.parse("holdRequest", args[0], sender.getName()), false);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;

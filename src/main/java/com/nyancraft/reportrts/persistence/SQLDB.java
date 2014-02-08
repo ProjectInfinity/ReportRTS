@@ -8,6 +8,7 @@ import org.bukkit.Location;
 
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.util.BungeeCord;
 
 public abstract class SQLDB implements Database{
 
@@ -109,8 +110,12 @@ public abstract class SQLDB implements Database{
                         rs.getInt("z"), 
                         rs.getInt("yaw"), 
                         rs.getInt("pitch"), 
-                        rs.getString("world"), 
+                        rs.getString("world"),
+                        rs.getString("bc_server"),
                         rs.getString("mod_comment")));
+                if(rs.getInt("status") > 0){
+                    ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModName(getUserName(rs.getInt("mod_id")));
+                }
                 ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModTimestamp(rs.getInt("mod_timestamp"));
             }
             rs.close();
@@ -160,6 +165,7 @@ public abstract class SQLDB implements Database{
             ps.setFloat(7, location.getYaw());
             ps.setFloat(8, location.getPitch());
             ps.setString(9, message);
+            ps.setString(10, BungeeCord.getServer());
             if(ps.executeUpdate() < 1) return false;
             ps.close();
         }catch(SQLException e){
@@ -187,7 +193,7 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
-    public boolean setRequestStatus(int id, String player, int status, String comment, int notified){
+    public boolean setRequestStatus(int id, String player, int status, String comment, int notified, long timestamp){
         if(!isLoaded()) return false;
         ResultSet rs = query(DatabaseManager.getQueryGen().getTicketStatusById(id));
         try{
@@ -203,7 +209,7 @@ public abstract class SQLDB implements Database{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE " + ReportRTS.getPlugin().storagePrefix + "reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
             ps.setInt(1, status);
             ps.setInt(2, modId);
-            ps.setLong(3, System.currentTimeMillis() / 1000);
+            ps.setLong(3, timestamp);
             ps.setString(4, comment);
             ps.setInt(5, notified);
             ps.setInt(6, id);
@@ -429,7 +435,8 @@ public abstract class SQLDB implements Database{
                         rs.getInt("z"), 
                         rs.getInt("yaw"), 
                         rs.getInt("pitch"), 
-                        rs.getString("world"), 
+                        rs.getString("world"),
+                        rs.getString("bc_server"),
                         rs.getString("mod_comment")));
                 if (rs.getInt("status") > 0) {
                     ReportRTS.getPlugin().requestMap.get(rs.getInt(1)).setModName(getUserName(rs.getInt("mod_id")));

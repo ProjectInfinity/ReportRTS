@@ -20,6 +20,7 @@ commands:
     aliases: [tpid]
   reportrts:
     description: General commands for ReportRTS
+    aliases: [rts]
     usage: /<command> [reload | ban | unban | reset | stats <player> | help | notifications | duty]
   hold:
     description: Puts the specified ticket on hold
@@ -44,6 +45,13 @@ commands:
     description: Assigns a ticket to specified staff member
     usage: /<command> [ticket id] [staff member]
 permissions:
+  reportrts.user:
+    description: Give this to all of your regular players.
+    default: true
+    children:
+      reportrts.command.modreq: true
+      reportrts.command.check.self: true
+      reportrts.command.complete.self: true
   reportrts.mod:
     description: Give this to all staff members.
     default: op

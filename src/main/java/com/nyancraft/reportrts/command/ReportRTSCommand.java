@@ -13,9 +13,11 @@ import org.bukkit.command.CommandSender;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
 import org.bukkit.entity.Player;
 
 public class ReportRTSCommand implements CommandExecutor{
@@ -53,6 +55,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
                     return true;
                 }
+                BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), false);
                 break;
 
@@ -62,6 +65,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
                     return true;
                 }
+                BungeeCord.globalNotify(Message.parse("unbanUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), false);
                 break;
 

@@ -18,6 +18,7 @@ import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.RTSFunctions;
 
 public class CheckCommand implements CommandExecutor {
@@ -85,6 +86,15 @@ public class CheckCommand implements CommandExecutor {
                         checkClosed("1", sender);
                     }
                     break;
+
+                case S:
+                case SERVER:
+                    try{
+                        checkServer((args.length > 1 ? args[2] : "1"), args[1], sender);
+                    }catch(ArrayIndexOutOfBoundsException e){
+                        checkServer("1", BungeeCord.getServer(), sender);
+                    }
+                    break;
                 }
                 if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
                 return true;
@@ -98,12 +108,33 @@ public class CheckCommand implements CommandExecutor {
         return true;
     }
     private enum SubCommands{
-        P,
-        PAGE,
-        H,
-        HELD,
-        C,
-        CLOSED
+        P, PAGE,
+        H, HELD,
+        C, CLOSED,
+        S, SERVER;
+    }
+
+    private void checkServer(String page, String server, CommandSender sender){
+        requestList.clear();
+        requestList.addAll(plugin.requestMap.entrySet());
+        int pageNumber = Integer.parseInt(page);
+        if(pageNumber < 0) pageNumber = 0;
+        int a = pageNumber * plugin.requestsPerPage;
+        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Requests From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
+        if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
+
+        for(int i = (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage; i < a && i < requestList.size(); i++){
+            HelpRequest currentRequest = requestList.get(i).getValue();
+            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getName()) || !currentRequest.getBungeeCordServer().equals(server)){
+                a++;
+                continue;
+            }
+            substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+            date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
+            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
+            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
+            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD +  " - " + substring);
+        }
     }
 
     private void checkPage(String page, CommandSender sender){
@@ -122,11 +153,11 @@ public class CheckCommand implements CommandExecutor {
                 continue;
             }
             substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
-
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
             ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
             substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
+            String bungeeServer = (currentRequest.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + currentRequest.getBungeeCordServer() + ChatColor.RESET + "] ");
+            sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
         }
     }
 
@@ -144,6 +175,8 @@ public class CheckCommand implements CommandExecutor {
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
                 ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
+                String bServer = rs.getString("bc_server");
+                String bungeeServer = (bServer.equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + bServer + ChatColor.RESET + "] ");
                 sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
             }
             rs.close();
@@ -167,7 +200,9 @@ public class CheckCommand implements CommandExecutor {
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
                 ChatColor online = (RTSFunctions.isUserOnline(rs.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
-                sender.sendMessage(ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+                String bServer = rs.getString("bc_server");
+                String bungeeServer = (bServer.equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + bServer + ChatColor.RESET + "] ");
+                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
             }
             rs.close();
         }catch(SQLException e){
@@ -209,6 +244,7 @@ public class CheckCommand implements CommandExecutor {
                     statusColor = ChatColor.GREEN;
                 }
                 String text = rs.getString("text");
+                String bungeeServer = rs.getString("bc_server");
                 String modComment = rs.getString("mod_comment");
 
                 sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + rs.getInt(1) + " - " + statusColor + status + ChatColor.AQUA + " ---------");
@@ -220,8 +256,11 @@ public class CheckCommand implements CommandExecutor {
                     int Millis = (rs.getInt("mod_timestamp") - rs.getInt("tstamp")) * 1000;
                     sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Time spent: %d hours, %d minutes, %d seconds",
                             Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000));
+                }else if(rs.getInt("status") > 0){
+                    int modId = rs.getInt("mod_id");
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Claimed by " + dbManager.getUserName(modId) + ".");
                 }
-
+                if(!bungeeServer.equals(BungeeCord.getServer())) sender.sendMessage(ChatColor.YELLOW + "BungeeCord Server: " + ChatColor.GREEN + bungeeServer);
                 if(modComment != null) sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + modComment);
                 sender.sendMessage(ChatColor.GRAY + text);
 
@@ -272,7 +311,8 @@ public class CheckCommand implements CommandExecutor {
                 date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
                 ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getName())) ? ChatColor.GREEN : ChatColor.RED;
                 substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-                sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
+                String bungeeServer = (currentRequest.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + currentRequest.getBungeeCordServer() + ChatColor.RESET + "] ");
+                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
             }
         }
     }

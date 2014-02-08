@@ -11,6 +11,7 @@ import com.nyancraft.reportrts.util.Message;
 
 public class ModlistCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        // TODO: Possible to-do. No cross server functionality!
         if(!RTSPermissions.canListStaff(sender)) return true;
 
         double start = 0;

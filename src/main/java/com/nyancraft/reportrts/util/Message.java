@@ -19,14 +19,18 @@ public class Message {
             prop = ReportRTS.getMessageHandler().getMessageConfig().getDefaults().getString(key);
             ReportRTS.getMessageHandler().saveMessageConfig();
         }
-        String message = (String) prop;
-        for (ChatColor color : ChatColor.values()) {
+        return MessageFormat.format(parseColors((String) prop), params);
+    }
+
+    public static String parseColors(String msg){
+        String message = msg;
+        for(ChatColor color : ChatColor.values()){
             String colorKey = "%" + color.name().toLowerCase() + "%";
-            if (message.contains(colorKey)) {
+            if(message.contains(colorKey)){
                 message = message.replaceAll(colorKey, color.toString());
             }
         }
-        return MessageFormat.format(message, params);
+        return message;
     }
 
     public static void debug(String name, String className, double start, String cmd, String[] args){

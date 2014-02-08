@@ -9,10 +9,14 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.ReportCompleteEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
+
+import java.io.IOException;
 
 public class CompleteCommand implements CommandExecutor {
 
@@ -42,6 +46,11 @@ public class CompleteCommand implements CommandExecutor {
                 }
                 dbManager.deleteEntryById(plugin.storagePrefix + "reportrts_request", ticketId);
                 plugin.requestMap.remove(ticketId);
+                try{
+                    BungeeCord.globalNotify(Message.parse("completedReq", ticketId, "Cancellation System"), ticketId, NotificationType.DELETE);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
                 RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"), false);
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 
@@ -83,7 +92,8 @@ public class CompleteCommand implements CommandExecutor {
             return true;
         }
 
-        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online)) {
+        long timestamp = System.currentTimeMillis() / 1000;
+        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online, timestamp)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
             return true;
         }
@@ -95,11 +105,24 @@ public class CompleteCommand implements CommandExecutor {
                 player.sendMessage(Message.parse("completedUser", user));
                 if(comment == null) comment = "";
                 player.sendMessage(Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment));
+            }else{
+                try{
+                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getName(), Message.parse("completedUser", user), ticketId);
+                    if(comment == null) comment = "";
+                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getName(), Message.parse("completedText",plugin.requestMap.get(ticketId).getMessage(), comment), ticketId);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
             }
             data = plugin.requestMap.get(ticketId);
             plugin.requestMap.remove(ticketId);
         }
 
+        try{
+            BungeeCord.globalNotify(Message.parse("completedReq", args[0], user), ticketId, NotificationType.COMPLETE);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), false);
         if(data != null){
             data.setModComment(comment);

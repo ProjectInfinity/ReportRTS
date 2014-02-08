@@ -29,6 +29,7 @@ unclaimUser: '%gold%{0} is no longer handling your request.'
 unclaimText: '%gold%Request text: %yellow%{0}'
 
 completedReq: '%gold%Request #{0} was completed by {1}.'
+completedReqMulti: '%gold%While you were gone, {0} requests were completed.  Use /check to check your currently open tickets.'
 completedUser: '%gold%{0} completed your request.'
 completedUserOffline: '%gold%One of your requests have been completed while you were offline.'
 completedText: '%gold%Request text: %yellow%{0} %gold%Comment: %yellow%{1}'
@@ -52,4 +53,5 @@ reopenedRequest: '%gold%{0} has reopened request #{1}'
 reopenedRequestSelf: '%gold%Request #{0} has been reopened.'
 
 teleportToRequest: '%blue%Teleported to request #{0}.'
+teleportedUser: '%gold%You were teleported to a different server to handle a request.  Type {0} to teleport again.'
 outdatedPlugin: '[ReportRTS] %red%You are not running the latest recommended build! Recommended build is: %gold%{0}'

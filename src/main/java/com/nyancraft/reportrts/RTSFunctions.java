@@ -9,13 +9,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Server;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.SQLDB;
 
 public class RTSFunctions {
 
@@ -85,6 +86,19 @@ public class RTSFunctions {
     public static boolean syncTicket(int ticketId) {
         int updateResult = DatabaseManager.getDatabase().updateTicket(ticketId);
         return updateResult > 0;
+    }
+
+    /**
+     * Synchronizes everything.
+     */
+    public static void sync(){
+        ReportRTS.getPlugin().requestMap.clear();
+        ReportRTS.getPlugin().notificationMap.clear();
+        ReportRTS.getPlugin().moderatorMap.clear();
+        DatabaseManager.getDatabase().populateRequestMap();
+        RTSFunctions.populateHeldRequestsWithData();
+        RTSFunctions.populateNotificationMapWithData();
+        RTSFunctions.populateModeratorMapWithData();
     }
 
     /**

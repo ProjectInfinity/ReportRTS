@@ -1,5 +1,6 @@
 package com.nyancraft.reportrts.command;
 
+import java.io.IOException;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -12,10 +13,12 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.ReportCreateEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
+import com.nyancraft.reportrts.util.BungeeCord;
 
 public class ModreqCommand implements CommandExecutor {
 
@@ -40,10 +43,17 @@ public class ModreqCommand implements CommandExecutor {
                 return true;
             }
             int ticketId = dbManager.getLatestTicketIdByUser(userId);
-            HelpRequest request = new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world, "");
+            HelpRequest request = new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world, BungeeCord.getServer(), "");
             plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
             plugin.requestMap.put(ticketId, request);
-            if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId), true);
+            if(plugin.notifyStaffOnNewRequest){
+                try{
+                    BungeeCord.globalNotify(Message.parse("modreqFiledMod", "CONSOLE", ticketId), ticketId, NotificationType.NEW);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                RTSFunctions.messageMods(Message.parse("modreqFiledMod","CONSOLE", ticketId), true);
+            }
             return true;
         }
         if(!RTSPermissions.canFileRequest(sender)) return true;
@@ -65,7 +75,7 @@ public class ModreqCommand implements CommandExecutor {
             }
         }
         double start = 0;
-        if(plugin.debugMode) start = System.nanoTime(); // Production value: System.currentTimeMillis(); Development value: System.nanoTime();
+        if(plugin.debugMode) start = System.nanoTime();
 
         Player player = (Player)sender;
         String message = RTSFunctions.implode(args, " ");
@@ -80,9 +90,16 @@ public class ModreqCommand implements CommandExecutor {
 
         sender.sendMessage(Message.parse("modreqFiledUser"));
         plugin.getLogger().log(Level.INFO, "" + player.getName() + " filed a request.");
-        if(plugin.notifyStaffOnNewRequest) RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), true);
+        if(plugin.notifyStaffOnNewRequest){
+            try{
+                BungeeCord.globalNotify(Message.parse("modreqFiledMod", player.getName(), ticketId), ticketId, NotificationType.NEW);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), true);
+        }
 
-        HelpRequest request = new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName(), "");
+        HelpRequest request = new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName(), BungeeCord.getServer(), "");
         plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
         plugin.requestMap.put(ticketId, request);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);

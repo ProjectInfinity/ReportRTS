@@ -10,17 +10,17 @@ import java.util.logging.Logger;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.util.*;
 
-import com.nyancraft.reportrts.util.Message;
-import com.nyancraft.reportrts.util.MessageHandler;
-import com.nyancraft.reportrts.util.VersionChecker;
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public class ReportRTS extends JavaPlugin{
+public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
     private static ReportRTS plugin;
     private final Logger log = Logger.getLogger("Minecraft");
@@ -29,6 +29,7 @@ public class ReportRTS extends JavaPlugin{
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
     public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
+    public Map<String, Integer> teleportMap = new HashMap<String, Integer>();
     public ArrayList<String> moderatorMap = new ArrayList<String>();
 
     public boolean notifyStaffOnNewRequest;
@@ -38,8 +39,10 @@ public class ReportRTS extends JavaPlugin{
     public boolean debugMode;
     public boolean outdated;
     public boolean vanishSupport;
+    public boolean bungeeCordSupport;
     public boolean setupDone = true;
     public boolean requestNagHeld;
+
     public int maxRequests;
     public int requestDelay;
     public int requestMinimumWords;
@@ -47,6 +50,7 @@ public class ReportRTS extends JavaPlugin{
     public int storagePort;
     public long requestNagging;
     public long storageRefreshTime;
+    public long bungeeCordSync;
     public String storageType;
     public String storageHostname;
     public String storageDatabase;
@@ -54,6 +58,7 @@ public class ReportRTS extends JavaPlugin{
     public String storagePassword;
     public String storagePrefix;
     public String versionString;
+    public String bungeeCordServerPrefix;
 
     public static Permission permission = null;
 
@@ -123,17 +128,26 @@ public class ReportRTS extends JavaPlugin{
                 }
             }, 4000L, plugin.storageRefreshTime * 20);
         }
+
+        if(bungeeCordSupport){
+            // Register BungeeCord channels.
+            getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+
+            // Schedule a offline-sync incase no players are online.
+            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
+                public void run(){
+                    if(BungeeCord.isServerEmpty()){
+                        RTSFunctions.sync();
+                    }
+                }
+            }, plugin.bungeeCordSync * 20, plugin.bungeeCordSync * 20);
+        }
     }
 
-    public void reloadPlugin(){
-        requestMap.clear();
-        notificationMap.clear();
-        moderatorMap.clear();
+    public void reloadPlugin(){;
         reloadSettings();
-        DatabaseManager.getDatabase().populateRequestMap();
-        RTSFunctions.populateHeldRequestsWithData();
-        RTSFunctions.populateNotificationMapWithData();
-        RTSFunctions.populateModeratorMapWithData();
+        RTSFunctions.sync();
     }
 
     public void reloadSettings(){
@@ -163,6 +177,10 @@ public class ReportRTS extends JavaPlugin{
         storagePrefix = getConfig().getString("storage.prefix");
         debugMode = getConfig().getBoolean("debug");
         vanishSupport = getConfig().getBoolean("VanishSupport", false);
+        bungeeCordSupport = getConfig().getBoolean("bungeecord.enable", false);
+        bungeeCordSync = getConfig().getLong("bungeecord.sync", 300L);
+        bungeeCordServerPrefix = getConfig().getString("bungeecord.serverPrefix");
+        BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
     }
 
     public static ReportRTS getPlugin(){
@@ -179,5 +197,11 @@ public class ReportRTS extends JavaPlugin{
             permission = permissionProvider.getProvider();
         }
         return (permission != null);
+    }
+
+    public void onPluginMessageReceived(String pluginChannel, Player player, byte[] bytes){
+        if(!pluginChannel.equals("BungeeCord")) return;
+
+        BungeeCord.handleNotify(bytes);
     }
 }

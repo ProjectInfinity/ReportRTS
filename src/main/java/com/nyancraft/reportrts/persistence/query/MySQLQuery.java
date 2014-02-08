@@ -13,6 +13,7 @@ public class MySQLQuery extends Query{
                 "`mod_comment` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8_general_ci'," +
                 "`tstamp` INT(10) UNSIGNED NOT NULL DEFAULT '0'," +
                 "`world` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci'," +
+                "`bc_server` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci'," +
                 "`x` INT(10) NOT NULL DEFAULT '0'," +
                 "`y` INT(10) NOT NULL DEFAULT '0'," +
                 "`z` INT(10) NOT NULL DEFAULT '0'," +
