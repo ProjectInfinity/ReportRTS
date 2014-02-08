@@ -68,12 +68,10 @@ public class MySQLDB extends SQLDB {
                 columns.add(rs.getString("Field"));
             }
             rs.close();
-            // TODO: Add check for bc_server column!
-            if(!columns.contains("yaw") || !columns.contains("pitch")){
+            if(!columns.contains("bc_server")){
                 db.query("ALTER TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`" +
-                        " ADD COLUMN `yaw` smallint(6) NOT NULL DEFAULT 0 AFTER `z`," +
-                        " ADD COLUMN `pitch` smallint(6) NOT NULL DEFAULT 0 AFTER `yaw`");
-                ReportRTS.getPlugin().getLogger().info("Successfully upgraded the database structure to v0.4.0");
+                        " ADD COLUMN `bc_server` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci' AFTER `world`");
+                ReportRTS.getPlugin().getLogger().info("Successfully upgraded the database structure to v1.2.0");
             }
             return true;
         }catch(SQLException e){
