@@ -126,6 +126,9 @@ public class CompleteCommand implements CommandExecutor {
         RTSFunctions.messageMods(Message.parse("completedReq", args[0], user), false);
         if(data != null){
             data.setModComment(comment);
+            if (data.getModName() == null) {
+                data.setModName(sender.getName());
+            }
             plugin.getServer().getPluginManager().callEvent(new ReportCompleteEvent(data, sender));
         }
         if(plugin.debugMode) Message.debug(user, this.getClass().getSimpleName(), start, cmd.getName(), args);
