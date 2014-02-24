@@ -266,6 +266,13 @@ public class MetricsLite {
 
         // The plugin's description file containg all of the plugin data such as name, version, author, etc
         appendJSONPair(json, "guid", guid);
+        try{
+            if(Integer.parseInt(description.getVersion().replace("v", "").replaceAll("[^A-Za-z0-9]", "")) != 0){
+                pluginVersion = pluginVersion.replace("v", "").split("-", 1)[0];
+            }
+        }catch(NumberFormatException e){
+            pluginVersion = description.getVersion();
+        }
         appendJSONPair(json, "plugin_version", pluginVersion);
         appendJSONPair(json, "server_version", serverVersion);
         appendJSONPair(json, "players_online", Integer.toString(playersOnline));
