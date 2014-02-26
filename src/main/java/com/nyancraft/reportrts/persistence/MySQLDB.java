@@ -12,7 +12,7 @@ import com.nyancraft.reportrts.persistence.database.MySQL;
 
 public class MySQLDB extends SQLDB {
     private MySQL db;
-    private ArrayList<String> columns = new ArrayList<String>();
+    private ArrayList<String> columns = new ArrayList<>();
 
     public Query queryGen;
 

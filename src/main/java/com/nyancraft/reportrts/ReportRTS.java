@@ -26,10 +26,10 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
 
-    public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<Integer, HelpRequest>();
-    public Map<Integer, String> notificationMap = new HashMap<Integer, String>();
-    public Map<String, Integer> teleportMap = new HashMap<String, Integer>();
-    public ArrayList<String> moderatorMap = new ArrayList<String>();
+    public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<>();
+    public Map<Integer, String> notificationMap = new HashMap<>();
+    public Map<String, Integer> teleportMap = new HashMap<>();
+    public ArrayList<String> moderatorMap = new ArrayList<>();
 
     public boolean notifyStaffOnNewRequest;
     public boolean notificationSound;
@@ -169,7 +169,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
             getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 
-            // Schedule a offline-sync incase no players are online.
+            // Schedule a offline-sync in case no players are online.
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
                     if(BungeeCord.isServerEmpty()){
@@ -180,7 +180,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         }
     }
 
-    public void reloadPlugin(){;
+    public void reloadPlugin(){
         reloadSettings();
         RTSFunctions.sync();
     }

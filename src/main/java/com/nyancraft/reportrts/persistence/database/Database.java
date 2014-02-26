@@ -48,9 +48,7 @@ public abstract class Database {
     }
 
     public final boolean checkConnection(){
-        if(connection != null)
-            return true;
-        return false;
+        return connection != null;
     }
 
     public final Connection getConnection(){

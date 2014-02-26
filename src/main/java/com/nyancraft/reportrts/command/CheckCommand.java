@@ -31,7 +31,7 @@ public class CheckCommand implements CommandExecutor {
         this.plugin = plugin;
         this.dbManager = DatabaseManager.getDatabase();
     }
-    private List<Map.Entry<Integer, HelpRequest>> requestList = new ArrayList<Map.Entry<Integer, HelpRequest>>();
+    private List<Map.Entry<Integer, HelpRequest>> requestList = new ArrayList<>();
     private SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
     private String date = null;
 
@@ -111,7 +111,7 @@ public class CheckCommand implements CommandExecutor {
         P, PAGE,
         H, HELD,
         C, CLOSED,
-        S, SERVER;
+        S, SERVER
     }
 
     private void checkServer(String page, String server, CommandSender sender){
@@ -183,7 +183,6 @@ public class CheckCommand implements CommandExecutor {
         } catch (SQLException e) {
             sender.sendMessage(Message.parse("generalInternalError", "Cannot check held requests, see console for errors."));
             e.printStackTrace();
-            return;
         }
     }
 

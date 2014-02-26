@@ -20,7 +20,7 @@ import com.nyancraft.reportrts.persistence.SQLDB;
 
 public class RTSFunctions {
 
-    private static ArrayList<String> columns = new ArrayList<String>();
+    private static ArrayList<String> columns = new ArrayList<>();
 
     /**
      * Combines array and returns an imploded string.
@@ -28,7 +28,7 @@ public class RTSFunctions {
      * @return String, imploded array.
      */
     public static String combineString(String[] args){
-        List<String> temp_list = new LinkedList<String>();
+        List<String> temp_list = new LinkedList<>();
         temp_list.addAll(Arrays.asList(args));
         while (temp_list.contains("")) {
             temp_list.remove("");

@@ -42,7 +42,7 @@ public class RTSListener implements Listener{
         }
 
         if(plugin.notificationMap.size() > 0){
-            Map<Integer, String> keys = new HashMap<Integer, String>();
+            Map<Integer, String> keys = new HashMap<>();
             for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
                 if(entry.getValue().equals(event.getPlayer().getName())){
                     plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);

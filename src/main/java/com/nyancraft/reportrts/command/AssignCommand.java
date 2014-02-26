@@ -5,7 +5,6 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.event.ReportAssignEvent;
-import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -19,11 +18,9 @@ import java.io.IOException;
 public class AssignCommand implements CommandExecutor {
 
     private ReportRTS plugin;
-    private Database dbManager;
 
     public AssignCommand(ReportRTS plugin){
         this.plugin = plugin;
-        this.dbManager = DatabaseManager.getDatabase();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

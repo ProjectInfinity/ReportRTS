@@ -4,7 +4,6 @@ import com.nyancraft.reportrts.ReportRTS;
 
 public abstract class Query {
     public abstract String createRequestTable();
-    public abstract String createTemporaryRequestTable();
     public abstract String createUserTable();
     public String createUser(){
         return "INSERT INTO `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (`name`, `banned`) VALUES (?, '0')";

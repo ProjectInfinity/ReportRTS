@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BungeeCord {
 
-    private static List<byte[]> pendingRequests = new CopyOnWriteArrayList<byte[]>();
+    private static List<byte[]> pendingRequests = new CopyOnWriteArrayList<>();
 
     private static boolean noPlayersOnline;
 
@@ -35,11 +35,7 @@ public class BungeeCord {
     }
 
     public static void triggerAutoSync(){
-        if(Bukkit.getOnlinePlayers().length == 0){
-            noPlayersOnline = true;
-        }else{
-            noPlayersOnline = false;
-        }
+        noPlayersOnline = Bukkit.getOnlinePlayers().length == 0;
     }
 
     public static boolean isServerEmpty(){
