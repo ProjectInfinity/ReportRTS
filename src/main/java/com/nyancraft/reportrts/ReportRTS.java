@@ -1,12 +1,11 @@
 package com.nyancraft.reportrts;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
+import com.nyancraft.reportrts.api.ApiServer;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.HelpRequest;
@@ -42,6 +41,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public boolean bungeeCordSupport;
     public boolean setupDone = true;
     public boolean requestNagHeld;
+    public boolean apiEnabled;
 
     public int maxRequests;
     public int requestDelay;
@@ -62,8 +62,21 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
     public static Permission permission = null;
 
+    private ApiServer apiServer;
+    private int apiPort;
+    private List<String> apiAllowedIPs = new ArrayList<>();
+
+    private String serverIP;
+
     public void onDisable(){
         DatabaseManager.getDatabase().disconnect();
+        if(apiEnabled){
+            try{
+                apiServer.getListener().close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
         messageHandler.saveMessageConfig();
     }
 
@@ -96,12 +109,34 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         getCommand("modlist").setExecutor(new ModlistCommand());
         getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
         getCommand("assign").setExecutor(new AssignCommand(plugin));
+
+        getCommand("check").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("complete").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("tp-id").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("hold").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("claim").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("unclaim").setTabCompleter(new TabCompleteHelper(plugin));
+        getCommand("assign").setTabCompleter(new TabCompleteHelper(plugin));
+
         if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
         try{
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
         }catch(IOException e){
             log.info("Unable to submit stats!");
+        }
+        if(apiEnabled){
+            try{
+                Properties props = new Properties();
+                props.load(new FileReader("server.properties"));
+                serverIP = props.getProperty("server-ip", "ANY");
+                if(serverIP.isEmpty()) serverIP = "ANY";
+                apiServer = new ApiServer(plugin, serverIP, apiPort, apiAllowedIPs);
+            }catch(IOException e){
+                log.warning("[ReportRTS] Unable to start API server!");
+                e.printStackTrace();
+            }
+            apiServer.start();
         }
         if(requestNagging > 0){
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
@@ -181,6 +216,9 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         bungeeCordSync = getConfig().getLong("bungeecord.sync", 300L);
         bungeeCordServerPrefix = getConfig().getString("bungeecord.serverPrefix");
         BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
+        apiEnabled = getConfig().getBoolean("api.enable", false);
+        apiPort = getConfig().getInt("api.port", 25567);
+        apiAllowedIPs = getConfig().getStringList("api.whitelist");
     }
 
     public static ReportRTS getPlugin(){

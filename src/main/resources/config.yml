@@ -15,6 +15,11 @@
 # bungeecord.sync - Sync timer in seconds.
 # bungeecord.serverPrefix - Sets a prefix for the current server.
 # bungeecord.serverName - Sets the server name for the current server.
+# api.enable - Enables the API server in ReportRTS which may be used to remotely control ReportRTS.
+# api.port - Sets the port that the ReportRTS API server will listen to.
+# api.password - Sets a password to authenticate your connection to the API server.
+# api.whitelist - A list of allowed IPs that may connect. Disabled if set to 0.0.0.0 or [].
+
 notifyStaff: true
 notifySound: true
 hideMessageIfEmpty: false
@@ -40,6 +45,13 @@ storage:
   password: 'password'
   prefix: ''
   refreshTime: 600
+
+api:
+  enable: false
+  port: 25567
+  password: 'changeMe'
+  whitelist:
+    - 0.0.0.0
 
 bungeecord:
   enable: false
