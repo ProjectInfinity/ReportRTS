@@ -52,6 +52,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "BAN":
+                if(args.length < 2) return false;
                 if(!RTSPermissions.canBanUser(sender)) return true;
                 if(!dbManager.setUserStatus(args[1], 1)){
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
@@ -62,6 +63,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "UNBAN":
+                if(args.length < 2) return false;
                 if(!RTSPermissions.canBanUser(sender)) return true;
                 if(!dbManager.setUserStatus(args[1], 0)){
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
@@ -83,7 +85,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "STATS":
-                if(args.length < 1) return false;
+                if(args.length < 2) return false;
                 if(!RTSPermissions.canCheckStats(sender)) return true;
                     rs = dbManager.getHandledBy(args[1]);
                     int currentHeld = 0;
