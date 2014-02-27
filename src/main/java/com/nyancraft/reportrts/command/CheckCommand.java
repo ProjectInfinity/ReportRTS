@@ -57,61 +57,55 @@ public class CheckCommand implements CommandExecutor {
         return true;
     }
         if(!RTSFunctions.isParsableToInt(args[0])){
-            try{
-                switch(SubCommands.valueOf(args[0].toUpperCase())){
+            switch(args[0].toUpperCase()){
 
-                case P:
-                case PAGE:
-                    try{
-                        checkPage(args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkPage("1", sender);
-                    }
-                    break;
-
-                case H:
-                case HELD:
-                    try{
-                        checkHeld(args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkHeld("1", sender);
-                    }
-                    break;
-
-                case C:
-                case CLOSED:
-                    try{
-                        checkClosed(args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkClosed("1", sender);
-                    }
-                    break;
-
-                case S:
-                case SERVER:
-                    try{
-                        checkServer((args.length > 1 ? args[2] : "1"), args[1], sender);
-                    }catch(ArrayIndexOutOfBoundsException e){
-                        checkServer("1", BungeeCord.getServer(), sender);
-                    }
-                    break;
+            case "P":
+            case "PAGE":
+                try{
+                    checkPage(args[1], sender);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    checkPage("1", sender);
                 }
+                break;
+
+            case "H":
+            case "HELD":
+                try{
+                    checkHeld(args[1], sender);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    checkHeld("1", sender);
+                }
+                break;
+
+            case "C":
+            case "CLOSED":
+                try{
+                    checkClosed(args[1], sender);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    checkClosed("1", sender);
+                }
+                break;
+
+            case "S":
+            case "SERVER":
+                try{
+                    checkServer((args.length > 1 ? args[2] : "1"), args[1], sender);
+                }catch(ArrayIndexOutOfBoundsException e){
+                    checkServer("1", BungeeCord.getServer(), sender);
+                }
+                break;
+
+            default:
                 if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
-                return true;
-            } catch(IllegalArgumentException e){
                 return false;
             }
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            return true;
         }
 
         checkId(Integer.parseInt(args[0]), sender);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
-    }
-    private enum SubCommands{
-        P, PAGE,
-        H, HELD,
-        C, CLOSED,
-        S, SERVER
     }
 
     private void checkServer(String page, String server, CommandSender sender){

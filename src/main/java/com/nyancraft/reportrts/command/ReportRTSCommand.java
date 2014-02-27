@@ -1,6 +1,8 @@
 package com.nyancraft.reportrts.command;
 
+import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
@@ -41,15 +43,15 @@ public class ReportRTSCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length == 0) return false;
         try{
-            switch(SubCommands.valueOf(args[0].toUpperCase())){
+            switch(args[0].toUpperCase()){
 
-            case RELOAD:
+            case "RELOAD":
                 if(!RTSPermissions.canReloadPlugin(sender)) return true;
                 plugin.reloadPlugin();
                 sender.sendMessage(ChatColor.YELLOW + "[ReportRTS] Reloaded configuration and requests.");
                 break;
 
-            case BAN:
+            case "BAN":
                 if(!RTSPermissions.canBanUser(sender)) return true;
                 if(!dbManager.setUserStatus(args[1], 1)){
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
@@ -59,7 +61,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), false);
                 break;
 
-            case UNBAN:
+            case "UNBAN":
                 if(!RTSPermissions.canBanUser(sender)) return true;
                 if(!dbManager.setUserStatus(args[1], 0)){
                     sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
@@ -69,7 +71,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), false);
                 break;
 
-            case RESET:
+            case "RESET":
                 if(!RTSPermissions.canResetPlugin(sender)) return true;
                 if(!dbManager.resetDB()){
                     sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to reset the plugin.");
@@ -80,7 +82,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 plugin.getLogger().log(Level.INFO, sender.getName() + " deleted all users and requests from ReportRTS!");
                 break;
 
-            case STATS:
+            case "STATS":
                 if(args.length < 1) return false;
                 if(!RTSPermissions.canCheckStats(sender)) return true;
                     rs = dbManager.getHandledBy(args[1]);
@@ -99,8 +101,8 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(ChatColor.YELLOW + "Total completed requests: " + totalCompleted);
                 break;
 
-            case SEARCH:
-            case FIND:
+            case "SEARCH":
+            case "FIND":
                 if(args.length < 3) return false;
                 if(!RTSPermissions.canCheckStats(sender)) return true;
                 String action = args[2];
@@ -112,9 +114,9 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
                     ResultSet result = dbManager.getLimitedHandledBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
                     sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Completed by " + player + ChatColor.AQUA + " ------");
-                    String substring = null;
+                    String substring;
                     SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
-                    String date = null;
+                    String date;
                     if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
@@ -129,9 +131,9 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
                     ResultSet result = dbManager.getLimitedCreatedBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
                     sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Created by " + player + ChatColor.AQUA + " ------");
-                    String substring = null;
+                    String substring;
                     SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
-                    String date = null;
+                    String date;
                     if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
@@ -143,7 +145,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
                 break;
 
-            case HELP:
+            case "HELP":
                 if(!RTSPermissions.canSeeHelpPage(sender)) return true;
                 sender.sendMessage(ChatColor.GREEN + "====[ " + ChatColor.GOLD + "ReportRTS Help " + ChatColor.GREEN + "]====");
                 sender.sendMessage(ChatColor.RED + "/check " + ChatColor.GOLD + ChatColor.BOLD + " [STATUS] [ID/PAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - See request details");
@@ -159,7 +161,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 sender.sendMessage(ChatColor.RED + "/unclaim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim request");
                 break;
 
-            case NOTIFICATIONS:
+            case "NOTIFICATIONS":
                 if(!RTSPermissions.canManageNotifications(sender)) return true;
                 if(args.length <= 1){
                     sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notificationMap.size() + " players left to notify.");
@@ -175,7 +177,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 sender.sendMessage(ChatColor.GREEN + "Notifications have been reset.");
                 break;
 
-            case DUTY:
+            case "DUTY":
                 if(!(sender instanceof Player)){
                     sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                     return true;
@@ -202,7 +204,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
                 break;
 
-            case SETUP:
+            case "SETUP":
                 if(args.length <= 1){
                     sender.sendMessage(ChatColor.RED + "Missing argument! Arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
                     return true;
@@ -356,24 +358,13 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 sender.sendMessage(ChatColor.RED + "Wrong argument! Valid arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
                 break;
+
+            default:
+                return false;
             }
-        }catch(Exception e){
+        }catch(SQLException | IOException e){
             return false;
         }
         return true;
-    }
-
-    private enum SubCommands{
-        RELOAD,
-        BAN,
-        UNBAN,
-        RESET,
-        STATS,
-        HELP,
-        NOTIFICATIONS,
-        DUTY,
-        SEARCH,
-        FIND,
-        SETUP
     }
 }
