@@ -26,11 +26,6 @@ public class MySQLQuery extends Query{
     }
 
     @Override
-    public String createTemporaryRequestTable() {
-        return null;
-    }
-
-    @Override
     public String createUserTable() {
         return "CREATE TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (" +
                 "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
