@@ -21,7 +21,7 @@ commands:
   reportrts:
     description: General commands for ReportRTS
     aliases: [rts]
-    usage: /<command> [reload | ban | unban | reset | stats <player> | help | notifications | duty]
+    usage: /<command> [reload | ban | unban | reset | stats <player> | help | notifications | duty | find <completed|created>]
   hold:
     description: Puts the specified ticket on hold
     usage: /<command> [id]
