@@ -223,4 +223,8 @@ public class RTSFunctions {
             if(RTSPermissions.isModerator(player)) ReportRTS.getPlugin().moderatorMap.add(player.getName());
         }
     }
+
+    public static boolean isNumber(String number){
+        return (number.matches("-?\\d+") && !(Integer.parseInt(number) == 0));
+    }
 }

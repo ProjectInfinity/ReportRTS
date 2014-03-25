@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApiServer extends Thread {
@@ -18,14 +17,14 @@ public class ApiServer extends Thread {
     private final List<String> allowedIPs;
     private boolean restrictIP;
 
-    public static List<String> authenticatedIPs;
+    public static String password;
 
-    public ApiServer(ReportRTS plugin, String address, int port, List<String> allowedIPs) throws IOException{
+    public ApiServer(ReportRTS plugin, String address, int port, List<String> allowedIPs, String password) throws IOException{
         this.plugin = plugin;
         this.address = address;
         this.port = port;
         this.allowedIPs = allowedIPs;
-        this.authenticatedIPs = new ArrayList<>();
+        this.password = password;
         if(allowedIPs == null || allowedIPs.isEmpty() || allowedIPs.get(0).equalsIgnoreCase("0.0.0.0")){
             this.restrictIP = false;
         }else if(allowedIPs.size() > 0){
@@ -50,7 +49,7 @@ public class ApiServer extends Thread {
             while(true){
                 Socket socket = getListener().accept();
 
-                // Don't handle the request if remote IP does not match the specified one. TODO: Make sure this works for more than just 127.0.0.1! Live server needed.
+                // Don't handle the request if remote IP does not match the specified one. TODO: Make sure this works for more than just 127.0.0.1! Live server needed, which I currently do not possess (anyone want to sponsor me one?).
                 if(restrictIP){
                     if(!allowedIPs.contains(socket.getInetAddress().getHostAddress())){
                         plugin.getLogger().warning(socket.getInetAddress().getHostAddress() + " attempted to access the API but was not whitelisted!");

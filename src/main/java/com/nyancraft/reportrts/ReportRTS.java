@@ -2,6 +2,8 @@ package com.nyancraft.reportrts;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -64,6 +66,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
     private ApiServer apiServer;
     private int apiPort;
+    private String apiPassword;
     private List<String> apiAllowedIPs = new ArrayList<>();
 
     private String serverIP;
@@ -131,7 +134,21 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                 props.load(new FileReader("server.properties"));
                 serverIP = props.getProperty("server-ip", "ANY");
                 if(serverIP.isEmpty()) serverIP = "ANY";
-                apiServer = new ApiServer(plugin, serverIP, apiPort, apiAllowedIPs);
+                try{
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    apiPassword = apiPassword + "ReportRTS";
+                    md.update(apiPassword.getBytes("UTF-8"));
+                    byte[] hash = md.digest();
+                    StringBuffer sb = new StringBuffer();
+                    for(byte b : hash) {
+                        sb.append(String.format("%02x", b));
+                    }
+                    apiPassword = sb.toString();
+                }catch(NoSuchAlgorithmException e){
+                    log.warning("[ReportRTS] Unable to hash password, consider disabling the API!");
+                    e.printStackTrace();
+                }
+                apiServer = new ApiServer(plugin, serverIP, apiPort, apiAllowedIPs, apiPassword);
             }catch(IOException e){
                 log.warning("[ReportRTS] Unable to start API server!");
                 e.printStackTrace();
@@ -218,6 +235,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
         apiEnabled = getConfig().getBoolean("api.enable", false);
         apiPort = getConfig().getInt("api.port", 25567);
+        apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
     }
 

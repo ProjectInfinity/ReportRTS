@@ -7,9 +7,8 @@ import java.util.Map;
 
 public class Response {
 
-    public static String prepareRequests(){;
+    public static String getRequests(){;
 
-        // Build JSON response.
         StringBuilder resp = new StringBuilder();
         resp.append("{");
         resp.append("\"openRequests\":");
@@ -35,7 +34,6 @@ public class Response {
 
             if(ReportRTS.getPlugin().requestMap.size() > i ) resp.append(",");
             i++;
-            // TODO: When > 1 open requests, EXTRA closing } appears.
         }
         resp.append("}");
         resp.append("}\n");
@@ -43,11 +41,36 @@ public class Response {
         return resp.toString();
     }
 
+    public static String getRequest(int n){
+       if(!ReportRTS.getPlugin().requestMap.containsKey(n)) return "{\"success\":\"false\",\"message\":\"Request not found\"}";
+        HelpRequest request = ReportRTS.getPlugin().requestMap.get(n);
+       return "{\"success\":\"true\",\"data\":[{\"status\":\"" + request.getStatus() + "\"," +
+               "\"x\":\"" + request.getX() + "\"," + "\"y\":\"" + request.getY() + "\"," +
+               "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +
+               "\"pitch\":\"" + request.getPitch() + "\"," + "\"timestamp\":\"" + request.getTimestamp() + "\"," +
+               "\"modtimestamp\":\"" + request.getModTimestamp() + "\"," + "\"message\":\"" + request.getMessage() + "\"," +
+               "\"username\":\"" + request.getName() + "\"," + "\"modname\":\"" + request.getModName() + "\"," +
+               "\"comment\":\"" + request.getModComment() + "\"," + "\"server\":\"" + request.getBungeeCordServer() + "\"," +
+               "]}";
+    }
+
+    public static String uncheckedResult(){
+        return "{\"success\":\"true\",\"message\":\"Action was performed, unable to check result\"}";
+    }
+
     public static String noAction(){
-        return "{\"response\":\"No action specified\"}";
+        return "{\"success\":\"false\",\"message\":\"No action specified\"}";
     }
 
     public static String loginRequired(){
-        return "{\"response\":\"Login required\"}";
+        return "{\"success\":\"false\",\"message\":\"Authentication missing or incorrect\"}";
+    }
+
+    public static String moreArgumentsExpected(String n){
+        return "{\"success\":\"false\",\"message\":\"Not enough arguments, " + n + " required\"}";
+    }
+
+    public static String invalidArgument(){
+        return "{\"success\":\"false\",\"message\":\"One of the provided arguments are invalid\"}";
     }
 }
