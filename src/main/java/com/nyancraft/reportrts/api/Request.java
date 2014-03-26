@@ -43,6 +43,9 @@ public class Request extends Thread {
 
         DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
+        final String number;
+        final String[] data;
+
         switch(requestData[1].toUpperCase()){
 
             case "GETREQUESTS":
@@ -82,14 +85,40 @@ public class Request extends Thread {
                     out.writeBytes(Response.invalidArgument());
                     break;
                 }
-                final String number = requestData[2];
-                final String[] data = requestData;
+                number = requestData[2];
+                data = requestData;
                 Bukkit.getScheduler().scheduleSyncDelayedTask(ReportRTS.getPlugin(), new Runnable(){
                     public void run(){
                         if(data.length > 3){
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "complete " + number + " " + data[3]);
                         }else{
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "complete " + number);
+                        }
+                    }
+                }, 60L);
+                out.writeBytes(Response.uncheckedResult());
+                break;
+
+            case "HOLDREQUEST":
+                if(!authenticate(requestData[0])){
+                    out.writeBytes(Response.loginRequired());
+                    break;
+                }
+                if(requestData.length < 3){
+                    out.writeBytes(Response.moreArgumentsExpected("3"));
+                    break;
+                }else if(!RTSFunctions.isNumber(requestData[2])){
+                    out.writeBytes(Response.invalidArgument());
+                    break;
+                }
+                number = requestData[2];
+                data = requestData;
+                Bukkit.getScheduler().scheduleSyncDelayedTask(ReportRTS.getPlugin(), new Runnable(){
+                    public void run(){
+                        if(data.length > 3){
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hold " + number + " " + data[3]);
+                        }else{
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "hold " + number);
                         }
                     }
                 }, 60L);
