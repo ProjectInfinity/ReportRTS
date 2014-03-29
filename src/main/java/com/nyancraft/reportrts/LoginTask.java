@@ -30,7 +30,7 @@ public class LoginTask extends BukkitRunnable {
             if(notifStatus == 1) return;
             String comment = rs.getString("mod_comment");
             if(comment == null) comment = "";
-            plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedText", rs.getString("text"), comment));
+            if(plugin.getServer().getOfflinePlayer(player).isOnline()) plugin.getServer().getPlayer(player).sendMessage(Message.parse("completedText", rs.getString("text"), comment));
             rs.close();
             if(!DatabaseManager.getDatabase().setNotificationStatus(entry.getKey(), 1)) plugin.getLogger().warning("Unable to set notification status to 1.");
         }catch(SQLException e){
