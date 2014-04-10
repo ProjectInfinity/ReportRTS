@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Response {
 
-    public static String getRequests(){;
+    public static String getRequests(){
 
         StringBuilder resp = new StringBuilder();
         resp.append("{");
