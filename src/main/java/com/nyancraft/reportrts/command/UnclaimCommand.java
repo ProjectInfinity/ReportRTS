@@ -34,13 +34,13 @@ public class UnclaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
-        if(!sender.getName().equals(plugin.requestMap.get(ticketId).getModName()) && !RTSPermissions.canOverride(sender)) return true;
+        if(!((Player)sender).getUniqueId().equals(plugin.requestMap.get(ticketId).getModUUID()) && !RTSPermissions.canOverride(sender)) return true;
         long timestamp = System.currentTimeMillis() / 1000;
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
         }
-        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
+        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
         if(player != null){
             player.sendMessage(Message.parse("unclaimUser", plugin.requestMap.get(ticketId).getModName()));
             player.sendMessage(Message.parse("unclaimText", plugin.requestMap.get(ticketId).getMessage()));

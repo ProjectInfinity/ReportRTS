@@ -3,20 +3,13 @@ package com.nyancraft.reportrts;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.Sound;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
-import com.nyancraft.reportrts.persistence.SQLDB;
 
 public class RTSFunctions {
 
@@ -70,8 +63,8 @@ public class RTSFunctions {
      * @param playSound - boolean play sound or not.
      */
     public static void messageMods(String message, boolean playSound){
-        for(String name : ReportRTS.getPlugin().moderatorMap){
-            Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
+        for(UUID uuid : ReportRTS.getPlugin().moderatorMap){
+            Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
             if(player == null) return;
             player.sendMessage(message);
             if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 0);
@@ -80,7 +73,6 @@ public class RTSFunctions {
 
     /**
      * Synchronizes ticket data from the given ticket ID.
-     *
      * @param ticketId - ticket ID to be synchronized.
      */
     public static boolean syncTicket(int ticketId) {
@@ -103,11 +95,14 @@ public class RTSFunctions {
 
     /**
      * Returns true if the person is online.
-     * @param username - String name of player
+     * @param uuid - UUID of player
      * @return boolean
      */
-    public static boolean isUserOnline(String username) {
-        return ReportRTS.getPlugin().getServer().getOfflinePlayer(username).isOnline();
+    public static boolean isUserOnline(UUID uuid){
+        for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
+            if(player.getUniqueId().equals(uuid)) return true;
+        }
+        return false;
     }
 
     /***
@@ -136,7 +131,7 @@ public class RTSFunctions {
                     if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
                         if(rs.isBeforeFirst()) rs.next();
                     }
-                    entry.getValue().setModName(rs.getString("name"));
+                    entry.getValue().setModUUID(UUID.fromString(rs.getString("uuid")));
                     rs.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -156,7 +151,7 @@ public class RTSFunctions {
                 rs.first();
             }
             while(rs.next()){
-                ReportRTS.getPlugin().notificationMap.put(rs.getInt(1), rs.getString("name"));
+                ReportRTS.getPlugin().notificationMap.put(rs.getInt(1), UUID.fromString(rs.getString("uuid")));
             }
             rs.close();
         }catch(SQLException e){
@@ -166,20 +161,20 @@ public class RTSFunctions {
 
     /**
      * Get number of open request by the specified user.
-     * @param sender - sender of command
+     * @param player - sender of command
      * @return amount of open requests by a specific user
      */
-    public static int getOpenRequestsByUser(CommandSender sender){
+    public static int getOpenRequestsByUser(Player player){
         int openRequestsByUser = 0;
         for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getName().equals(sender.getName())) openRequestsByUser++;
+            if(entry.getValue().getUUID().equals(player.getUniqueId())) openRequestsByUser++;
         }
         return openRequestsByUser;
     }
 
-    public static long checkTimeBetweenRequests(CommandSender sender){
+    public static long checkTimeBetweenRequests(Player player){
         for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getName().equals(sender.getName())){
+            if(entry.getValue().getUUID().equals(player.getUniqueId())){
                 if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().requestDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().requestDelay);
             }
         }
@@ -198,29 +193,9 @@ public class RTSFunctions {
         return message;
     }
 
-    public static boolean checkColumns(){
-        if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) return true;
-        columns.clear();
-        try{
-            ResultSet rs = DatabaseManager.getConnection().createStatement().executeQuery(DatabaseManager.getQueryGen().getColumns(ReportRTS.getPlugin().storagePrefix + "reportrts_request"));
-            while(rs.next()){
-                columns.add(rs.getString("name"));
-            }
-            rs.close();
-            if(!columns.contains("yaw") || !columns.contains("pitch")){
-                ReportRTS.getPlugin().getLogger().info("Noticed you don't have the database structure required. I'll try to fix that!");
-                return false;
-            }
-            return true;
-        }catch(SQLException e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public static void populateModeratorMapWithData(){
-        for(Player player: ReportRTS.getPlugin().getServer().getOnlinePlayers()){
-            if(RTSPermissions.isModerator(player)) ReportRTS.getPlugin().moderatorMap.add(player.getName());
+        for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
+            if(RTSPermissions.isModerator(player)) ReportRTS.getPlugin().moderatorMap.add(player.getUniqueId());
         }
     }
 

@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class AssignCommand implements CommandExecutor {
 
@@ -30,33 +31,36 @@ public class AssignCommand implements CommandExecutor {
         double start = 0;
         if(plugin.debugMode) start = System.nanoTime();
 
-        String name = sender.getName();
         int ticketId = Integer.parseInt(args[0]);
         if(!plugin.requestMap.containsKey(ticketId)){
             sender.sendMessage(Message.parse("assignNotOpen"));
             return true;
         }
         String assignee = args[1];
-        if(name == null || assignee == null){
+        if(assignee == null){
             sender.sendMessage(Message.parse("generalInternalError", "Your name or assignee is null! Try again."));
             return true;
         }
-        if(DatabaseManager.getDatabase().getUserId(assignee, false) == 0){
+        int userId = DatabaseManager.getDatabase().getUserId(assignee, false);
+        if(userId == 0){
             sender.sendMessage(Message.parse("generalInternalError", "That user does not exist!"));
             return true;
         }
+
+        UUID assigneeUUID = DatabaseManager.getDatabase().getUserUUID(userId);
+
         long timestamp = System.currentTimeMillis()/1000;
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to assign request #" + ticketId + " to " + assignee));
             return true;
         }
-        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
+        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
         if(player != null){
             player.sendMessage(Message.parse("assignUser", assignee));
             player.sendMessage(Message.parse("assignText", plugin.requestMap.get(ticketId).getMessage()));
         }
         plugin.requestMap.get(ticketId).setStatus(1);
-        plugin.requestMap.get(ticketId).setModName(assignee);
+        plugin.requestMap.get(ticketId).setModUUID(assigneeUUID);
         plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
         try{
             BungeeCord.globalNotify(Message.parse("assignRequest", assignee, ticketId), ticketId, NotificationType.MODIFICATION);
@@ -68,7 +72,7 @@ public class AssignCommand implements CommandExecutor {
         // Let other plugins know the request was assigned.
         plugin.getServer().getPluginManager().callEvent(new ReportAssignEvent(plugin.requestMap.get(ticketId), sender));
         
-        if(plugin.debugMode) Message.debug(name, this.getClass().getSimpleName(), start, cmd.getName(), args);
+        if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
         return true;
     }
 }

@@ -45,7 +45,7 @@ public class HoldCommand implements CommandExecutor {
         
         if(plugin.requestMap.containsKey(ticketId)){
         	
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
+            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
             if(player != null){
                 player.sendMessage(Message.parse("holdUser", sender.getName()));
                 player.sendMessage(Message.parse("holdText", plugin.requestMap.get(ticketId).getMessage(), reason.trim()));

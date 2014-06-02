@@ -1,9 +1,9 @@
 package com.nyancraft.reportrts;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.HelpRequest;
@@ -42,39 +41,39 @@ public class RTSListener implements Listener{
         }
 
         if(plugin.notificationMap.size() > 0){
-            Map<Integer, String> keys = new HashMap<>();
-            for(Map.Entry<Integer, String> entry : plugin.notificationMap.entrySet()){
-                if(entry.getValue().equals(event.getPlayer().getName())){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+            Map<Integer, UUID> keys = new HashMap<>();
+            for(Map.Entry<Integer, UUID> entry : plugin.notificationMap.entrySet()){
+                if(entry.getValue().equals(event.getPlayer().getUniqueId())){
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
                     keys.put(entry.getKey(), entry.getValue());
                 }
             }
             if(keys.size() >= 2){
                 event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size()));
-                for(Map.Entry<Integer, String> entry : keys.entrySet()){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+                for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
                 }
             }else{
-                for(Map.Entry<Integer, String> entry : keys.entrySet()){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getName(), entry), 100);
+                for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
                 }
             }
 
             for(int key : keys.keySet()) plugin.notificationMap.remove(key);
 
             if(!plugin.teleportMap.isEmpty()){
-                Integer g = plugin.teleportMap.get(event.getPlayer().getName());
+                Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
                     event.getPlayer().sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(g)));
                     Bukkit.dispatchCommand(event.getPlayer(), "tp-id" + Integer.toString(g));
-                    plugin.teleportMap.remove(event.getPlayer().getName());
+                    plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
             }
         }
 
         if(!RTSPermissions.isModerator(event.getPlayer())) return;
 
-        if(!plugin.moderatorMap.contains(event.getPlayer().getName())) plugin.moderatorMap.add(event.getPlayer().getName());
+        if(!plugin.moderatorMap.contains(event.getPlayer().getUniqueId())) plugin.moderatorMap.add(event.getPlayer().getUniqueId());
 
         int openRequests = plugin.requestMap.size();
 
@@ -116,20 +115,20 @@ public class RTSListener implements Listener{
         int userId = DatabaseManager.getDatabase().getUserId(event.getPlayer().getName(), true);
         if(DatabaseManager.getDatabase().fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
             int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
-            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
+            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), event.getPlayer().getUniqueId(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
             try{
-                BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), ticketId, NotificationType.NEW);
+                BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getUniqueId(), ticketId), ticketId, NotificationType.NEW);
             }catch(IOException e){
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), true);
+            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getUniqueId(), ticketId), true);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event){
         BungeeCord.triggerAutoSync();
-        if(plugin.moderatorMap.contains(event.getPlayer().getName())) plugin.moderatorMap.remove(event.getPlayer().getName());
+        if(plugin.moderatorMap.contains(event.getPlayer().getUniqueId())) plugin.moderatorMap.remove(event.getPlayer().getUniqueId());
     }
 }

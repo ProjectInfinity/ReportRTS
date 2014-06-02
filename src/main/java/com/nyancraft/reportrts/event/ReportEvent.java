@@ -24,7 +24,7 @@ private static final HandlerList handlers = new HandlerList();
 	
 	/**
 	 * Get the request that this event regards.
-	 * This will have the data of the request <i>after</i>
+	 * This will have the data of the request after
 	 * the event has happened.
 	 * 
 	 * i.e. a claim event will have the .getModName() equal

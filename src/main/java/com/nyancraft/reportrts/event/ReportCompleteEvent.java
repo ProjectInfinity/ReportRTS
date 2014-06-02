@@ -22,10 +22,10 @@ public class ReportCompleteEvent extends ReportEvent {
 	
 	/**
 	 * This will get the user that
-	 * <b>used the complete command</b>.
+	 * used the complete command.
 	 * 
 	 * You might want to use the request's
-	 * {@link com.nyancraft.reportrts.data.HelpRequest.java#getModName() request.getModName()}
+	 * {@link com.nyancraft.reportrts.data.HelpRequest#getModName() request.getModName()}
 	 * to get the mod who handled the request.
 	 * 
 	 * @return The user who completed the request.

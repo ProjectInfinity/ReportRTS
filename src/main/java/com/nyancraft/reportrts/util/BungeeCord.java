@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BungeeCord {
@@ -85,8 +86,7 @@ public class BungeeCord {
         DataOutputStream msgout = new DataOutputStream(msgbytes);
         msgout.writeUTF("TeleportNotify");
         msgout.writeInt(ticketId);
-        msgout.writeUTF(player.getName());
-
+        msgout.writeUTF(player.getUniqueId().toString());
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
 
@@ -182,7 +182,7 @@ public class BungeeCord {
                         RTSFunctions.messageMods(msg, false);
                     }else if(notifType.getCode() == 2 || notifType.getCode() == 5){
                         if(RTSFunctions.syncTicket(ticketId)){
-                            if(notifType.getCode() == 2) ReportRTS.getPlugin().notificationMap.put(ticketId, ReportRTS.getPlugin().requestMap.get(ticketId).getName());
+                            if(notifType.getCode() == 2) ReportRTS.getPlugin().notificationMap.put(ticketId, ReportRTS.getPlugin().requestMap.get(ticketId).getUUID());
                             ReportRTS.getPlugin().requestMap.remove(ticketId);
                             RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
                         }
@@ -192,10 +192,10 @@ public class BungeeCord {
                     }
                 }else if(function.equals("NotifyUserAndSync")){
                     int ticketId = msgin.readInt();
-                    String username = msgin.readUTF();
+                    UUID uuid = UUID.fromString(msgin.readUTF());
                     String msg = msgin.readUTF();
                     if(RTSFunctions.syncTicket(ticketId)){
-                        Player player = Bukkit.getPlayerExact(username);
+                        Player player = Bukkit.getPlayer(uuid);
                         if(player != null){
                             player.sendMessage(msg);
                             if(!DatabaseManager.getDatabase().setNotificationStatus(ticketId, 1)) ReportRTS.getPlugin().getLogger().warning("Unable to set notification status to 1.");
@@ -203,17 +203,17 @@ public class BungeeCord {
                     }
                 }else if(function.equals("TeleportNotify")){
                     int ticketId = msgin.readInt();
-                    String username = msgin.readUTF();
-                    if(RTSFunctions.isUserOnline(username)){
-                        Player player = Bukkit.getPlayerExact(username);
+                    UUID uuid = UUID.fromString(msgin.readUTF());
+                    if(RTSFunctions.isUserOnline(uuid)){
+                        Player player = Bukkit.getPlayer(uuid);
                         if(player != null){
                             player.sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(ticketId)));
                             Bukkit.dispatchCommand(player, "tp-id " + Integer.toString(ticketId));
                         }else{
-                            ReportRTS.getPlugin().teleportMap.put(username, ticketId);
+                            ReportRTS.getPlugin().teleportMap.put(uuid, ticketId);
                         }
                     }else{
-                        ReportRTS.getPlugin().teleportMap.put(username, ticketId);
+                        ReportRTS.getPlugin().teleportMap.put(uuid, ticketId);
                     }
                 }
             }else if(subChannel.equals("GetServer")){

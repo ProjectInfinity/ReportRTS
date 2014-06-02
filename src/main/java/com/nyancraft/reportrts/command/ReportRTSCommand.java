@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
@@ -76,7 +77,7 @@ public class ReportRTSCommand implements CommandExecutor{
             case "RESET":
                 if(!RTSPermissions.canResetPlugin(sender)) return true;
                 if(!dbManager.resetDB()){
-                    sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occured when attempting to reset the plugin.");
+                    sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occurred when attempting to reset the plugin.");
                     return true;
                 }
                 plugin.reloadPlugin();
@@ -123,7 +124,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
                         date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
+                        ChatColor online = (RTSFunctions.isUserOnline((UUID) result.getObject("uuid"))) ? ChatColor.GREEN : ChatColor.RED;
                         sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
                     }
                     result.close();
@@ -140,7 +141,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     while(result.next()){
                         substring = RTSFunctions.shortenMessage(result.getString("text"));
                         date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline(result.getString("name"))) ? ChatColor.GREEN : ChatColor.RED;
+                        ChatColor online = (RTSFunctions.isUserOnline((UUID) result.getObject("uuid"))) ? ChatColor.GREEN : ChatColor.RED;
                         sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
                     }
                     result.close();
@@ -184,9 +185,10 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage("[ReportRTS] You cannot change your duty status from the console.");
                     return true;
                 }
+                Player player1 = (Player) sender;
                 if(!RTSPermissions.isModerator((Player)sender)) return true;
                 if(args.length <= 1){
-                    if(plugin.moderatorMap.contains(sender.getName()))
+                    if(plugin.moderatorMap.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
                     else
                         sender.sendMessage(ChatColor.RED + "You are currently off duty.");
@@ -198,10 +200,10 @@ public class ReportRTSCommand implements CommandExecutor{
                     return true;
                 }
                 if(duty.equalsIgnoreCase("on")){
-                    if(!plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.add(sender.getName());
+                    if(!plugin.moderatorMap.contains(player1.getUniqueId())) plugin.moderatorMap.add(player1.getUniqueId());
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 }else{
-                    if(plugin.moderatorMap.contains(sender.getName())) plugin.moderatorMap.remove(sender.getName());
+                    if(plugin.moderatorMap.contains(player1.getUniqueId())) plugin.moderatorMap.remove(player1.getUniqueId());
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;

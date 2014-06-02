@@ -3,7 +3,6 @@ package com.nyancraft.reportrts;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.util.Message;
 
 public class RTSPermissions {
@@ -39,11 +38,13 @@ public class RTSPermissions {
     }
 
     public static boolean canCompleteRequests(CommandSender sender){
+        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.complete");
         return sender.hasPermission("reportrts.command.complete");
     }
 
     public static boolean canCompleteOwnRequests(CommandSender sender){
+        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.complete.self");
         return sender.hasPermission("reportrts.command.complete.self");
     }
@@ -109,6 +110,7 @@ public class RTSPermissions {
     }
 
     public static boolean canPutTicketOnHold(CommandSender sender){
+        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null){
             if(!ReportRTS.permission.has(sender, "reportrts.command.hold")){
                 sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.hold"));
@@ -124,6 +126,7 @@ public class RTSPermissions {
     }
 
     public static boolean canClaimTicket(CommandSender sender){
+        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null){
             if(!ReportRTS.permission.has(sender, "reportrts.command.claim")){
                 sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.claim"));

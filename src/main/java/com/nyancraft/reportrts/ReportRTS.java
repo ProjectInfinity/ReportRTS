@@ -15,11 +15,13 @@ import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitTask;
 
 public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
@@ -29,9 +31,9 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private VersionChecker versionChecker = new VersionChecker();
 
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<>();
-    public Map<Integer, String> notificationMap = new HashMap<>();
-    public Map<String, Integer> teleportMap = new HashMap<>();
-    public ArrayList<String> moderatorMap = new ArrayList<>();
+    public Map<Integer, UUID> notificationMap = new HashMap<>();
+    public Map<UUID, Integer> teleportMap = new HashMap<>();
+    public ArrayList<UUID> moderatorMap = new ArrayList<>();
 
     public boolean notifyStaffOnNewRequest;
     public boolean notificationSound;
@@ -233,7 +235,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         bungeeCordSync = getConfig().getLong("bungeecord.sync", 300L);
         bungeeCordServerPrefix = getConfig().getString("bungeecord.serverPrefix");
         BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
-        apiEnabled = getConfig().getBoolean("api.enable", false);
+        apiEnabled =  false; // TODO: Change to this when it's ready: getConfig().getBoolean("api.enable", false);
         apiPort = getConfig().getInt("api.port", 25567);
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");

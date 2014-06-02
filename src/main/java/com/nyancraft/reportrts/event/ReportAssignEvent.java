@@ -6,7 +6,7 @@ import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
  * Event that is called when a moderator
- * assigns another moderator a request, <code>/assign.</code>
+ * assigns another moderator a request, /assign.
  *
  */
 public class ReportAssignEvent extends ReportEvent {

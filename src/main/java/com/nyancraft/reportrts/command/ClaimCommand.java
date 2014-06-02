@@ -24,7 +24,11 @@ public class ClaimCommand implements CommandExecutor{
         this.plugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+        if(!(sender instanceof Player)){
+            sender.sendMessage("As of the UUID update, console may not claim requests.");
+            return true;
+        }
         if(args.length == 0) return false;
         if(!RTSPermissions.canClaimTicket(sender)) return true;
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
@@ -45,13 +49,13 @@ public class ClaimCommand implements CommandExecutor{
             sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
             return true;
         }
-        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
+        Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
         if(player != null){
             player.sendMessage(Message.parse("claimUser", name));
             player.sendMessage(Message.parse("claimText", plugin.requestMap.get(ticketId).getMessage()));
         }
         plugin.requestMap.get(ticketId).setStatus(1);
-        plugin.requestMap.get(ticketId).setModName(name);
+        plugin.requestMap.get(ticketId).setModUUID(((Player) sender).getUniqueId());
         plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
         try{
             BungeeCord.globalNotify(Message.parse("claimRequest", name, args[0]), ticketId, NotificationType.MODIFICATION);

@@ -26,8 +26,8 @@ public class Response {
             resp.append("\"timestamp\":").append(entry.getValue().getTimestamp()).append(",");
             resp.append("\"modtimestamp\":").append(entry.getValue().getModTimestamp()).append(",");
             resp.append("\"message\":").append("\"").append(entry.getValue().getMessage()).append("\"").append(",");
-            resp.append("\"username\":").append("\"").append(entry.getValue().getName()).append("\"").append(",");
-            resp.append("\"modname\":").append("\"").append(entry.getValue().getModName()).append("\"").append(",");
+            resp.append("\"uuid\":").append("\"").append(entry.getValue().getUUID()).append("\"").append(",");
+            resp.append("\"moduuid\":").append("\"").append(entry.getValue().getModUUID()).append("\"").append(",");
             resp.append("\"comment\":").append("\"").append(entry.getValue().getModComment()).append("\"").append(",");
             resp.append("\"server\":").append("\"").append(entry.getValue().getBungeeCordServer()).append("\"").append("}");
             resp.append("]");
@@ -49,7 +49,7 @@ public class Response {
                "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +
                "\"pitch\":\"" + request.getPitch() + "\"," + "\"timestamp\":\"" + request.getTimestamp() + "\"," +
                "\"modtimestamp\":\"" + request.getModTimestamp() + "\"," + "\"message\":\"" + request.getMessage() + "\"," +
-               "\"username\":\"" + request.getName() + "\"," + "\"modname\":\"" + request.getModName() + "\"," +
+               "\"uuid\":\"" + request.getUUID() + "\"," + "\"moduuid\":\"" + request.getModUUID() + "\"," +
                "\"comment\":\"" + request.getModComment() + "\"," + "\"server\":\"" + request.getBungeeCordServer() + "\"," +
                "]}";
     }

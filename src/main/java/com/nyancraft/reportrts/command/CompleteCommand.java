@@ -40,7 +40,8 @@ public class CompleteCommand implements CommandExecutor {
                     sender.sendMessage(Message.parse("generalInternalError", "That request was not found."));
                     return true;
                 }
-                if(!plugin.requestMap.get(ticketId).getName().equalsIgnoreCase(sender.getName())){
+                Player player = (Player) sender;
+                if(!plugin.requestMap.get(ticketId).getUUID().equals(player.getUniqueId())){
                     sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
                     return true;
                 }
@@ -58,6 +59,11 @@ public class CompleteCommand implements CommandExecutor {
                 return true;
             }
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
+            return true;
+        }
+        if(!(sender instanceof Player)){
+            // TODO: Workaround needed, API affected by this!
+            sender.sendMessage("As of the UUID update it is not possible to complete requests from the console. This will be fixed once a workaround has been discovered.");
             return true;
         }
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
@@ -81,9 +87,9 @@ public class CompleteCommand implements CommandExecutor {
         boolean isClaimedByOther = false;
 
         if(plugin.requestMap.containsKey(ticketId)){
-            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getName())) ? 1 : 0;
+            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getUUID())) ? 1 : 0;
             if(plugin.requestMap.get(ticketId).getStatus() == 1){
-                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModName().equalsIgnoreCase(user));
+                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModUUID().equals(((Player) sender).getUniqueId()));
             }
         }
 
@@ -99,8 +105,8 @@ public class CompleteCommand implements CommandExecutor {
         }
         HelpRequest data = null;
         if(plugin.requestMap.containsKey(ticketId)) {
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getName());
-            if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getName());
+            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
+            if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getUUID());
             if(player != null){
                 player.sendMessage(Message.parse("completedUser", user));
                 if(comment == null) comment = "";

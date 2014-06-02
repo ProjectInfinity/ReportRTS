@@ -2,6 +2,7 @@ package com.nyancraft.reportrts.persistence;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 import org.bukkit.Location;
 
@@ -26,6 +27,8 @@ public interface Database {
     public int getNumberHeldRequests();
 
     public int getUserId(String player, boolean createIfNotExists);
+
+    public UUID getUserUUID(int userId);
 
     public int countRequests(int status);
 
@@ -59,7 +62,7 @@ public interface Database {
 
     public ResultSet getAllFromTable(String table);
 
-    public boolean setRequestStatus(int id, String player, int status, String comment, int notified, long timestamp);
+    public boolean setRequestStatus(int id, String user, int status, String comment, int notified, long timestamp);
 
     public boolean setNotificationStatus(int id, int status);
 

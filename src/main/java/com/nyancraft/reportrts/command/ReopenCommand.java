@@ -12,6 +12,7 @@ import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.data.NotificationType;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 

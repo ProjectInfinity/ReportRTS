@@ -6,7 +6,7 @@ import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
  * Event that is called when a Report has been set to
- * be on hold, <code>/hold</code>. This includes
+ * be on hold, /hold. This includes
  * the player that put the request on hold, and the reason.
  */
 public class ReportHoldEvent extends ReportEvent {

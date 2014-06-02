@@ -6,7 +6,7 @@ public abstract class Query {
     public abstract String createRequestTable();
     public abstract String createUserTable();
     public String createUser(){
-        return "INSERT INTO `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (`name`, `banned`) VALUES (?, '0')";
+        return "INSERT INTO `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (`name`, `uuid`, `banned`) VALUES (?, ?, '0')";
     }
     public String createExactUser(){
         return "INSERT INTO `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (`id`,`name`, `banned`) VALUES (?,?,?)";
@@ -30,6 +30,9 @@ public abstract class Query {
     }
     public String getUserId(){
         return "SELECT `id` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `name` = ?";
+    }
+    public String getUserUUID(int userId){
+        return "SELECT `uuid` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `id` = '" + userId + "'";
     }
     public String getUserName(int userId){
         return "SELECT `name` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `id` = '" + userId + "'";

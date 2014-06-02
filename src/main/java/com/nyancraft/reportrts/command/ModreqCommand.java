@@ -1,6 +1,7 @@
 package com.nyancraft.reportrts.command;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -35,6 +36,7 @@ public class ModreqCommand implements CommandExecutor {
         if(!(sender instanceof Player)) {
             sender.sendMessage("[ReportRTS] Some information will not be correct, such as location.");
             int userId = dbManager.getUserId("CONSOLE", true);
+            UUID uuid = UUID.fromString("CONSOLE");
             String message = RTSFunctions.implode(args, " ");
             Location location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
             String world = plugin.getServer().getWorlds().get(0).getName();
@@ -43,7 +45,7 @@ public class ModreqCommand implements CommandExecutor {
                 return true;
             }
             int ticketId = dbManager.getLatestTicketIdByUser(userId);
-            HelpRequest request = new HelpRequest("CONSOLE", ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world, BungeeCord.getServer(), "");
+            HelpRequest request = new HelpRequest("CONSOLE", uuid, ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), world, BungeeCord.getServer(), "");
             plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
             plugin.requestMap.put(ticketId, request);
             if(plugin.notifyStaffOnNewRequest){
@@ -61,13 +63,14 @@ public class ModreqCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("modreqTooShort", plugin.requestMinimumWords));
             return true;
         }
-        if(RTSFunctions.getOpenRequestsByUser(sender) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
+        Player player = (Player) sender;
+        if(RTSFunctions.getOpenRequestsByUser(player) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
             sender.sendMessage(Message.parse("modreqTooManyOpen"));
             return true;
         }
         if(plugin.requestDelay > 0){
             if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))){
-                long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(sender);
+                long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(player);
                 if(timeBetweenRequest > 0){
                     sender.sendMessage(Message.parse("modreqTooFast", timeBetweenRequest));
                     return true;
@@ -77,7 +80,6 @@ public class ModreqCommand implements CommandExecutor {
         double start = 0;
         if(plugin.debugMode) start = System.nanoTime();
 
-        Player player = (Player)sender;
         String message = RTSFunctions.implode(args, " ");
         int userId = dbManager.getUserId(player.getName(), true);
         if(!dbManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
@@ -99,7 +101,7 @@ public class ModreqCommand implements CommandExecutor {
             RTSFunctions.messageMods(Message.parse("modreqFiledMod", player.getName(), ticketId), true);
         }
 
-        HelpRequest request = new HelpRequest(player.getName(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName(), BungeeCord.getServer(), "");
+        HelpRequest request = new HelpRequest(player.getName(), player.getUniqueId(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), player.getWorld().getName(), BungeeCord.getServer(), "");
         plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
         plugin.requestMap.put(ticketId, request);
         if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);

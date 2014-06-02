@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.util.Message;
 
+import java.util.UUID;
+
 public class ModlistCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         // TODO: Possible to-do. No cross server functionality!
@@ -19,8 +21,8 @@ public class ModlistCommand implements CommandExecutor{
         String staff = "";
         String separator = Message.parse("modlistMessageSeparator");
 
-        for(String name : ReportRTS.getPlugin().moderatorMap){
-            Player player = ReportRTS.getPlugin().getServer().getPlayer(name);
+        for(UUID uuid : ReportRTS.getPlugin().moderatorMap){
+            Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
             if(player == null) return false;
             if(ReportRTS.getPlugin().vanishSupport && sender instanceof Player){
                 if(!((Player) sender).canSee(player)) continue;

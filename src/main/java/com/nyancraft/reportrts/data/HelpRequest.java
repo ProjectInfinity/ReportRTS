@@ -1,5 +1,7 @@
 package com.nyancraft.reportrts.data;
 
+import java.util.UUID;
+
 public class HelpRequest {
     
     private int id;
@@ -22,8 +24,12 @@ public class HelpRequest {
     private String modcomment;
     private String bc_server;
 
-    public HelpRequest(String name, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
+    private UUID uuid;
+    private UUID moduuid;
+
+    public HelpRequest(String name, UUID uuid, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
         this.name = name;
+        this.uuid = uuid;
         this.id = id;
         this.tstamp = tstamp;
         this.text = text;
@@ -48,8 +54,16 @@ public class HelpRequest {
     }
 
     /**
+     * Retrieves UUID of player
+     * @return UUID unique user id of player
+     */
+    public UUID getUUID(){
+        return this.uuid;
+    }
+
+    /**
      * Retrieves name of player
-     * @return String name of player
+     * @return String username
      */
     public String getName(){
         return this.name;
@@ -143,7 +157,15 @@ public class HelpRequest {
     public String getBungeeCordServer() { return this.bc_server; }
 
     /**
-     * Retrieves the name of the moderator that handled the ticket, if any
+     * Retrieves the UUID of the moderator that handled the ticket, if any
+     * @return UUID moduuid
+     */
+    public UUID getModUUID(){
+        return this.moduuid;
+    }
+
+    /**
+     * Retrieves name of the moderator that handled the ticket, if any
      * @return String modname
      */
     public String getModName(){
@@ -155,43 +177,58 @@ public class HelpRequest {
     }
 
     /**
-     * Sets the status of the ticket
+     * Retrieves the mod comment on the ticket
+     * @return String modcomment
+     */
+    public String getModComment(){
+        return this.modcomment;
+    }
+
+    /**
      * @param status
+     * Sets the status of the ticket
      */
     public void setStatus(int status){
         this.status = status;
     }
 
     /**
-     * Sets the moderator that handled this ticket
+     * @param moduuid
+     * Sets the moderator UUID that handled this ticket
+     */
+    public void setModUUID(UUID moduuid){
+        this.moduuid = moduuid;
+    }
+
+    /**
+     * @param name
+     * Sets the name of the person who filed the ticket
+     */
+    public void setName(String name){
+        this.name = name;
+    }
+
+    /**
      * @param modname
+     * Sets the moderator name that handled this ticket
      */
     public void setModName(String modname){
         this.modname = modname;
     }
 
-
     /**
-     * Sets timestamp when ticket was created
      * @param modTimestamp
+     * Sets timestamp when ticket was created
      */
     public void setModTimestamp(long modTimestamp){
         this.modtstamp = modTimestamp;
     }
     
     /**
-     * Sets the mod comment on the ticket
      * @param modcomment
+     * Sets the mod comment on the ticket
      */
     public void setModComment(String modcomment){
         this.modcomment = modcomment;
     }
-    
-    /**
-     * Retrieves the mod comment on the ticket
-     * @return 
-     */
-    public String getModComment(){
-        return this.modcomment;
-    }    
 }

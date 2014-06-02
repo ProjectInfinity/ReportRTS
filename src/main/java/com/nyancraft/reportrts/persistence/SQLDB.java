@@ -3,12 +3,14 @@ package com.nyancraft.reportrts.persistence;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.bukkit.Location;
 
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.util.BungeeCord;
+import org.bukkit.entity.Player;
 
 public abstract class SQLDB implements Database{
 
@@ -48,16 +50,20 @@ public abstract class SQLDB implements Database{
             }
     }
 
-    private int createUser(String player){
+    private int createUser(String user){
         if(!isLoaded()) return 0;
         int userId = 0;
+        // TODO: Lazy way to fail the creation since we need the player's UUID, this should be looked into once I have an alternative way to grab UUID of an offline player.
+        if(ReportRTS.getPlugin().getServer().getPlayer(user) == null) return 0;
         try {
+            Player player = ReportRTS.getPlugin().getServer().getPlayer(user);
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((DatabaseManager.getQueryGen().createUser()));
-            ps.setString(1, player);
+            ps.setString(1, player.getName());
+            ps.setString(2, player.getUniqueId().toString());
             if(ps.executeUpdate() < 1) return 0;
             ps.close();
             ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
-            ps.setString(1, player);
+            ps.setString(1, player.getName());
             ResultSet rs = ps.executeQuery();
 
             if(!rs.isBeforeFirst()) return 0;
@@ -95,13 +101,29 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
+    public UUID getUserUUID(int userId){
+        if(!isLoaded() || userId == 0) return null;
+        UUID uuid = null;
+        try {
+            ResultSet rs = query(DatabaseManager.getQueryGen().getUserUUID(userId));
+            rs.first();
+            uuid = UUID.fromString(rs.getString("uuid"));
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return uuid;
+    }
+
+    @Override
     public void populateRequestMap() {
         try {
             ResultSet rs = query(DatabaseManager.getQueryGen().getAllOpenAndClaimedRequests());
             while(rs.next()){
                 ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
-                        rs.getString("name"), 
-                        rs.getInt(1), 
+                        rs.getString("name"),
+                        UUID.fromString(rs.getString("uuid")),
+                        rs.getInt(2), // TODO: Used to be 1, probably changed to 2.
                         rs.getLong("tstamp"), 
                         rs.getString("text"), 
                         rs.getInt("status"), 
@@ -425,7 +447,8 @@ public abstract class SQLDB implements Database{
             int results = 0;
             while (rs.next()) {
                 ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
-                        rs.getString("name"), 
+                        rs.getString("name"),
+                        UUID.fromString(rs.getString("uuid")),
                         rs.getInt(1), 
                         rs.getLong("tstamp"), 
                         rs.getString("text"), 

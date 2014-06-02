@@ -5,10 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.nyancraft.reportrts.MigrationTask;
 import com.nyancraft.reportrts.ReportRTS;
 
 import com.nyancraft.reportrts.persistence.query.Query;
 import com.nyancraft.reportrts.persistence.database.MySQL;
+import org.bukkit.scheduler.BukkitTask;
 
 public class MySQLDB extends SQLDB {
     private MySQL db;
@@ -73,6 +75,23 @@ public class MySQLDB extends SQLDB {
                         " ADD COLUMN `bc_server` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci' AFTER `world`");
                 ReportRTS.getPlugin().getLogger().info("Successfully upgraded the database structure to v1.2.0");
             }
+            rs = db.query(queryGen.getColumns(ReportRTS.getPlugin().storagePrefix + "reportrts_user"));
+            columns.clear();
+            while(rs.next()){
+                columns.add(rs.getString("Field"));
+            }
+            rs.close();
+            if(!columns.contains("uuid")){
+                db.query("ALTER TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user`" +
+                    " ADD COLUMN `uuid` CHAR(36) NULL DEFAULT NULL AFTER `name`");
+                ReportRTS.getPlugin().getLogger().info("Successfully upgraded the user database structure to accommodate for the UUID update.");
+
+                /** UUID Async data migration. Get rid of this after a while when it is no longer needed. **/
+                if(db.checkConnection()){
+                    ReportRTS.getPlugin().getLogger().info("Starting UUID data migration.");
+                    BukkitTask migrationTask = new MigrationTask(ReportRTS.getPlugin()).runTaskAsynchronously(ReportRTS.getPlugin());
+                }
+        }
             return true;
         }catch(SQLException e){
             e.printStackTrace();

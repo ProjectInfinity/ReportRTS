@@ -78,6 +78,7 @@ public class TeleportCommand implements CommandExecutor {
 
         HelpRequest currentRequest = plugin.requestMap.get(ticketId);
 
+        // TODO: Teleportation issue lies here, need to check the results of .getBungeeCordServer() and .getServer().
         if(plugin.bungeeCordSupport && !currentRequest.getBungeeCordServer().equals(BungeeCord.getServer())){
             try{
                 BungeeCord.teleportUser(player, currentRequest.getBungeeCordServer(), currentRequest.getId());
