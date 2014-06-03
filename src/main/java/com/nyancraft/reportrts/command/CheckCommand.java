@@ -152,7 +152,7 @@ public class CheckCommand implements CommandExecutor {
             substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
             ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getUUID())) ? ChatColor.GREEN : ChatColor.RED;
-            // TODO: UUID -> Name conversion.
+
             substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
             String bungeeServer = (currentRequest.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + currentRequest.getBungeeCordServer() + ChatColor.RESET + "] ");
             sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
