@@ -123,7 +123,7 @@ public abstract class SQLDB implements Database{
                 ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
-                        rs.getInt(2), // TODO: Used to be 1, probably changed to 2.
+                        rs.getInt(1),
                         rs.getLong("tstamp"), 
                         rs.getString("text"), 
                         rs.getInt("status"), 
