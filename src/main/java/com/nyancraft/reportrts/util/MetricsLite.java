@@ -267,8 +267,8 @@ public class MetricsLite {
         // The plugin's description file containg all of the plugin data such as name, version, author, etc
         appendJSONPair(json, "guid", guid);
         try{
-            if(Integer.parseInt(description.getVersion().replace("v", "").replaceAll("[^A-Za-z0-9]", "")) != 0){
-                pluginVersion = pluginVersion.replace("v", "").split("-", 1)[0];
+            if(Integer.parseInt(description.getVersion().replace("v", "").replace("b", "").replaceAll("[^A-Za-z0-9]", "")) != 0){
+                pluginVersion = pluginVersion.replace("v", "").split("-")[0];
             }
         }catch(NumberFormatException e){
             pluginVersion = description.getVersion();
