@@ -196,7 +196,7 @@ public class CheckCommand implements CommandExecutor {
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
                 date = sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000));
-                ChatColor online = (RTSFunctions.isUserOnline((UUID) rs.getObject("uuid"))) ? ChatColor.GREEN : ChatColor.RED;
+                ChatColor online = (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid")))) ? ChatColor.GREEN : ChatColor.RED;
                 String bServer = rs.getString("bc_server");
                 String bungeeServer = (bServer.equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + bServer + ChatColor.RESET + "] ");
                 sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + date + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
