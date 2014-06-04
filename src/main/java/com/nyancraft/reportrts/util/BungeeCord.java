@@ -43,12 +43,16 @@ public class BungeeCord {
         return noPlayersOnline;
     }
 
+    public static String getServerName() {
+        return serverName;
+    }
+
     public static String getServer(){
         if(!ReportRTS.getPlugin().bungeeCordSupport){ return ""; }
         if(serverName != null){
             return serverName;
         }else{
-            Player player = Bukkit.getOnlinePlayers()[0];
+            Player player = Bukkit.getOnlinePlayers()[0]; // This will error if no player is online.
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);
             try{
