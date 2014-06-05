@@ -1,6 +1,7 @@
 package com.nyancraft.reportrts.command;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -81,6 +82,14 @@ public class ModreqCommand implements CommandExecutor {
         if(plugin.debugMode) start = System.nanoTime();
 
         String message = RTSFunctions.implode(args, " ");
+        if(plugin.requestPreventDuplicate){
+            for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
+                if(!entry.getValue().getUUID().equals(player.getUniqueId())) continue;
+                if(!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
+                player.sendMessage(Message.parse("modreqDuplicate"));
+                return true;
+            }
+        }
         int userId = dbManager.getUserId(player.getName(), true);
         if(!dbManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
             sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
