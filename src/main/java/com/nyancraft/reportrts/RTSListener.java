@@ -65,7 +65,7 @@ public class RTSListener implements Listener{
                 Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
                     event.getPlayer().sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(g)));
-                    Bukkit.dispatchCommand(event.getPlayer(), "tp-id" + Integer.toString(g));
+                    Bukkit.dispatchCommand(event.getPlayer(), "tp-id " + Integer.toString(g));
                     plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
             }
