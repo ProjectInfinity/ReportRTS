@@ -45,6 +45,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public boolean bungeeCordSupport;
     public boolean setupDone = true;
     public boolean requestNagHeld;
+    public boolean requestPreventDuplicate;
     public boolean apiEnabled;
 
     public int maxRequests;
@@ -225,6 +226,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         requestDelay = getConfig().getInt("request.delay");
         requestMinimumWords = getConfig().getInt("request.minimumWords");
         requestsPerPage = getConfig().getInt("request.perPage");
+        requestPreventDuplicate = getConfig().getBoolean("request.preventDuplicates", true);
         requestNagging = getConfig().getLong("request.nag");
         requestNagHeld = getConfig().getBoolean("request.nagHeld", false);
         storageRefreshTime = getConfig().getLong("storage.refreshTime");
