@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,12 +21,12 @@ public class MessageHandler {
     public void reloadMessageConfig() {
         if(!configExists()){
             if(messageFile == null) messageFile = new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml");
-            messageConfig = YamlConfiguration.loadConfiguration(ReportRTS.getPlugin().getResource("messages.yml"));
+            messageConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(ReportRTS.getPlugin().getResource("messages.yml")));
             saveMessageConfig();
         }
         if(messageFile == null) messageFile = new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml");
         messageConfig = YamlConfiguration.loadConfiguration(messageFile);
-        InputStream defaultMessageStream = ReportRTS.getPlugin().getResource("messages.yml");
+        InputStreamReader defaultMessageStream = new InputStreamReader(ReportRTS.getPlugin().getResource("messages.yml"));
         if(defaultMessageStream != null) {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultMessageStream);
             messageConfig.setDefaults(defaultConfig);
