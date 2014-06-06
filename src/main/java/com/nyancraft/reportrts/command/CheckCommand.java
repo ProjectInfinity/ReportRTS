@@ -64,7 +64,7 @@ public class CheckCommand implements CommandExecutor {
             case "P":
             case "PAGE":
                 try{
-                    checkPage(args[1], sender);
+                    checkPage(RTSFunctions.isNumber(args[1]) ? args[1] : "1", sender);
                 }catch(ArrayIndexOutOfBoundsException e){
                     checkPage("1", sender);
                 }
@@ -73,7 +73,7 @@ public class CheckCommand implements CommandExecutor {
             case "H":
             case "HELD":
                 try{
-                    checkHeld(args[1], sender);
+                    checkHeld(RTSFunctions.isNumber(args[1]) ? args[1] : "1", sender);
                 }catch(ArrayIndexOutOfBoundsException e){
                     checkHeld("1", sender);
                 }
@@ -82,7 +82,7 @@ public class CheckCommand implements CommandExecutor {
             case "C":
             case "CLOSED":
                 try{
-                    checkClosed(args[1], sender);
+                    checkClosed(RTSFunctions.isNumber(args[1]) ? args[1] : "1", sender);
                 }catch(ArrayIndexOutOfBoundsException e){
                     checkClosed("1", sender);
                 }
@@ -91,7 +91,7 @@ public class CheckCommand implements CommandExecutor {
             case "S":
             case "SERVER":
                 try{
-                    checkServer((args.length > 1 ? args[2] : "1"), args[1], sender);
+                    checkServer(args.length > 2 ? (RTSFunctions.isNumber(args[2]) ? args[2] : "1") : "1", args[1], sender);
                 }catch(ArrayIndexOutOfBoundsException e){
                     checkServer("1", BungeeCord.getServer(), sender);
                 }
@@ -128,7 +128,6 @@ public class CheckCommand implements CommandExecutor {
             substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
             date = sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000));
             ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getUUID())) ? ChatColor.GREEN : ChatColor.RED;
-            // TODO: UUID -> Name conversion.
             substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
             sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + date + " by " + online + currentRequest.getName() + ChatColor.GOLD +  " - " + substring);
         }
