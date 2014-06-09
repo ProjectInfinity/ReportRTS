@@ -26,10 +26,11 @@ public class MigrationTask extends BukkitRunnable {
             return;
         }
         ArrayList<String> players = new ArrayList<>();
+        ArrayList<String> delete = new ArrayList<>();
         Map<String, UUID> response = new HashMap<String, UUID>();
+        Map<String, Integer> tracking = new HashMap<>();
         UUIDFetcher fetcher = null;
         try {
-            // TODO: Show progression?
             ResultSet preLoopRS = DatabaseManager.getDatabase().query("SELECT COUNT(`name`) FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uuid` IS NULL OR `uuid` = ''");
             preLoopRS.first();
             int total = preLoopRS.getInt(1);
@@ -45,7 +46,6 @@ public class MigrationTask extends BukkitRunnable {
                 while(rs.next()) players.add(rs.getString("name"));
                 rs.close();
                 if (players.size() < 1) break;
-
                 fetcher = new UUIDFetcher(players);
                 response = fetcher.call();
 
@@ -62,6 +62,23 @@ public class MigrationTask extends BukkitRunnable {
                 System.out.println("[ReportRTS] Updated " + tempCount + " player entries.");
                 System.out.println("[ReportRTS] Progress: " + count + "/" + total + " " + String.format("%.2f", (float)(count * 100) / total) + "%");
                 System.out.println("[ReportRTS] ----------------------------");
+
+                for(String player: players) {
+                    if(!tracking.containsKey(player)) {
+                        tracking.put(player, 1);
+                        continue;
+                    }
+                    tracking.put(player, tracking.get(player) + 1);
+                    if(tracking.get(player) >= 10) delete.add(player);
+                }
+
+                if(delete.size() > 0) {
+                    for(String ghost : delete) {
+                        DatabaseManager.getDatabase().query("DELETE FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `name` = '" + ghost +"'");
+                        System.out.println("[ReportRTS] User " + ghost + " does not exist and was deleted.");
+                    }
+                    delete.clear();
+                }
             }
 
             System.out.println("[ReportRTS] Finished migrating data. Please reload the plugin.");
