@@ -26,7 +26,8 @@ public interface Database {
 
     public int getNumberHeldRequests();
 
-    public int getUserId(String player, boolean createIfNotExists);
+    public int getUserId(String player);
+    public int getUserId(String player, UUID uuid, boolean createIfNotExists);
 
     public UUID getUserUUID(int userId);
 
@@ -66,7 +67,10 @@ public interface Database {
 
     public boolean setNotificationStatus(int id, int status);
 
+    public boolean setUserStatus(String player, UUID uuid, int status);
     public boolean setUserStatus(String player, int status);
+
+    public boolean userExists(String player);
 
     public boolean resetDB();
 

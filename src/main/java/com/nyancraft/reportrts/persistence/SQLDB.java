@@ -53,10 +53,32 @@ public abstract class SQLDB implements Database{
     private int createUser(String user){
         if(!isLoaded()) return 0;
         int userId = 0;
+        if(user.equalsIgnoreCase("CONSOLE")) {
+            try {
+                PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((DatabaseManager.getQueryGen().createUser()));
+                ps.setString(1, "CONSOLE");
+                ps.setString(2, UUID.randomUUID().toString());
+                if(ps.executeUpdate() < 1) return 0;
+                ps.close();
+                ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
+                ps.setString(1, "CONSOLE");
+                ResultSet rs = ps.executeQuery();
+
+                if(!rs.isBeforeFirst()) return 0;
+                if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
+                userId = rs.getInt(1);
+                ps.close();
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return userId;
+        }
         // TODO: Lazy way to fail the creation since we need the player's UUID, this should be looked into once I have an alternative way to grab UUID of an offline player.
         if(ReportRTS.getPlugin().getServer().getPlayer(user) == null) return 0;
         try {
             Player player = ReportRTS.getPlugin().getServer().getPlayer(user);
+            if(player == null) return 0;
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((DatabaseManager.getQueryGen().createUser()));
             ps.setString(1, player.getName());
             ps.setString(2, player.getUniqueId().toString());
@@ -78,12 +100,37 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
-    public int getUserId(String player, boolean createIfNotExists) {
+    public int getUserId(String player) {
         if(!isLoaded()) return 0;
         int userId = 0;
+        if(player.equalsIgnoreCase("CONSOLE")) {
+            createUser("CONSOLE");
+        }
         try {
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserId());
             ps.setString(1, player);
+            ResultSet rs = ps.executeQuery();
+            if(rs.isBeforeFirst()){
+                if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
+                userId = rs.getInt("id");
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
+    @Override
+    public int getUserId(String player, UUID uuid, boolean createIfNotExists) {
+        if(!isLoaded()) return 0;
+        int userId = 0;
+        if (ReportRTS.getPlugin().getServer().getPlayer(player) == null) return 0;
+        try {
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserIdWithUUID());
+            ps.setString(1, player);
+            ps.setString(2, ReportRTS.getPlugin().getServer().getPlayer(player).getUniqueId().toString());
             ResultSet rs = ps.executeQuery();
             if(rs.isBeforeFirst()){
                 if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
@@ -106,8 +153,10 @@ public abstract class SQLDB implements Database{
         UUID uuid = null;
         try {
             ResultSet rs = query(DatabaseManager.getQueryGen().getUserUUID(userId));
-            rs.first();
-            uuid = UUID.fromString(rs.getString("uuid"));
+            if(!rs.first()) return null;
+            String uuidString = rs.getString("uuid");
+            if(rs.wasNull()) return null;
+            uuid = UUID.fromString(uuidString);
             rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -226,7 +275,10 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             rs.close();
-            int modId = getUserId(player, true);
+            if(!userExists(player)) {
+                return false;
+            }
+            int modId = getUserId(player, getUserUUID(getUserId(player)), true);
 
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("UPDATE " + ReportRTS.getPlugin().storagePrefix + "reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ?, mod_comment = ?, notified_of_completion = ? WHERE `id` = ?");
             ps.setInt(1, status);
@@ -258,11 +310,15 @@ public abstract class SQLDB implements Database{
 
     @Override
     public boolean setUserStatus(String player, int status) {
-        int userId = getUserId(player, true);
+        int userId = getUserId(player);
         ResultSet rs = query(DatabaseManager.getQueryGen().getUserStatus(userId));
         try {
             if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
-                if(rs.isBeforeFirst()) rs.next();
+                if(rs.isBeforeFirst()) {
+                    if(!rs.next()) return false;
+                } else {
+                    return false;
+                }
             }
             int banned = rs.getInt("banned");
             rs.close();
@@ -277,6 +333,33 @@ public abstract class SQLDB implements Database{
         }
         return true;
     }
+
+    @Override
+    public boolean setUserStatus(String player, UUID uuid, int status) {
+        int userId = getUserId(player, uuid, true);
+        ResultSet rs = query(DatabaseManager.getQueryGen().getUserStatus(userId));
+        try {
+            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
+                if(rs.isBeforeFirst()) {
+                    if(!rs.next()) return false;
+                } else {
+                    return false;
+                }
+            }
+            int banned = rs.getInt("banned");
+            rs.close();
+            if(banned == status) return false;
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().setUserStatus(status));
+            ps.setInt(1, userId);
+            if(ps.executeUpdate() < 1) return false;
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public int countRequests(int status){
         if(!isLoaded()) return 0;
@@ -385,7 +468,7 @@ public abstract class SQLDB implements Database{
     public ResultSet getHandledBy(String player){
         try{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getHandledBy());
-            ps.setInt(1, getUserId(player, true));
+            ps.setInt(1, getUserId(player));
             return ps.executeQuery();
         }catch(SQLException e){
             e.printStackTrace();
@@ -397,7 +480,7 @@ public abstract class SQLDB implements Database{
     public ResultSet getLimitedHandledBy(String player, int from, int limit){
         try{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getLimitedHandledBy());
-            ps.setInt(1, getUserId(player, true));
+            ps.setInt(1, getUserId(player));
             ps.setInt(2, from);
             ps.setInt(3, limit);
             return ps.executeQuery();
@@ -411,7 +494,7 @@ public abstract class SQLDB implements Database{
     public ResultSet getLimitedCreatedBy(String player, int from, int limit){
         try{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getLimitedCreatedBy());
-            ps.setInt(1, getUserId(player, true));
+            ps.setInt(1, getUserId(player));
             ps.setInt(2, from);
             ps.setInt(3, limit);
             return ps.executeQuery();
@@ -439,6 +522,31 @@ public abstract class SQLDB implements Database{
             e.printStackTrace();
         }
         return username;
+    }
+
+    @Override
+    public boolean userExists(String player) {
+        boolean result = false;
+        try {
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement((DatabaseManager.getQueryGen().getUserExists()));
+            ps.setString(1, player);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs == null) return false;
+
+            rs.first();
+
+            if(rs.getInt(1) > 0) {
+                result = true;
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return result;
     }
 
     public int updateTicket(int ticketId) {

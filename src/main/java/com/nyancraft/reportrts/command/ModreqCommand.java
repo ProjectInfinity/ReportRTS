@@ -36,8 +36,8 @@ public class ModreqCommand implements CommandExecutor {
         if(args.length == 0) return false;
         if(!(sender instanceof Player)) {
             sender.sendMessage("[ReportRTS] Some information will not be correct, such as location.");
-            int userId = dbManager.getUserId("CONSOLE", true);
-            UUID uuid = UUID.fromString("CONSOLE");
+            int userId = dbManager.getUserId("CONSOLE");
+            UUID uuid = dbManager.getUserUUID(userId);
             String message = RTSFunctions.implode(args, " ");
             Location location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
             String world = plugin.getServer().getWorlds().get(0).getName();
@@ -90,7 +90,7 @@ public class ModreqCommand implements CommandExecutor {
                 return true;
             }
         }
-        int userId = dbManager.getUserId(player.getName(), true);
+        int userId = dbManager.getUserId(player.getName(), player.getUniqueId(), true);
         if(!dbManager.fileRequest(player.getName(), player.getWorld().getName(), player.getLocation(), message, userId)) {
             sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
             return true;

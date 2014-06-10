@@ -41,14 +41,17 @@ public class AssignCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalInternalError", "Your name or assignee is null! Try again."));
             return true;
         }
-        int userId = DatabaseManager.getDatabase().getUserId(assignee, false);
+        int userId = DatabaseManager.getDatabase().getUserId(assignee);
         if(userId == 0){
             sender.sendMessage(Message.parse("generalInternalError", "That user does not exist!"));
             return true;
         }
 
         UUID assigneeUUID = DatabaseManager.getDatabase().getUserUUID(userId);
-
+        if(assigneeUUID == null) {
+            sender.sendMessage(Message.parse("generalInternalError", "User UUID might not exist for user ID " + userId));
+            return true;
+        }
         long timestamp = System.currentTimeMillis()/1000;
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0, timestamp)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to assign request #" + ticketId + " to " + assignee));

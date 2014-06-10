@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import com.nyancraft.reportrts.data.HelpRequest;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -55,9 +58,35 @@ public class ReportRTSCommand implements CommandExecutor{
             case "BAN":
                 if(args.length < 2) return false;
                 if(!RTSPermissions.canBanUser(sender)) return true;
-                if(!dbManager.setUserStatus(args[1], 1)){
-                    sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
-                    return true;
+                Player p1 = plugin.getServer().getPlayer(args[1]);
+                boolean existsInDB = dbManager.userExists(args[1]);
+                if(p1 == null && !existsInDB) {
+                    boolean userFound = false;
+                    UUID uuid = null;
+                    for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) {
+                        if(!entry.getValue().getName().equalsIgnoreCase(args[1])) continue;
+                        userFound = true;
+                        uuid = entry.getValue().getUUID();
+                        break;
+                    }
+                    if(!userFound) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
+                        return true;
+                    } else {
+                        sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " was found but somehow does not exist in the user table."));
+                        return true;
+                    }
+
+                } else if(p1 != null) {
+                    if(!dbManager.setUserStatus(p1.getName(), p1.getUniqueId(), 1)) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + p1.getName() + " from filing requests."));
+                        return true;
+                    }
+                } else if(existsInDB) {
+                    if(!dbManager.setUserStatus(args[1], 1)) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
+                        return true;
+                    }
                 }
                 BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), false);

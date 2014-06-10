@@ -31,6 +31,11 @@ public abstract class Query {
     public String getUserId(){
         return "SELECT `id` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `name` = ?";
     }
+
+    public String getUserIdWithUUID(){
+        return "SELECT `id` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `name` = ? AND `uuid` = ?";
+    }
+
     public String getUserUUID(int userId){
         return "SELECT `uuid` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` WHERE `id` = '" + userId + "'";
     }
@@ -79,6 +84,10 @@ public abstract class Query {
         return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request as request INNER JOIN " + ReportRTS.getPlugin().storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE request.user_id = ? ORDER BY request.tstamp DESC LIMIT ?, ? ";
     }
 
+    public String getUserExists(){
+        return "SELECT COUNT(*) FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_user WHERE `name` = ? AND `uuid` IS NOT NULL";
+    }
+
     public String countRequests(int status){
         return "SELECT COUNT(`id`) FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request WHERE `status` = '" + status + "'";
     }
@@ -86,6 +95,7 @@ public abstract class Query {
     public String deleteRequestOlderThan(String table, int lessThanThis){
         return "DELETE FROM " + table + " WHERE tstamp < " + lessThanThis;
     }
+
     public String deleteEntryById(String table, int id){
         return "DELETE FROM `" + table + "` WHERE `id` = '" + id + "'";
     }
