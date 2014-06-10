@@ -30,7 +30,7 @@ public class MySQLQuery extends Query{
         return "CREATE TABLE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` (" +
                 "`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT," +
                 "`name` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci'," +
-                "`uuid` CHAR(36) NULL DEFAULT NULL" +
+                "`uuid` CHAR(36) NULL DEFAULT NULL," +
                 "`banned` TINYINT(1) UNSIGNED NULL DEFAULT NULL," +
                 "PRIMARY KEY (`id`))";
     }
