@@ -57,6 +57,7 @@ public class ClaimCommand implements CommandExecutor{
         plugin.requestMap.get(ticketId).setStatus(1);
         plugin.requestMap.get(ticketId).setModUUID(((Player) sender).getUniqueId());
         plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
+        plugin.requestMap.get(ticketId).setModName(name);
         try{
             BungeeCord.globalNotify(Message.parse("claimRequest", name, args[0]), ticketId, NotificationType.MODIFICATION);
         }catch(IOException e){

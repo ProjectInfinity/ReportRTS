@@ -65,6 +65,7 @@ public class AssignCommand implements CommandExecutor {
         plugin.requestMap.get(ticketId).setStatus(1);
         plugin.requestMap.get(ticketId).setModUUID(assigneeUUID);
         plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
+        plugin.requestMap.get(ticketId).setModName(assignee);
         try{
             BungeeCord.globalNotify(Message.parse("assignRequest", assignee, ticketId), ticketId, NotificationType.MODIFICATION);
         }catch(IOException e){
