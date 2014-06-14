@@ -113,9 +113,9 @@ public class CompleteCommand implements CommandExecutor {
                 player.sendMessage(Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment));
             }else{
                 try{
-                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getName(), Message.parse("completedUser", user), ticketId);
+                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getUUID(), Message.parse("completedUser", user), ticketId);
                     if(comment == null) comment = "";
-                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getName(), Message.parse("completedText",plugin.requestMap.get(ticketId).getMessage(), comment), ticketId);
+                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getUUID(), Message.parse("completedText",plugin.requestMap.get(ticketId).getMessage(), comment), ticketId);
                 }catch(IOException e){
                     e.printStackTrace();
                 }

@@ -136,7 +136,7 @@ public class BungeeCord {
         }
     }
 
-    public static void notifyUser(String username, String message, int ticketId) throws IOException{
+    public static void notifyUser(UUID uuid, String message, int ticketId) throws IOException{
         if(!ReportRTS.getPlugin().bungeeCordSupport || serverName == null) return;
 
         String serverPrefix = (ReportRTS.getPlugin().bungeeCordServerPrefix == null || ReportRTS.getPlugin().bungeeCordServerPrefix.equals("") ? "[" + serverName + "]" : Message.parseColors(ReportRTS.getPlugin().bungeeCordServerPrefix));
@@ -150,7 +150,7 @@ public class BungeeCord {
         DataOutputStream msgout = new DataOutputStream(msgbytes);
         msgout.writeUTF("NotifyUserAndSync");
         msgout.writeInt(ticketId);
-        msgout.writeUTF(username);
+        msgout.writeUTF(uuid.toString());
         msgout.writeUTF(serverPrefix + " " + message);
 
         out.writeShort(msgbytes.toByteArray().length);
