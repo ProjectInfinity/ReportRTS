@@ -38,7 +38,6 @@ public class RTSPermissions {
     }
 
     public static boolean canCompleteRequests(CommandSender sender){
-        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.complete");
         return sender.hasPermission("reportrts.command.complete");
     }

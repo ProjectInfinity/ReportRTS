@@ -36,7 +36,7 @@ public class UnclaimCommand implements CommandExecutor{
         }
         if(!((Player)sender).getUniqueId().equals(plugin.requestMap.get(ticketId).getModUUID()) && !RTSPermissions.canOverride(sender)) return true;
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp, true)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + args[0]));
             return true;
         }

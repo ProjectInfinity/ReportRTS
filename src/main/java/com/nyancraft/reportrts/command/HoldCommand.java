@@ -38,7 +38,7 @@ public class HoldCommand implements CommandExecutor {
             reason = reason.substring(args[0].length());
         }
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0, timestamp)) {
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0, timestamp, true)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + args[0] + " on hold."));
             return true;
         }

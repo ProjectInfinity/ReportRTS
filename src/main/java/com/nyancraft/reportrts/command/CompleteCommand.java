@@ -61,11 +61,6 @@ public class CompleteCommand implements CommandExecutor {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
             return true;
         }
-        if(!(sender instanceof Player)){
-            // TODO: Workaround needed, API affected by this!
-            sender.sendMessage("As of the UUID update it is not possible to complete requests from the console. This will be fixed once a workaround has been discovered.");
-            return true;
-        }
         if(!RTSFunctions.isParsableToInt(args[0])) return false;
         long start = 0;
         if(plugin.debugMode) start = System.nanoTime();
@@ -99,7 +94,7 @@ public class CompleteCommand implements CommandExecutor {
         }
 
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online, timestamp)) {
+        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online, timestamp, true)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
             return true;
         }

@@ -31,7 +31,7 @@ public class ReopenCommand implements CommandExecutor{
         int ticketId = Integer.parseInt(args[0]);
         if(plugin.debugMode) start = System.nanoTime();
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, timestamp, true)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[0]));
             return true;
         }

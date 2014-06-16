@@ -126,11 +126,10 @@ public abstract class SQLDB implements Database{
     public int getUserId(String player, UUID uuid, boolean createIfNotExists) {
         if(!isLoaded()) return 0;
         int userId = 0;
-        if (ReportRTS.getPlugin().getServer().getPlayer(player) == null) return 0;
         try {
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getUserIdWithUUID());
             ps.setString(1, player);
-            ps.setString(2, ReportRTS.getPlugin().getServer().getPlayer(player).getUniqueId().toString());
+            ps.setString(2, uuid.toString());
             ResultSet rs = ps.executeQuery();
             if(rs.isBeforeFirst()){
                 if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")) rs.next();
@@ -264,7 +263,7 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
-    public boolean setRequestStatus(int id, String player, int status, String comment, int notified, long timestamp){
+    public boolean setRequestStatus(int id, String player, int status, String comment, int notified, long timestamp, boolean createUser){
         if(!isLoaded()) return false;
         ResultSet rs = query(DatabaseManager.getQueryGen().getTicketStatusById(id));
         try{
@@ -275,8 +274,12 @@ public abstract class SQLDB implements Database{
                 return false;
             }
             rs.close();
-            if(!userExists(player)) {
+            boolean userExists = userExists(player);
+            if(!userExists && !createUser) {
                 return false;
+            } else if(!userExists && createUser) {
+                createUser(player);
+                if(!userExists(player)) return false;
             }
             int modId = getUserId(player, getUserUUID(getUserId(player)), true);
 

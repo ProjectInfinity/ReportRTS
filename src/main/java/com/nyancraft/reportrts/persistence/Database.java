@@ -63,7 +63,7 @@ public interface Database {
 
     public ResultSet getAllFromTable(String table);
 
-    public boolean setRequestStatus(int id, String user, int status, String comment, int notified, long timestamp);
+    public boolean setRequestStatus(int id, String user, int status, String comment, int notified, long timestamp, boolean createUser);
 
     public boolean setNotificationStatus(int id, int status);
 

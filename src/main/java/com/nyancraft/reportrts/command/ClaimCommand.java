@@ -45,7 +45,7 @@ public class ClaimCommand implements CommandExecutor{
             return true;
         }
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, name, 1, "", 0, timestamp)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, name, 1, "", 0, timestamp, true)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to claim request #" + args[0]));
             return true;
         }

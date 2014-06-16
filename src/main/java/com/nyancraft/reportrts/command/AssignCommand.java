@@ -53,7 +53,7 @@ public class AssignCommand implements CommandExecutor {
             return true;
         }
         long timestamp = System.currentTimeMillis()/1000;
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0, timestamp)){
+        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, assignee, 1, "", 0, timestamp, true)){
             sender.sendMessage(Message.parse("generalInternalError", "Unable to assign request #" + ticketId + " to " + assignee));
             return true;
         }
