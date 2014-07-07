@@ -49,7 +49,7 @@ public abstract class Query {
         return "SELECT `id` FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` WHERE `user_id` = '" + userId + "' ORDER BY `tstamp` DESC LIMIT 1";
     }
     public String getHeldRequests(int from, int limit){
-        return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request as request INNER JOIN " + ReportRTS.getPlugin().storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' AND request.id > '" + from + "' LIMIT " + limit;
+        return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request as request INNER JOIN " + ReportRTS.getPlugin().storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE request.status = '2' ORDER BY request.id ASC LIMIT " + from + ", " + limit;
     }
     public String getClosedRequests(int from, int limit){
         return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request as request INNER JOIN " + ReportRTS.getPlugin().storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE request.status = '3' ORDER BY request.mod_timestamp DESC LIMIT " + from + ", " + limit;
