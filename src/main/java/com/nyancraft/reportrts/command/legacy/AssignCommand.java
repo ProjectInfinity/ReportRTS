@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.command;
+package com.nyancraft.reportrts.command.legacy;
 
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;

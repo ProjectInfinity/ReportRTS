@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.command;
+package com.nyancraft.reportrts.command.legacy;
 
 import com.nyancraft.reportrts.ReportRTS;
 import org.bukkit.command.Command;

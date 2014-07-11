@@ -161,20 +161,20 @@ public class RTSFunctions {
 
     /**
      * Get number of open request by the specified user.
-     * @param player - sender of command
+     * @param uuid - UUID of user that sent the command.
      * @return amount of open requests by a specific user
      */
-    public static int getOpenRequestsByUser(Player player){
+    public static int getOpenRequestsByUser(UUID uuid){
         int openRequestsByUser = 0;
         for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getUUID().equals(player.getUniqueId())) openRequestsByUser++;
+            if(entry.getValue().getUUID().equals(uuid)) openRequestsByUser++;
         }
         return openRequestsByUser;
     }
 
-    public static long checkTimeBetweenRequests(Player player){
+    public static long checkTimeBetweenRequests(UUID uuid){
         for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getUUID().equals(player.getUniqueId())){
+            if(entry.getValue().getUUID().equals(uuid)){
                 if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().requestDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().requestDelay);
             }
         }
@@ -199,6 +199,11 @@ public class RTSFunctions {
         }
     }
 
+    /**
+     * Check if the provided String is a number or not.
+     * @param number as a String
+     * @return true if String is a number
+     */
     public static boolean isNumber(String number){
         return (number.matches("-?\\d+") && !(Integer.parseInt(number) == 0));
     }

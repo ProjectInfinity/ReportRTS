@@ -18,14 +18,15 @@ public class TabCompleteHelper implements TabCompleter{
         this.plugin = plugin;
     }
 
+    // TODO: REALLY needs testing with the new command system.
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         //System.out.println("Command: " + cmd + ", Label: " + label + ", Args: " + RTSFunctions.implode(args, "") + ", Length: " + args.length);
-        if(args.length > 1 || !RTSFunctions.isParsableToInt(args[0]) || args[0].equalsIgnoreCase(sender.getName()) || plugin.requestMap.size() < 1){
+        if(args.length > 1 || !RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName()) || plugin.requestMap.size() < 1) {
 
-            if(args[0].isEmpty()){
+            if(args[1].isEmpty()) {
                 List<String> response = new ArrayList<>();
-                response.add(plugin.requestMap.keySet().toArray()[0].toString());
+                response.add(plugin.requestMap.keySet().toArray()[1].toString());
                 return response;
             }
             List<String> response = new ArrayList<>();
@@ -33,15 +34,15 @@ public class TabCompleteHelper implements TabCompleter{
             return response;
         }
         final Set<Integer> keys = plugin.requestMap.keySet();
-        int initialKey = Integer.parseInt(args[0]);
+        int initialKey = Integer.parseInt(args[1]);
         if(initialKey <= 0) return null;
         int prevKey = 0;
-        for(int key : keys){
-            if(!Integer.toString(key).startsWith(args[0]) && !(key == prevKey) || initialKey > key){
+        for(int key : keys) {
+            if(!Integer.toString(key).startsWith(args[1]) && !(key == prevKey) || initialKey > key) {
                 continue;
             }
-            if(initialKey == key){
-                for(int i : keys){
+            if(initialKey == key) {
+                for(int i : keys) {
                     if(i <= initialKey) continue;
                     prevKey = i;
                     break;

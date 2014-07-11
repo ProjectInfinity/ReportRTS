@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.command;
+package com.nyancraft.reportrts.command.legacy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

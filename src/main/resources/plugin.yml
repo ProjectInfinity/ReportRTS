@@ -4,46 +4,13 @@ version: ${version}
 author: ProjectInfinity
 softdepend: [Vault]
 commands:
-  modreq:
-    description: Request help from staff
-    usage: /<command> [message]
-  check:
-    description: Check all requests.
-    usage: /<command> [id | p,page <id> | h,held <id> | c,closed <id>]
-  complete:
-    description: Marks specified request as completed
-    usage: /<command> [id] [comment]
-    aliases: [done]
-  tp-id:
-    description: Teleports to the specified request
-    usage: /<command> [id]
-    aliases: [tpid]
+  ticket:
+    description: General user commands for ReportRTS
+    usage: /<command> [action] [arguments]
   reportrts:
-    description: General commands for ReportRTS
+    description: General management commands for ReportRTS
     aliases: [rts]
     usage: /<command> [reload | ban | unban | reset | stats <player> | help | notifications | duty | find <completed|created>]
-  hold:
-    description: Puts the specified ticket on hold
-    usage: /<command> [id]
-  claim:
-    description: Claims the specified ticket
-    usage: /<command> [id]
-  modlist:
-    description: Shows online staff members
-    usage: /<command>
-  unclaim:
-    description: Unclaims the specified ticket
-    usage: /<command> [id]
-  reopen:
-    description: Reopens the specified ticket
-    usage: /<command> [id]
-  mod-broadcast:
-    description: Broadcasts a message to staff
-    usage: /<command> [message]
-    aliases: [mb]
-  assign:
-    description: Assigns a ticket to specified staff member
-    usage: /<command> [ticket id] [staff member]
 permissions:
   reportrts.user:
     description: Give this to all of your regular players.

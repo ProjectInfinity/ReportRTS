@@ -3,6 +3,7 @@
 # hideMessageIfEmpty - If true, hides the notification on login if there are no open requests.
 # debug - If true, it will show information about actions performed.
 # VanishSupport - If true, hide staff from /modlist when vanished.
+# command.legacy - If true, use old command system. I.e. /check, /complete, /modreq etc.
 # versionCheck - If true, ReportRTS will alert you of new recommended versions.
 # request.max - Maximum number of requests a user may have open at the same time.
 # request.delay - User has to wait this amount of seconds before filing another request.
@@ -27,6 +28,20 @@ hideMessageIfEmpty: false
 debug: false
 VanishSupport: false
 versionCheck: true
+
+command:
+  legacy: false
+  readTicket: 'read'
+  openTicket: 'open'
+  closeTicket: 'close'
+  reopenTicket: 'reopen'
+  claimTicket: 'claim'
+  assignTicket: 'assign'
+  unclaimTicket: 'unclaim'
+  holdTicket: 'hold'
+  teleportToTicket: 'tp'
+  broadcastToStaff: 'broadcast'
+  listStaff: 'staff'
 
 request:
   delay: 60

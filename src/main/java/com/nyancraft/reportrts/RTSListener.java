@@ -64,8 +64,8 @@ public class RTSListener implements Listener{
             if(!plugin.teleportMap.isEmpty()){
                 Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
-                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(g)));
-                    Bukkit.dispatchCommand(event.getPlayer(), "tp-id " + Integer.toString(g));
+                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g)));
+                    Bukkit.dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g));
                     plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
             }
@@ -107,7 +107,7 @@ public class RTSListener implements Listener{
             block.breakNaturally();
             return;
         }
-        if(RTSFunctions.getOpenRequestsByUser(event.getPlayer()) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(event.getPlayer(), "reportrts.command.modreq.unlimited") : event.getPlayer().hasPermission("reportrts.command.modreq.unlimited"))){
+        if(RTSFunctions.getOpenRequestsByUser(event.getPlayer().getUniqueId()) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(event.getPlayer(), "reportrts.command.modreq.unlimited") : event.getPlayer().hasPermission("reportrts.command.modreq.unlimited"))){
             event.getPlayer().sendMessage(Message.parse("modreqTooManyOpen"));
             block.breakNaturally();
             return;

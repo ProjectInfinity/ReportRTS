@@ -1,4 +1,4 @@
-package com.nyancraft.reportrts.command;
+package com.nyancraft.reportrts.command.legacy;
 
 import java.io.IOException;
 import java.util.Map;
@@ -65,13 +65,13 @@ public class ModreqCommand implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if(RTSFunctions.getOpenRequestsByUser(player) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
+        if(RTSFunctions.getOpenRequestsByUser(player.getUniqueId()) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
             sender.sendMessage(Message.parse("modreqTooManyOpen"));
             return true;
         }
         if(plugin.requestDelay > 0){
             if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))){
-                long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(player);
+                long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(player.getUniqueId());
                 if(timeBetweenRequest > 0){
                     sender.sendMessage(Message.parse("modreqTooFast", timeBetweenRequest));
                     return true;
