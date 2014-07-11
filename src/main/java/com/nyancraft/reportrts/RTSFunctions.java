@@ -42,6 +42,7 @@ public class RTSFunctions {
     }
 
     for( String part : array ) {
+        if(part == null) continue;
         out = out + part + glue;
     }
     out = out.substring(0, out.length() - glue.length() );
