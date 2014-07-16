@@ -72,7 +72,7 @@ public class TeleportTicket {
                 player.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
                 return true;
             }
-            player.sendMessage(Message.parse("teleportToRequest", ticketId));
+            player.sendMessage(Message.parse("teleportToRequest", args[1]));
             return true;
         }
 
@@ -97,7 +97,7 @@ public class TeleportTicket {
             sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
             return true;
         }
-        player.sendMessage(Message.parse("teleportToRequest", args[0]));
+        player.sendMessage(Message.parse("teleportToRequest", args[1]));
         return true;
     }
 }
