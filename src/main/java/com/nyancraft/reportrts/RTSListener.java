@@ -118,11 +118,11 @@ public class RTSListener implements Listener{
             plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), event.getPlayer().getUniqueId(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
             try{
-                BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getUniqueId(), ticketId), ticketId, NotificationType.NEW);
+                BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), ticketId, NotificationType.NEW);
             }catch(IOException e){
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getUniqueId(), ticketId), true);
+            RTSFunctions.messageMods(Message.parse("modreqFiledMod", event.getPlayer().getName(), String.valueOf(ticketId)), true);
         }
     }
 
