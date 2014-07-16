@@ -206,6 +206,6 @@ public class RTSFunctions {
      * @return true if String is a number
      */
     public static boolean isNumber(String number){
-        return (number.matches("-?\\d+") && !(Integer.parseInt(number) == 0));
+        return (number.matches("-?\\d+") && !(Long.parseLong((number)) <= 0L) && (Long.parseLong((number)) < Integer.MAX_VALUE));
     }
 }
