@@ -58,11 +58,11 @@ public class HoldTicket {
         }
 
         try {
-            BungeeCord.globalNotify(Message.parse("holdRequest", ticketId, sender.getName()), ticketId, NotificationType.HOLD);
+            BungeeCord.globalNotify(Message.parse("holdRequest", args[1], sender.getName()), ticketId, NotificationType.HOLD);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("holdRequest", ticketId, sender.getName()), false);
+        RTSFunctions.messageMods(Message.parse("holdRequest", args[1], sender.getName()), false);
         return true;
     }
 }

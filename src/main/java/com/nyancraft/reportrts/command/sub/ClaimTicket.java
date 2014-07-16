@@ -65,11 +65,11 @@ public class ClaimTicket {
         plugin.requestMap.get(ticketId).setModName(name);
 
         try {
-            BungeeCord.globalNotify(Message.parse("claimRequest", name, ticketId), ticketId, NotificationType.MODIFICATION);
+            BungeeCord.globalNotify(Message.parse("claimRequest", name, args[1]), ticketId, NotificationType.MODIFICATION);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("claimRequest", name, ticketId), false);
+        RTSFunctions.messageMods(Message.parse("claimRequest", name, args[1]), false);
 
         // Let other plugins know the request was claimed
         plugin.getServer().getPluginManager().callEvent(new ReportClaimEvent(plugin.requestMap.get(ticketId)));

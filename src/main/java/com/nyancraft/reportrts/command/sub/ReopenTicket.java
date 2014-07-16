@@ -37,24 +37,24 @@ public class ReopenTicket {
         int ticketId = Integer.parseInt(args[1]);
 
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, System.currentTimeMillis() / 1000, true)) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + ticketId));
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[1]));
             return true;
         }
 
         if(RTSFunctions.syncTicket(ticketId)) {
             try {
-                BungeeCord.globalNotify(Message.parse("reopenedRequest", sender.getName(), ticketId), ticketId, NotificationType.NEW);
+                BungeeCord.globalNotify(Message.parse("reopenedRequest", sender.getName(), args[1]), ticketId, NotificationType.NEW);
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), ticketId), true);
+            RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
             // Let other plugins know the request was assigned.
             plugin.getServer().getPluginManager().callEvent(new ReportReopenEvent(plugin.requestMap.get(ticketId), sender));
             sender.sendMessage(Message.parse("reopenedRequestSelf", ticketId));
 
             return true;
         } else {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + ticketId));
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[1]));
             return true;
         }
     }

@@ -51,11 +51,11 @@ public class CloseTicket {
                 dbManager.deleteEntryById(plugin.storagePrefix + "reportrts_request", ticketId);
                 plugin.requestMap.remove(ticketId);
                 try{
-                    BungeeCord.globalNotify(Message.parse("completedReq", ticketId, "Cancellation System"), ticketId, NotificationType.DELETE);
+                    BungeeCord.globalNotify(Message.parse("completedReq", args[1], "Cancellation System"), ticketId, NotificationType.DELETE);
                 }catch(IOException e){
                     e.printStackTrace();
                 }
-                RTSFunctions.messageMods(Message.parse("completedReq", ticketId,"Cancellation System"), false);
+                RTSFunctions.messageMods(Message.parse("completedReq", args[1],"Cancellation System"), false);
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 
                 return true;
@@ -124,11 +124,11 @@ public class CloseTicket {
         }
 
         try {
-            BungeeCord.globalNotify(Message.parse("completedReq", ticketId, user), ticketId, NotificationType.COMPLETE);
+            BungeeCord.globalNotify(Message.parse("completedReq", args[1], user), ticketId, NotificationType.COMPLETE);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("completedReq", ticketId, user), false);
+        RTSFunctions.messageMods(Message.parse("completedReq", args[1], user), false);
         if(data != null) {
             data.setModComment(comment);
             if (data.getModName() == null) {

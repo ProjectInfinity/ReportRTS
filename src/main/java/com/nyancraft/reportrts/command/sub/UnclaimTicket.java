@@ -52,14 +52,14 @@ public class UnclaimTicket {
         }
         plugin.requestMap.get(ticketId).setStatus(0);
         try {
-            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), ticketId), ticketId, NotificationType.MODIFICATION);
+            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[1]), ticketId, NotificationType.MODIFICATION);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), ticketId), false);
+        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.requestMap.get(ticketId).getModName(), args[1]), false);
 
-        sender.sendMessage(Message.parse("unclaimReqSelf", ticketId));
+        sender.sendMessage(Message.parse("unclaimReqSelf", args[1]));
 
         plugin.getServer().getPluginManager().callEvent(new ReportUnclaimEvent(plugin.requestMap.get(ticketId), plugin.requestMap.get(ticketId).getModName(), sender));
         plugin.requestMap.get(ticketId).setModName(null);
