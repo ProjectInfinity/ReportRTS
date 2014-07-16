@@ -49,7 +49,7 @@ public class RTSListener implements Listener{
                 }
             }
             if(keys.size() >= 2){
-                event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size()));
+                event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size(), (plugin.legacyCommands ? plugin.commandMap.get("readTicket") + " self" : "ticket " + plugin.commandMap.get("readTicket") + " self")));
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
                     plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
                 }
@@ -64,7 +64,7 @@ public class RTSListener implements Listener{
             if(!plugin.teleportMap.isEmpty()){
                 Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
-                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g)));
+                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/" + (plugin.legacyCommands ? plugin.commandMap.get("teleportToTicket") : "ticket " + plugin.commandMap.get("teleportToTicket")) + " " + Integer.toString(g)));
                     Bukkit.dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g));
                     plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
@@ -81,7 +81,7 @@ public class RTSListener implements Listener{
             event.getPlayer().sendMessage(Message.parse("generalNoRequests"));
 
         if(openRequests > 0)
-            event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests));
+            event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))));
 
         if(event.getPlayer().isOp()){
             if(plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));

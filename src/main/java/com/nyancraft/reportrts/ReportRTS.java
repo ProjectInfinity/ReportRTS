@@ -163,12 +163,12 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                     if(requestNagHeld){
                         int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
                         if(heldRequests > 0){
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests), false);
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }else{
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
                     }else{
-                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
             }, 120L, (requestNagging * 60) * 20);
