@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -37,12 +38,13 @@ public class TeleportTicket {
         int ticketId = Integer.parseInt(args[1]);
         Player player = (Player) sender;
 
+        // Ticket status not open.
         if(!plugin.requestMap.containsKey(ticketId)) {
 
             Location location;
             try(ResultSet rs = DatabaseManager.getDatabase().getLocationById(ticketId)) {
                 if(!rs.isBeforeFirst()) {
-                    sender.sendMessage(Message.parse("generalRequestNotFound", ticketId));
+                    player.sendMessage(Message.parse("generalRequestNotFound", ticketId));
                     return true;
                 }
                 rs.first();
@@ -52,24 +54,50 @@ public class TeleportTicket {
                     try{
                         BungeeCord.teleportUser(player, bungeeServer, ticketId);
                     }catch(IOException e){
-                        sender.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
+                        player.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
                     }
                     return true;
                 }
-                location = new Location(player.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getFloat("yaw"), rs.getFloat("pitch"));
+                location = new Location(plugin.getServer().getWorld(rs.getString("world")), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getFloat("yaw"), rs.getFloat("pitch"));
             } catch (SQLException e) {
-                sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occurred when trying to fall back upon the database.");
+                player.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occurred when trying to fall back upon the database.");
                 e.printStackTrace();
                 return true;
             }
-            if(!player.teleport(location)){
-                sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
+            if(location.getWorld() == null) {
+                player.sendMessage(ChatColor.RED + "[ReportRTS] World is null! Attempting to teleport to that ticket will cause a NullPointerException.");
+                return true;
+            }
+            if(!player.teleport(location)) {
+                player.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
                 return true;
             }
             player.sendMessage(Message.parse("teleportToRequest", ticketId));
             return true;
         }
 
+        // Ticket status open.
+        HelpRequest currentRequest = plugin.requestMap.get(ticketId);
+
+        if(plugin.bungeeCordSupport && !currentRequest.getBungeeCordServer().equals(BungeeCord.getServer())) {
+            try {
+                BungeeCord.teleportUser(player, currentRequest.getBungeeCordServer(), currentRequest.getId());
+            } catch(IOException e) {
+                sender.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
+            }
+            return true;
+        }
+
+        Location location = new Location(player.getServer().getWorld(currentRequest.getWorld()), currentRequest.getX(), currentRequest.getY(), currentRequest.getZ(), currentRequest.getYaw(), currentRequest.getPitch());
+        if(location.getWorld() == null) {
+            player.sendMessage(ChatColor.RED + "[ReportRTS] World is null! Attempting to teleport to that ticket will cause a NullPointerException.");
+            return true;
+        }
+        if(!player.teleport(location)) {
+            sender.sendMessage(ChatColor.RED + "[ReportRTS] Teleportation failed due to an unexpected error.");
+            return true;
+        }
+        player.sendMessage(Message.parse("teleportToRequest", args[0]));
         return true;
     }
 }
