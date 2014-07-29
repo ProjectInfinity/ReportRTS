@@ -48,6 +48,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public boolean requestPreventDuplicate;
     public boolean apiEnabled;
     public boolean legacyCommands;
+    public boolean fancify;
 
     public int maxRequests;
     public int requestDelay;
@@ -113,6 +114,11 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         }
         outdated = !versionChecker.upToDate();
 
+        if(fancify && pm.getPlugin("ProtocolLib") == null) {
+            log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
+            fancify = false;
+        }
+
         if(legacyCommands) {
             pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
@@ -122,7 +128,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         getCommand("reportrts").setExecutor(new ReportRTSCommand(plugin));
         getCommand("ticket").setExecutor(new TicketCommand(plugin));
         getCommand("ticket").setTabCompleter(new TabCompleteHelper(plugin));
-        if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
+        if(pm.getPlugin("Vault") != null) setupPermissions();
         try{
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
@@ -239,6 +245,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
         legacyCommands = getConfig().getBoolean("command.legacy", false);
+        fancify = getConfig().getBoolean("request.fancify", true);
         commandMap.clear();
         // Register all commands/subcommands.
         commandMap.put("readTicket",getConfig().getString("command.readTicket"));

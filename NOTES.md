@@ -18,3 +18,8 @@ Notes about ReportRTS version 1.2.2
     * Fixed a NullPointerException that would occur if a player attempted to teleport to a ticket that referenced world that did no longer exist on the server.
     * Fixed an issue in isNumber() that caused it to return true when a negative number was passed.
     * Fixed an issue resulting in a NumberFormatException should the user provide a number larger than the max size of an Integer.
+5. Tickets are fancier than ever!
+    * If a ticket message is equal to or longer than 20 characters, it is shortened. However when hovered over it will display the full text in a tooltip.
+        * This slows down the commands by a tiny bit. If you don't want to sacrifice the minor performance you may turn it off.
+        * Disable fancy tickets by setting "request.fancify" to false.
+        * Soft dependency for ProtocolLib added as a result. Plugin will continue to function like usual without ProtocolLib.

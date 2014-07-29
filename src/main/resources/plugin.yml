@@ -2,7 +2,7 @@ name: ${name}
 main: com.nyancraft.reportrts.ReportRTS
 version: ${version}
 author: ProjectInfinity
-softdepend: [Vault]
+softdepend: [Vault, ProtocolLib]
 commands:
   ticket:
     description: General user commands for ReportRTS

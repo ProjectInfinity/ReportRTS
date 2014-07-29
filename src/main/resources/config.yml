@@ -52,6 +52,7 @@ request:
   nag: 5
   nagHeld: false
   minimumWords: 3
+  fancify: true
 
 storage:
   type: mysql

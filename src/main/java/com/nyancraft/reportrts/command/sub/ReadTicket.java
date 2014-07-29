@@ -1,5 +1,9 @@
 package com.nyancraft.reportrts.command.sub;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
@@ -11,7 +15,9 @@ import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -176,8 +182,22 @@ public class ReadTicket {
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
             String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
-            sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
-                    + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD + " - " + substring);
+            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
+                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
+                        + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
+                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
+                        + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD + " - " + substring);
+            }
         }
 
         return true;
@@ -210,8 +230,23 @@ public class ReadTicket {
                 ChatColor online = (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid")))) ? ChatColor.GREEN : ChatColor.RED;
                 String bServer = rs.getString("bc_server");
                 String bungeeServer = (bServer.equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + bServer + ChatColor.RESET + "] ");
-                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000))
-                        + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+
+                if(plugin.fancify && (sender instanceof Player) && rs.getString("text").length() >= 20) {
+                    PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                    chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " "
+                            + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000)) + " by " + (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid"))) ? ChatColor.GREEN : ChatColor.RED)
+                            + rs.getString("name") + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                            "{\"action\":\"show_text\",\"value\":\"" + rs.getString("text").replaceAll("\"", "\\\\\"") + "\"}}]}"));
+                    try {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                } else {
+                    sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000))
+                            + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+                }
             }
         } catch (SQLException e) {
             sender.sendMessage(Message.parse("generalInternalError", "Cannot check held requests, see console for errors."));
@@ -247,8 +282,27 @@ public class ReadTicket {
                 ChatColor online = (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid")))) ? ChatColor.GREEN : ChatColor.RED;
                 String bServer = rs.getString("bc_server");
                 String bungeeServer = (bServer.equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + bServer + ChatColor.RESET + "] ");
-                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000))
-                        + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+
+                if(plugin.fancify && (sender instanceof Player) && rs.getString("text").length() >= 20) {
+                    PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                    chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " "
+                            + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000)) + " by " + (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid"))) ? ChatColor.GREEN : ChatColor.RED)
+                            + rs.getString("name") + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                            "{\"action\":\"show_text\",\"value\":\"" + rs.getString("text").replaceAll("\"", "\\\\\"") + "\"}}]}"));
+                    try {
+                        ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                    } catch (InvocationTargetException e) {
+                        plugin.getLogger().severe("Unable to send server packet. Cause: " + e.getCause() + " Message: " + e.getMessage());
+                        plugin.getLogger().severe("Ticket information - ID: #" + rs.getInt(1) + " UserID: " + rs.getInt("user_id") + " Username " + rs.getString("name") + " ModID: " + rs.getInt("mod_id")
+                        + "ModComment: " + rs.getString("mod_comment") + " World: " + rs.getString("world") + " Text: " + rs.getString("text"));
+                        e.printStackTrace();
+                        return false;
+                    }
+                } else {
+                    sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " " + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000))
+                            + " by " + online + rs.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
+                }
+
             }
         } catch (SQLException e) {
             sender.sendMessage(Message.parse("generalInternalError", "Could not view closed tickets, see console for errors."));
@@ -283,17 +337,31 @@ public class ReadTicket {
         List<HelpRequest> tmpList = new ArrayList<>(plugin.requestMap.values());
 
         for(int i = (page * plugin.requestsPerPage) - plugin.requestsPerPage; i < a && i < plugin.requestMap.size(); i++){
-            HelpRequest currentRequest = tmpList.get(i);
-            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(currentRequest.getUUID()) || !currentRequest.getBungeeCordServer().equals(server)){
+            HelpRequest ticket = tmpList.get(i);
+            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(ticket.getUUID()) || !ticket.getBungeeCordServer().equals(server)){
                 a++;
                 continue;
             }
-            substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+            substring = RTSFunctions.shortenMessage(ticket.getMessage());
+            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
 
-            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getUUID())) ? ChatColor.GREEN : ChatColor.RED;
-            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-            sender.sendMessage(ChatColor.GOLD + "#" + currentRequest.getId() + " " + sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000))
-                    + " by " + online + currentRequest.getName() + ChatColor.GOLD +  " - " + substring);
+            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
+                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + ChatColor.GOLD + "#" + ticket.getId() + " "
+                        + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
+                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
+                        + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
+            }
+
         }
         return true;
     }
@@ -320,14 +388,28 @@ public class ReadTicket {
                 i++;
                 if (i > 5) break;
             }
-            HelpRequest currentRequest = entry.getValue();
-            String substring = RTSFunctions.shortenMessage(currentRequest.getMessage());
+            HelpRequest ticket = entry.getValue();
+            String substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
-            ChatColor online = (RTSFunctions.isUserOnline(currentRequest.getUUID())) ? ChatColor.GREEN : ChatColor.RED;
-            substring = (currentRequest.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + currentRequest.getModName() : ChatColor.GRAY + substring;
-            String bungeeServer = (currentRequest.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + currentRequest.getBungeeCordServer() + ChatColor.RESET + "] ");
-            sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + currentRequest.getId() + " " + sdf.format(new java.util.Date(currentRequest.getTimestamp() * 1000))
-                    + " by " + online + currentRequest.getName() + ChatColor.GOLD + " - " + substring);
+            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
+            String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
+
+            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
+                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
+                        + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
+                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
+                        + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
+            }
         }
         return true;
     }
