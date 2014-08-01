@@ -17,7 +17,7 @@ public class TicketCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        /** TODO: Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION **/
+        /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION *
         int i = -1;
         for(String arg : args) {
             i++;
