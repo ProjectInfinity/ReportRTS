@@ -18,15 +18,33 @@ public class TabCompleteHelper implements TabCompleter{
         this.plugin = plugin;
     }
 
-    // TODO: REALLY needs testing with the new command system.
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        //System.out.println("Command: " + cmd + ", Label: " + label + ", Args: " + RTSFunctions.implode(args, "") + ", Length: " + args.length);
-        if(args.length > 1 || !RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName()) || plugin.requestMap.size() < 1) {
-
-            if(args[1].isEmpty()) {
+        /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION
+        int tempI = -1;
+        for(String arg : args) {
+            tempI++;
+            System.out.println("Position: " + tempI + " | Actual Position: " + (tempI + 1) + " | Argument: " + arg);
+        }
+        /** LOOK ABOVE **/
+        if(args.length == 0 || (!args[0].equalsIgnoreCase(plugin.commandMap.get("readTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("closeTicket")) &&
+            !args[0].equalsIgnoreCase(plugin.commandMap.get("teleportToTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("holdTicket")) &&
+            !args[0].equalsIgnoreCase(plugin.commandMap.get("claimTicket")) && !args[0].equalsIgnoreCase(plugin.commandMap.get("unclaimTicket")) &&
+            !args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket")))) {
+                // If you got here then the sub-command you tried to tab-complete does not support it.
                 List<String> response = new ArrayList<>();
-                response.add(plugin.requestMap.keySet().toArray()[1].toString());
+                response.add("");
+                return response;
+        }
+        if(args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName())) || plugin.requestMap.size() < 1) {
+
+            if(args.length < 2 || args[1].isEmpty()) {
+                List<String> response = new ArrayList<>();
+                if(args.length >= 2) {
+                    response.add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.requestMap.keySet().toArray()[1].toString());
+                } else {
+                    response.add(args[0] + " " + plugin.requestMap.keySet().toArray()[1].toString());
+                }
                 return response;
             }
             List<String> response = new ArrayList<>();
