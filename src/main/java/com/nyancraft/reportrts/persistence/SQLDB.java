@@ -103,7 +103,7 @@ public abstract class SQLDB implements Database{
     public int getUserId(String player) {
         if(!isLoaded()) return 0;
         int userId = 0;
-        if(player.equalsIgnoreCase("CONSOLE")) {
+        if(player.equalsIgnoreCase("CONSOLE") && !userExists(player)) {
             createUser("CONSOLE");
         }
         try {
@@ -277,7 +277,7 @@ public abstract class SQLDB implements Database{
             boolean userExists = userExists(player);
             if(!userExists && !createUser) {
                 return false;
-            } else if(!userExists && createUser) {
+            } else if(createUser && !userExists) {
                 createUser(player);
                 if(!userExists(player)) return false;
             }
