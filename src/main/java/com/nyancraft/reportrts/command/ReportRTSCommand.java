@@ -238,6 +238,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "SETUP":
+                if(!sender.isOp()) return false;
                 if(args.length <= 1){
                     sender.sendMessage(ChatColor.RED + "Missing argument! Arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
                     return true;
