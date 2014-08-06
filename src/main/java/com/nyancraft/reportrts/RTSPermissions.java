@@ -125,7 +125,6 @@ public class RTSPermissions {
     }
 
     public static boolean canClaimTicket(CommandSender sender){
-        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null){
             if(!ReportRTS.permission.has(sender, "reportrts.command.claim")){
                 sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.claim"));

@@ -15,7 +15,6 @@ import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -33,6 +32,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<>();
     public Map<Integer, UUID> notificationMap = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
+    public Map<String, String> commandMap = new HashMap<>();
     public ArrayList<UUID> moderatorMap = new ArrayList<>();
 
     public boolean notifyStaffOnNewRequest;
@@ -47,6 +47,8 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public boolean requestNagHeld;
     public boolean requestPreventDuplicate;
     public boolean apiEnabled;
+    public boolean legacyCommands;
+    public boolean fancify;
 
     public int maxRequests;
     public int requestDelay;
@@ -111,28 +113,22 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             setupDone = false;
         }
         outdated = !versionChecker.upToDate();
-        getCommand("modreq").setExecutor(new ModreqCommand(plugin));
-        getCommand("check").setExecutor(new CheckCommand(plugin));
-        getCommand("complete").setExecutor(new CompleteCommand(plugin));
-        getCommand("reopen").setExecutor(new ReopenCommand(plugin));
-        getCommand("tp-id").setExecutor(new TeleportCommand(plugin));
+
+        if(fancify && pm.getPlugin("ProtocolLib") == null) {
+            log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
+            fancify = false;
+        }
+
+        if(legacyCommands) {
+            pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
+                    commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
+                    commandMap.get("listStaff")), plugin);
+        }
+
         getCommand("reportrts").setExecutor(new ReportRTSCommand(plugin));
-        getCommand("hold").setExecutor(new HoldCommand(plugin));
-        getCommand("claim").setExecutor(new ClaimCommand(plugin));
-        getCommand("unclaim").setExecutor(new UnclaimCommand(plugin));
-        getCommand("modlist").setExecutor(new ModlistCommand());
-        getCommand("mod-broadcast").setExecutor(new ModBroadcastCommand(plugin));
-        getCommand("assign").setExecutor(new AssignCommand(plugin));
-
-        getCommand("check").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("complete").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("tp-id").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("hold").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("claim").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("unclaim").setTabCompleter(new TabCompleteHelper(plugin));
-        getCommand("assign").setTabCompleter(new TabCompleteHelper(plugin));
-
-        if(getServer().getPluginManager().getPlugin("Vault") != null) setupPermissions();
+        getCommand("ticket").setExecutor(new TicketCommand(plugin));
+        getCommand("ticket").setTabCompleter(new TabCompleteHelper(plugin));
+        if(pm.getPlugin("Vault") != null) setupPermissions();
         try{
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
@@ -173,12 +169,12 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                     if(requestNagHeld){
                         int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
                         if(heldRequests > 0){
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests), false);
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }else{
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
                     }else{
-                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests), false);
+                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
             }, 120L, (requestNagging * 60) * 20);
@@ -248,6 +244,21 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         apiPort = getConfig().getInt("api.port", 25567);
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
+        legacyCommands = getConfig().getBoolean("command.legacy", false);
+        fancify = getConfig().getBoolean("request.fancify", true);
+        commandMap.clear();
+        // Register all commands/subcommands.
+        commandMap.put("readTicket",getConfig().getString("command.readTicket"));
+        commandMap.put("openTicket",getConfig().getString("command.openTicket"));
+        commandMap.put("closeTicket",getConfig().getString("command.closeTicket"));
+        commandMap.put("reopenTicket",getConfig().getString("command.reopenTicket"));
+        commandMap.put("claimTicket",getConfig().getString("command.claimTicket"));
+        commandMap.put("unclaimTicket",getConfig().getString("command.unclaimTicket"));
+        commandMap.put("holdTicket",getConfig().getString("command.holdTicket"));
+        commandMap.put("teleportToTicket",getConfig().getString("command.teleportToTicket"));
+        commandMap.put("broadcastToStaff",getConfig().getString("command.broadcastToStaff"));
+        commandMap.put("listStaff",getConfig().getString("command.listStaff"));
+        // Commands registered!
     }
 
     public static ReportRTS getPlugin(){
