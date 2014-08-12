@@ -25,7 +25,7 @@ public class BroadcastMessage {
 
         if(!RTSPermissions.canBroadcast(sender)) return true;
         if(args.length < 2) return false;
-        args[0] = "";
+        args[0] = null;
         String message = RTSFunctions.implode(args, " ");
         try {
             BungeeCord.globalNotify(Message.parse("broadcastMessage", sender.getName(), message), -1, NotificationType.NOTIFYONLY);
