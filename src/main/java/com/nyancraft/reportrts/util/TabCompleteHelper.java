@@ -43,7 +43,7 @@ public class TabCompleteHelper implements TabCompleter{
                 if(args.length >= 2) {
                     response.add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.requestMap.keySet().toArray()[1].toString());
                 } else {
-                    response.add(args[0] + " " + plugin.requestMap.keySet().toArray()[1].toString());
+                    response.add(args[0] + " " + plugin.requestMap.keySet().toArray()[0].toString());
                 }
                 return response;
             }
