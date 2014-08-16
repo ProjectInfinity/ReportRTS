@@ -258,6 +258,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         commandMap.put("teleportToTicket",getConfig().getString("command.teleportToTicket"));
         commandMap.put("broadcastToStaff",getConfig().getString("command.broadcastToStaff"));
         commandMap.put("listStaff",getConfig().getString("command.listStaff"));
+        commandMap.put("assignTicket",getConfig().getString("command.assignTicket"));
         // Commands registered!
     }
 

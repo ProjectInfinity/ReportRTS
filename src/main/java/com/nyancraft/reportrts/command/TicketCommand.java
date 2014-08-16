@@ -93,6 +93,12 @@ public class TicketCommand implements CommandExecutor {
             if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
             return result;
         }
+        /** Assign a ticket **/
+        if(args[0].equalsIgnoreCase(plugin.commandMap.get("assignTicket"))) {
+            result = AssignTicket.handleCommand(sender, args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            return result;
+        }
         return true;
     }
 }
