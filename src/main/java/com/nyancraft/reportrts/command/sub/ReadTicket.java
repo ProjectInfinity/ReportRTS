@@ -163,7 +163,7 @@ public class ReadTicket {
         int a = page * plugin.requestsPerPage;
 
         // Compile a response for the user.
-        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Requests -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
+        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Tickets -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 
         List<HelpRequest> tmpList = new ArrayList<>(plugin.requestMap.values());
@@ -222,7 +222,7 @@ public class ReadTicket {
         try(ResultSet rs = dbManager.getHeldRequests(i, plugin.requestsPerPage)) {
 
             int heldRequests = dbManager.getNumberHeldRequests();
-            sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Requests -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
+            sender.sendMessage(ChatColor.AQUA + "--------- " + heldRequests + " Tickets -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
             if(heldRequests == 0) sender.sendMessage(Message.parse("holdNoRequests"));
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
@@ -249,7 +249,7 @@ public class ReadTicket {
                 }
             }
         } catch (SQLException e) {
-            sender.sendMessage(Message.parse("generalInternalError", "Cannot check held requests, see console for errors."));
+            sender.sendMessage(Message.parse("generalInternalError", "Cannot check held tickets, see console for errors."));
             e.printStackTrace();
         }
         return true;
@@ -272,9 +272,9 @@ public class ReadTicket {
         int i = (page * plugin.requestsPerPage) - plugin.requestsPerPage;
 
         try(ResultSet rs = dbManager.getClosedRequests(i, plugin.requestsPerPage)) {
-            // Only count closed (status 3) requests.
+            // Only count closed (status 3) tickets.
             int closedRequests = dbManager.countRequests(3);
-            sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Requests -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
+            sender.sendMessage(ChatColor.AQUA + "--------- " + closedRequests + " Tickets -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
             if(closedRequests == 0) sender.sendMessage(Message.parse("closedNoRequests"));
             while(rs.next()){
                 substring = RTSFunctions.shortenMessage(rs.getString("text"));
@@ -331,7 +331,7 @@ public class ReadTicket {
         int a = (page * plugin.requestsPerPage) - plugin.requestsPerPage;
 
         // Compile a response for the user.
-        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Requests From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
+        sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Tickets From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 
         List<HelpRequest> tmpList = new ArrayList<>(plugin.requestMap.values());
@@ -382,7 +382,7 @@ public class ReadTicket {
         for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) if(entry.getValue().getName().equals(sender.getName())) openRequests++;
         int i = 0;
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " unresolved tickets " + ChatColor.AQUA + "----------");
-        if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open requests at this time.");
+        if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open tickets at this time.");
         for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) {
             if (entry.getValue().getName().equals(sender.getName())) {
                 i++;
