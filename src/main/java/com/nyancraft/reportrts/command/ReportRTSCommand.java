@@ -180,17 +180,17 @@ public class ReportRTSCommand implements CommandExecutor{
             case "HELP":
                 if(!RTSPermissions.canSeeHelpPage(sender)) return true;
                 sender.sendMessage(ChatColor.GREEN + "====[ " + ChatColor.GOLD + "ReportRTS Help " + ChatColor.GREEN + "]====");
-                sender.sendMessage(ChatColor.RED + "/check " + ChatColor.GOLD + ChatColor.BOLD + " [STATUS] [ID/PAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - See request details");
-                sender.sendMessage(ChatColor.RED + "/claim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Claim request, stops toe stepping");
-                sender.sendMessage(ChatColor.RED + "/complete " + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Mark request as complete");
-                sender.sendMessage(ChatColor.RED + "/hold " + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Put request on hold");
-                sender.sendMessage(ChatColor.RED + "/modreq " + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - File a request");
-                sender.sendMessage(ChatColor.RED + "/modlist " + ChatColor.YELLOW + " - See online staff");
-                sender.sendMessage(ChatColor.RED + "/mod-broadcast " + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - Send a message to all online staff");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("readTicket") : "/ticket " + plugin.commandMap.get("readTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [STATUS] [ID/PAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - See ticket details");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("claimTicket") : "/ticket " + plugin.commandMap.get("claimTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Claim ticket, stops toe stepping");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("closeTicket") : "/ticket " + plugin.commandMap.get("closeTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Close ticket");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("holdTicket") : "/ticket " + plugin.commandMap.get("holdTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Put ticket on hold");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("openTicket") : "/ticket " + plugin.commandMap.get("openTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - Opens a ticket");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("listStaff") : "/ticket " + plugin.commandMap.get("listStaff")) + ChatColor.YELLOW + " - See online staff");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("broadcastToStaff") : "/ticket " + plugin.commandMap.get("broadcastToStaff")) + ChatColor.GOLD + ChatColor.BOLD + " [MESSAGE]" + ChatColor.RESET + ChatColor.YELLOW + " - Send a message to all online staff");
                 sender.sendMessage(ChatColor.RED + "/reportrts " + ChatColor.GOLD + ChatColor.BOLD + " [ACTION]" + ChatColor.RESET + ChatColor.YELLOW + " - General command for ReportRTS");
-                sender.sendMessage(ChatColor.RED + "/reopen " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Reopen a held or closed request");
-                sender.sendMessage(ChatColor.RED + "/tp-id " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Teleports to specified request");
-                sender.sendMessage(ChatColor.RED + "/unclaim " + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim request");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("reopenTicket") : "/ticket " + plugin.commandMap.get("reopenTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Reopens a held or closed ticket");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("teleportToTicket") : "/ticket " + plugin.commandMap.get("teleportToTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Teleport to specified ticket");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("unclaimTicket") : "/ticket " + plugin.commandMap.get("unclaimTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim ticket");
                 break;
 
             case "NOTIFICATIONS":
