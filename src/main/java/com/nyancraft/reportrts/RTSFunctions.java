@@ -210,7 +210,9 @@ public class RTSFunctions {
     }
 
     /**
-     *
+     * Separate text whenever a certain amount of words are reached.
+     * PS: If you know how to stop Windows servers from printing the CR (Carriage Return)
+     * character, please let me know!
      * @param text that you want to separate.
      * @param when X amount of words have been displayed.
      * @return String with line separators.

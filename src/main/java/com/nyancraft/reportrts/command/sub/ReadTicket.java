@@ -187,7 +187,7 @@ public class ReadTicket {
                 chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
                         + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
                         + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                        "{\"action\":\"show_text\",\"value\":\"" + RTSFunctions.separateText(ticket.getMessage(), 6) + "\"}}]}"));
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
                 } catch (InvocationTargetException e) {
@@ -236,7 +236,7 @@ public class ReadTicket {
                     chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " "
                             + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000)) + " by " + (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid"))) ? ChatColor.GREEN : ChatColor.RED)
                             + rs.getString("name") + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                            "{\"action\":\"show_text\",\"value\":\"" + rs.getString("text").replaceAll("\"", "\\\\\"") + "\"}}]}"));
+                            "{\"action\":\"show_text\",\"value\":\"" + RTSFunctions.separateText(rs.getString("text").replaceAll("\"", "\\\\\""), 6) + "\"}}]}"));
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
                     } catch (InvocationTargetException e) {
@@ -288,7 +288,7 @@ public class ReadTicket {
                     chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + rs.getInt(1) + " "
                             + sdf.format(new java.util.Date(rs.getLong("tstamp") * 1000)) + " by " + (RTSFunctions.isUserOnline(UUID.fromString(rs.getString("uuid"))) ? ChatColor.GREEN : ChatColor.RED)
                             + rs.getString("name") + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                            "{\"action\":\"show_text\",\"value\":\"" + rs.getString("text").replaceAll("\"", "\\\\\"") + "\"}}]}"));
+                            "{\"action\":\"show_text\",\"value\":\"" + RTSFunctions.separateText(rs.getString("text").replaceAll("\"", "\\\\\""), 6) + "\"}}]}"));
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
                     } catch (InvocationTargetException e) {
@@ -350,7 +350,7 @@ public class ReadTicket {
                 chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + ChatColor.GOLD + "#" + ticket.getId() + " "
                         + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
                         + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                        "{\"action\":\"show_text\",\"value\":\"" + RTSFunctions.separateText(ticket.getMessage(), 6) + "\"}}]}"));
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
                 } catch (InvocationTargetException e) {
@@ -399,7 +399,7 @@ public class ReadTicket {
                 chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
                         + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + ((RTSFunctions.isUserOnline(ticket.getUUID())) ? ChatColor.GREEN : ChatColor.RED)
                         + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + substring.replaceAll("\"", "\\\\\"") + "\",\"color\":\"gray\",\"hoverEvent\":" +
-                        "{\"action\":\"show_text\",\"value\":\"" + ticket.getMessage() + "\"}}]}"));
+                        "{\"action\":\"show_text\",\"value\":\"" + RTSFunctions.separateText(ticket.getMessage(), 6) + "\"}}]}"));
                 try {
                     ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
                 } catch (InvocationTargetException e) {
