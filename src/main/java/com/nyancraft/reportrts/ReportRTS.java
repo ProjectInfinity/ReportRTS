@@ -66,6 +66,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public String storagePrefix;
     public String versionString;
     public String bungeeCordServerPrefix;
+    public String lineSeparator = System.lineSeparator();
 
     public static Permission permission = null;
 

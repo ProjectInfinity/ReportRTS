@@ -208,4 +208,23 @@ public class RTSFunctions {
     public static boolean isNumber(String number){
         return (number.matches("-?\\d+") && !(Long.parseLong((number)) <= 0L) && (Long.parseLong((number)) < Integer.MAX_VALUE));
     }
+
+    /**
+     *
+     * @param text that you want to separate.
+     * @param when X amount of words have been displayed.
+     * @return String with line separators.
+     */
+    public static String separateText(String text, int when) {
+        int i = 0;
+        StringBuilder message = new StringBuilder();
+        for(String t : text.split(" ")) {
+            if(i >= when) {
+                i = 0;
+                message.append(ReportRTS.getPlugin().lineSeparator);
+            }
+            message.append(t);
+        }
+        return message.toString();
+    }
 }
