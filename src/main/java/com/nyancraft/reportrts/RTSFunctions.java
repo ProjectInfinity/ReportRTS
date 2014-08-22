@@ -223,9 +223,9 @@ public class RTSFunctions {
                 i = 0;
                 message.append(ReportRTS.getPlugin().lineSeparator);
             }
-            message.append(t);
+            message.append(t).append(" ");
             i++;
         }
-        return message.toString();
+        return message.toString().trim();
     }
 }
