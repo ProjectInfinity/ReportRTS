@@ -138,10 +138,13 @@ public class ReadTicket {
         sender.sendMessage(ChatColor.AQUA + "--------- " + "Request #" + ticket.getId() + " - " + statusColor + status + ChatColor.AQUA + " ---------");
         sender.sendMessage(ChatColor.YELLOW + "Filed by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
         sender.sendMessage(ChatColor.GRAY + ticket.getMessage());
-        if(ticket.getStatus() == 1){
+        if(ticket.getStatus() == 1) {
             long Millis = (System.currentTimeMillis() - (ticket.getModTimestamp()) * 1000);
             sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Claimed for: %d hours, %d minutes, %d seconds",
-                    Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000));
+                    Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getModName());
+        }
+        if(ticket.getModComment() != null && ticket.getStatus() >= 2) {
+            sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + ticket.getModComment());
         }
         return true;
     }
