@@ -37,8 +37,10 @@ public class UnclaimTicket {
             sender.sendMessage(Message.parse("unclaimNotClaimed"));
             return true;
         }
-        // TODO: Console workaround needed.
-        if(!((Player)sender).getUniqueId().equals(plugin.requestMap.get(ticketId).getModUUID()) && !RTSPermissions.canOverride(sender)) return true;
+        // CONSOLE overrides all.
+        if(sender instanceof Player) {
+            if(!((Player)sender).getUniqueId().equals(plugin.requestMap.get(ticketId).getModUUID()) && !RTSPermissions.canOverride(sender)) return true;
+        }
 
         if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, System.currentTimeMillis() / 1000, true)) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to unclaim request #" + ticketId));
