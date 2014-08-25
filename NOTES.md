@@ -6,3 +6,4 @@ ReportRTS v1.2.3 Changelog
 3. Added a "by <username>" to claimed tickets. Previously it only said it was claimed for X amount of time.
 4. Bug fixes!
     * Added missing comment on closed tickets.
+    * Fix numbers from appearing in comments when closing a ticket.

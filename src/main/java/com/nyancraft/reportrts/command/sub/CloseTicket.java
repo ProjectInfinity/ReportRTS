@@ -71,11 +71,10 @@ public class CloseTicket {
             return true;
         }
 
-        args[0] = "";
+        args[0] = null;
         String comment = RTSFunctions.implode(args, " ");
 
-        // TODO: Does this do anything?
-        if(comment.length() <= args[1].length())
+        if(args[1].length() == comment.length())
             comment = null;
         else
             comment = comment.substring(args[1].length()).trim();
