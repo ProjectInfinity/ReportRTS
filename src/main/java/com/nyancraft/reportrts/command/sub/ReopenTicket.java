@@ -50,7 +50,7 @@ public class ReopenTicket {
             RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
             // Let other plugins know the request was assigned.
             plugin.getServer().getPluginManager().callEvent(new ReportReopenEvent(plugin.requestMap.get(ticketId), sender));
-            sender.sendMessage(Message.parse("reopenedRequestSelf", ticketId));
+            sender.sendMessage(Message.parse("reopenedRequestSelf", args[1]));
 
             return true;
         } else {
