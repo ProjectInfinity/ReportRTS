@@ -5,13 +5,13 @@
 # VanishSupport - If true, hide staff from /modlist when vanished.
 # command.legacy - If true, use old command system. I.e. /check, /complete, /modreq etc.
 # versionCheck - If true, ReportRTS will alert you of new recommended versions.
-# request.max - Maximum number of requests a user may have open at the same time.
-# request.delay - User has to wait this amount of seconds before filing another request.
-# request.hideOffline - If set to true, hides all requests in /check from offline users.
-# request.perPage - This sets the amount of requests that should be shown on each page.
-# request.preventDuplicates - Prevent duplicate requests by the same user.
-# request.nag - If above 0 (minutes), nag the online staff members about open requests.
-# request.nagHeld - If true, the nag feature will mention requests on hold. !!This will run a DB query!!
+# ticket.max - Maximum number of tickets a user may have open at the same time.
+# ticket.delay - User has to wait this amount of seconds before opening another ticket.
+# ticket.hideOffline - If set to true, hides all tickets in /ticket read from offline users.
+# ticket.perPage - This sets the total amount of tickets that should be shown on each page.
+# ticket.preventDuplicates - Prevent duplicate tickets by the same user.
+# ticket.nag - If above 0 (minutes), nag the online staff members about open tickets.
+# ticket.nagHeld - If true, the nag feature will mention tickets on hold. !!This will run a DB query!!
 # storage - Setup for storage in ReportRTS. Supported types: MySQL.
 # bungeecord.enable - If true, BungeeCord support will be enabled.
 # bungeecord.sync - Sync timer in seconds.
@@ -43,7 +43,7 @@ command:
   broadcastToStaff: 'broadcast'
   listStaff: 'staff'
 
-request:
+ticket:
   delay: 60
   max: 5
   hideOffline: false

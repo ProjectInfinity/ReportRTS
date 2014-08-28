@@ -213,7 +213,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public void reloadSettings(){
         reloadConfig();
         getConfig().options().copyDefaults(true);
-        saveConfig();
+        assertConfigUpToDate();
         messageHandler.reloadMessageConfig();
         messageHandler.saveMessageConfig();
         messageHandler.reloadMessageMap();
@@ -221,13 +221,13 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         notificationSound = getConfig().getBoolean("notifySound");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
         hideWhenOffline = getConfig().getBoolean("request.hideOffline");
-        maxRequests = getConfig().getInt("request.max");
-        requestDelay = getConfig().getInt("request.delay");
-        requestMinimumWords = getConfig().getInt("request.minimumWords");
-        requestsPerPage = getConfig().getInt("request.perPage");
-        requestPreventDuplicate = getConfig().getBoolean("request.preventDuplicates", true);
-        requestNagging = getConfig().getLong("request.nag");
-        requestNagHeld = getConfig().getBoolean("request.nagHeld", false);
+        maxRequests = getConfig().getInt("ticket.max");
+        requestDelay = getConfig().getInt("ticket.delay");
+        requestMinimumWords = getConfig().getInt("ticket.minimumWords");
+        requestsPerPage = getConfig().getInt("ticket.perPage");
+        requestPreventDuplicate = getConfig().getBoolean("ticket.preventDuplicates", true);
+        requestNagging = getConfig().getLong("ticket.nag");
+        requestNagHeld = getConfig().getBoolean("ticket.nagHeld", false);
         storageRefreshTime = getConfig().getLong("storage.refreshTime");
         storageType = getConfig().getString("storage.type", "mysql");
         storagePort = getConfig().getInt("storage.port");
@@ -246,7 +246,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         apiPassword = getConfig().getString("api.password");
         apiAllowedIPs = getConfig().getStringList("api.whitelist");
         legacyCommands = getConfig().getBoolean("command.legacy", false);
-        fancify = getConfig().getBoolean("request.fancify", true);
+        fancify = getConfig().getBoolean("ticket.fancify", true);
         commandMap.clear();
         // Register all commands/subcommands.
         commandMap.put("readTicket",getConfig().getString("command.readTicket"));
@@ -283,5 +283,14 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         if(!pluginChannel.equals("BungeeCord")) return;
 
         BungeeCord.handleNotify(bytes);
+    }
+
+    private void assertConfigUpToDate() {
+        if(getConfig().getConfigurationSection("request") != null && getConfig().getConfigurationSection("ticket") == null) {
+            getConfig().createSection("ticket", getConfig().getConfigurationSection("request").getValues(false));
+            //getConfig().set("request", null); // TODO: Uncomment this when proved that it works.
+            log.info("Updated configuration. 'request' => 'ticket'.");
+        }
+        saveConfig();
     }
 }
