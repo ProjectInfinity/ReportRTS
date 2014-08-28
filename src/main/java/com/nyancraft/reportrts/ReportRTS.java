@@ -15,6 +15,7 @@ import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -55,6 +56,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public int requestMinimumWords;
     public int requestsPerPage;
     public int storagePort;
+    public int consoleID;
     public long requestNagging;
     public long storageRefreshTime;
     public long bungeeCordSync;
@@ -67,6 +69,8 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public String versionString;
     public String bungeeCordServerPrefix;
     public String lineSeparator = System.lineSeparator();
+
+    public UUID consoleUUID;
 
     public static Permission permission = null;
 
@@ -119,6 +123,9 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
             fancify = false;
         }
+
+        consoleID = DatabaseManager.getDatabase().getUserId("CONSOLE");
+        consoleUUID = DatabaseManager.getDatabase().getUserUUID(consoleID);
 
         if(legacyCommands) {
             pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),

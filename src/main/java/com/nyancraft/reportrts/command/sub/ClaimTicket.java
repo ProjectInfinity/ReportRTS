@@ -61,7 +61,7 @@ public class ClaimTicket {
 
         plugin.requestMap.get(ticketId).setStatus(1);
         // Workaround for CONSOLE.
-        plugin.requestMap.get(ticketId).setModUUID((!(sender instanceof Player) ? DatabaseManager.getDatabase().getUserUUID(DatabaseManager.getDatabase().getUserId(sender.getName())) : ((Player) sender).getUniqueId()));
+        plugin.requestMap.get(ticketId).setModUUID((!(sender instanceof Player) ? plugin.consoleUUID : ((Player) sender).getUniqueId()));
         plugin.requestMap.get(ticketId).setModTimestamp(timestamp);
         plugin.requestMap.get(ticketId).setModName(name);
 

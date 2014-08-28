@@ -86,7 +86,7 @@ public class CloseTicket {
             online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getUUID())) ? 1 : 0;
             if(plugin.requestMap.get(ticketId).getStatus() == 1) {
                 // Holy shit.
-                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModUUID().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : dbManager.getUserUUID(dbManager.getUserId(sender.getName())))));
+                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModUUID().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : plugin.consoleUUID)));
             }
         }
 
