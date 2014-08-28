@@ -220,7 +220,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         notifyStaffOnNewRequest = getConfig().getBoolean("notifyStaff");
         notificationSound = getConfig().getBoolean("notifySound");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
-        hideWhenOffline = getConfig().getBoolean("request.hideOffline");
+        hideWhenOffline = getConfig().getBoolean("ticket.hideOffline");
         maxRequests = getConfig().getInt("ticket.max");
         requestDelay = getConfig().getInt("ticket.delay");
         requestMinimumWords = getConfig().getInt("ticket.minimumWords");
