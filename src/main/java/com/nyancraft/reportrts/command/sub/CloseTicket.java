@@ -3,9 +3,9 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportCompleteEvent;
+import com.nyancraft.reportrts.event.TicketCompleteEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
@@ -101,7 +101,7 @@ public class CloseTicket {
             return true;
         }
 
-        HelpRequest data = null;
+        Ticket data = null;
         if(plugin.requestMap.containsKey(ticketId)) {
             Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
             if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getUUID());
@@ -133,7 +133,7 @@ public class CloseTicket {
             if (data.getModName() == null) {
                 data.setModName(sender.getName());
             }
-            plugin.getServer().getPluginManager().callEvent(new ReportCompleteEvent(data, sender));
+            plugin.getServer().getPluginManager().callEvent(new TicketCompleteEvent(data, sender));
         }
         return true;
     }

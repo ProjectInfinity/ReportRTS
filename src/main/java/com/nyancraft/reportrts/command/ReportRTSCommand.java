@@ -8,9 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -63,7 +62,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 if(p1 == null && !existsInDB) {
                     boolean userFound = false;
                     UUID uuid = null;
-                    for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) {
+                    for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()) {
                         if(!entry.getValue().getName().equalsIgnoreCase(args[1])) continue;
                         userFound = true;
                         uuid = entry.getValue().getUUID();

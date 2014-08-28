@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import com.nyancraft.reportrts.api.ApiServer;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
@@ -29,7 +29,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
 
-    public Map<Integer, HelpRequest> requestMap = new LinkedHashMap<>();
+    public Map<Integer, Ticket> requestMap = new LinkedHashMap<>();
     public Map<Integer, UUID> notificationMap = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();

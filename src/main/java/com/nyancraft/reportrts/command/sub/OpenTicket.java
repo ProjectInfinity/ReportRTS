@@ -3,9 +3,9 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportCreateEvent;
+import com.nyancraft.reportrts.event.TicketCreateEvent;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
@@ -81,7 +81,7 @@ public class OpenTicket {
 
         // Prevent duplicate requests by comparing UUID and message to other currently open requests.
         if(plugin.requestPreventDuplicate) {
-            for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()){
+            for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()){
                 if(!entry.getValue().getUUID().equals(uuid)) continue;
                 if(!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
                 sender.sendMessage(Message.parse("modreqDuplicate"));
@@ -109,8 +109,8 @@ public class OpenTicket {
             RTSFunctions.messageMods(Message.parse("modreqFiledMod", username, Integer.toString(ticketId)), true);
         }
 
-        HelpRequest request = new HelpRequest(username, uuid, ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
-        plugin.getServer().getPluginManager().callEvent(new ReportCreateEvent(request));
+        Ticket request = new Ticket(username, uuid, ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
+        plugin.getServer().getPluginManager().callEvent(new TicketCreateEvent(request));
         plugin.requestMap.put(ticketId, request);
 
         return true;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -16,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -115,7 +115,7 @@ public class RTSListener implements Listener{
         int userId = DatabaseManager.getDatabase().getUserId(event.getPlayer().getName(), event.getPlayer().getUniqueId(), true);
         if(DatabaseManager.getDatabase().fileRequest(event.getPlayer().getName(), event.getPlayer().getWorld().getName(), event.getPlayer().getLocation(), message, userId)){
             int ticketId = DatabaseManager.getDatabase().getLatestTicketIdByUser(userId);
-            plugin.requestMap.put(ticketId, new HelpRequest(event.getPlayer().getName(), event.getPlayer().getUniqueId(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
+            plugin.requestMap.put(ticketId, new Ticket(event.getPlayer().getName(), event.getPlayer().getUniqueId(), ticketId, System.currentTimeMillis()/1000, message, 0, event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY(), event.getPlayer().getLocation().getBlockZ(), event.getPlayer().getLocation().getYaw(), event.getPlayer().getLocation().getPitch(), event.getPlayer().getWorld().getName(), BungeeCord.getServer(), ""));
             event.getPlayer().sendMessage(Message.parse("modreqFiledUser"));
             try{
                 BungeeCord.globalNotify(Message.parse("modreqFiledMod", event.getPlayer().getName(), ticketId), ticketId, NotificationType.NEW);

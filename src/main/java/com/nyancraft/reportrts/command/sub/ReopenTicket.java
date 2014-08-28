@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportReopenEvent;
+import com.nyancraft.reportrts.event.TicketReopenEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -49,7 +49,7 @@ public class ReopenTicket {
             }
             RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
             // Let other plugins know the request was assigned.
-            plugin.getServer().getPluginManager().callEvent(new ReportReopenEvent(plugin.requestMap.get(ticketId), sender));
+            plugin.getServer().getPluginManager().callEvent(new TicketReopenEvent(plugin.requestMap.get(ticketId), sender));
             sender.sendMessage(Message.parse("reopenedRequestSelf", args[1]));
 
             return true;

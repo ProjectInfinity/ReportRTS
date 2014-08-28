@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportUnclaimEvent;
+import com.nyancraft.reportrts.event.TicketUnclaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -63,7 +63,7 @@ public class UnclaimTicket {
 
         sender.sendMessage(Message.parse("unclaimReqSelf", args[1]));
 
-        plugin.getServer().getPluginManager().callEvent(new ReportUnclaimEvent(plugin.requestMap.get(ticketId), plugin.requestMap.get(ticketId).getModName(), sender));
+        plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.requestMap.get(ticketId), plugin.requestMap.get(ticketId).getModName(), sender));
         plugin.requestMap.get(ticketId).setModName(null);
 
         return true;

@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportAssignEvent;
+import com.nyancraft.reportrts.event.TicketAssignEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -83,7 +83,7 @@ public class AssignTicket {
         }
         RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId), false);
         // Let other plugins know the request was assigned.
-        plugin.getServer().getPluginManager().callEvent(new ReportAssignEvent(plugin.requestMap.get(ticketId), sender));
+        plugin.getServer().getPluginManager().callEvent(new TicketAssignEvent(plugin.requestMap.get(ticketId), sender));
 
         return true;
     }

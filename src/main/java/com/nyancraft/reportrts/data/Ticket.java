@@ -2,7 +2,7 @@ package com.nyancraft.reportrts.data;
 
 import java.util.UUID;
 
-public class HelpRequest {
+public class Ticket {
     
     private int id;
     private int status;
@@ -27,7 +27,7 @@ public class HelpRequest {
     private UUID uuid;
     private UUID moduuid;
 
-    public HelpRequest(String name, UUID uuid, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
+    public Ticket(String name, UUID uuid, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
         this.name = name;
         this.uuid = uuid;
         this.id = id;

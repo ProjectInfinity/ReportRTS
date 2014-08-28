@@ -3,7 +3,7 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -77,7 +77,7 @@ public class TeleportTicket {
         }
 
         // Ticket status open.
-        HelpRequest currentRequest = plugin.requestMap.get(ticketId);
+        Ticket currentRequest = plugin.requestMap.get(ticketId);
 
         if(plugin.bungeeCordSupport && !currentRequest.getBungeeCordServer().equals(BungeeCord.getServer())) {
             try {

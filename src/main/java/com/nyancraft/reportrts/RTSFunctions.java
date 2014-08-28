@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
 
+import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.data.HelpRequest;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 
 public class RTSFunctions {
@@ -124,7 +124,7 @@ public class RTSFunctions {
      * Populates the requestMap with data regarding held requests.
      */
     public static void populateHeldRequestsWithData(){
-        for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
+        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
             if(entry.getValue().getStatus() == 1){
                 int ticketId = entry.getValue().getId();
                 ResultSet rs = DatabaseManager.getDatabase().getHeldTicketById(ticketId);
@@ -167,14 +167,14 @@ public class RTSFunctions {
      */
     public static int getOpenRequestsByUser(UUID uuid){
         int openRequestsByUser = 0;
-        for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
+        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
             if(entry.getValue().getUUID().equals(uuid)) openRequestsByUser++;
         }
         return openRequestsByUser;
     }
 
     public static long checkTimeBetweenRequests(UUID uuid){
-        for(Map.Entry<Integer, HelpRequest> entry : ReportRTS.getPlugin().requestMap.entrySet()){
+        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
             if(entry.getValue().getUUID().equals(uuid)){
                 if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().requestDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().requestDelay);
             }

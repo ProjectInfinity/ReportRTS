@@ -1,7 +1,7 @@
 package com.nyancraft.reportrts.api;
 
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ public class Response {
         resp.append("\"openRequests\":");
         resp.append("{");
         int i = 1;
-        for(Map.Entry<Integer, HelpRequest> entry: ReportRTS.getPlugin().requestMap.entrySet()){
+        for(Map.Entry<Integer, Ticket> entry: ReportRTS.getPlugin().requestMap.entrySet()){
 
             resp.append("\"" + entry.getKey().toString() + "\":[");
             resp.append("{\"status\":").append(entry.getValue().getStatus()).append(",");
@@ -43,7 +43,7 @@ public class Response {
 
     public static String getRequest(int n){
        if(!ReportRTS.getPlugin().requestMap.containsKey(n)) return "{\"success\":\"false\",\"message\":\"Request not found\"}";
-        HelpRequest request = ReportRTS.getPlugin().requestMap.get(n);
+        Ticket request = ReportRTS.getPlugin().requestMap.get(n);
        return "{\"success\":\"true\",\"data\":[{\"status\":\"" + request.getStatus() + "\"," +
                "\"x\":\"" + request.getX() + "\"," + "\"y\":\"" + request.getY() + "\"," +
                "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +

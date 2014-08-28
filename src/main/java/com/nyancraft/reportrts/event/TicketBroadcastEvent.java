@@ -8,14 +8,14 @@ import org.bukkit.event.HandlerList;
  * Event that is called when a Moderator broadcasts a message.
  *
  */
-public class ReportModBroadcastEvent extends Event {
+public class TicketBroadcastEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
     String message;
     CommandSender sender;
 
-    public ReportModBroadcastEvent(CommandSender sender, String message) {
+    public TicketBroadcastEvent(CommandSender sender, String message) {
         this.sender = sender;
         this.message = message;
     }

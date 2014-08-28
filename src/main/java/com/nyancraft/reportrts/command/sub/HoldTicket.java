@@ -5,7 +5,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportHoldEvent;
+import com.nyancraft.reportrts.event.TicketHoldEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -52,7 +52,7 @@ public class HoldTicket {
                 player.sendMessage(Message.parse("holdText", plugin.requestMap.get(ticketId).getMessage(), reason.trim()));
             }
 
-            plugin.getServer().getPluginManager().callEvent(new ReportHoldEvent(plugin.requestMap.get(ticketId), reason, sender));
+            plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.requestMap.get(ticketId), reason, sender));
 
             plugin.requestMap.remove(ticketId);
         }

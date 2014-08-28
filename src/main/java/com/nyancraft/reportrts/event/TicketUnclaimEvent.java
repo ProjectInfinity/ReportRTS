@@ -1,8 +1,7 @@
 package com.nyancraft.reportrts.event;
 
+import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.command.CommandSender;
-
-import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
  * Event called when a request is unclaimed, with the
@@ -10,12 +9,12 @@ import com.nyancraft.reportrts.data.HelpRequest;
  * the request.
  *
  */
-public class ReportUnclaimEvent extends ReportEvent {
+public class TicketUnclaimEvent extends TicketEvent {
 
 	private String modName;
 	private CommandSender sender;
 	
-	public ReportUnclaimEvent(HelpRequest request, String modName, CommandSender sender) {
+	public TicketUnclaimEvent(Ticket request, String modName, CommandSender sender) {
             super(request);
             this.sender = sender;
             this.modName = modName;

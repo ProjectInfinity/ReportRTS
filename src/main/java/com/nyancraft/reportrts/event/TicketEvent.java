@@ -1,25 +1,24 @@
 package com.nyancraft.reportrts.event;
 
+import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
  * Base class for all event regarding Reports.
  *
  */
-public abstract class ReportEvent extends Event {
+public abstract class TicketEvent extends Event {
 
 private static final HandlerList handlers = new HandlerList();
 	
 	/**
 	 * The request that the event regards.
 	 */
-	private HelpRequest request;
-	
-	public ReportEvent(HelpRequest request){
-		this.request = request;
+	private Ticket ticket;
+
+	public TicketEvent(Ticket request){
+		this.ticket = request;
 	}
 	
 	/**
@@ -32,8 +31,8 @@ private static final HandlerList handlers = new HandlerList();
 	 * 
 	 * @return a HelpRequst object with all the request data in it.
 	 */
-	public HelpRequest getRequest(){
-		return this.request;
+	public Ticket getTicket(){
+		return this.ticket;
 	}
 	
 	public HandlerList getHandlers(){

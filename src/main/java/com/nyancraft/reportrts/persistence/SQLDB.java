@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.util.BungeeCord;
 import org.bukkit.entity.Player;
 
@@ -168,7 +168,7 @@ public abstract class SQLDB implements Database{
         try {
             ResultSet rs = query(DatabaseManager.getQueryGen().getAllOpenAndClaimedRequests());
             while(rs.next()){
-                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
+                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new Ticket(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
                         rs.getInt(1),
@@ -557,7 +557,7 @@ public abstract class SQLDB implements Database{
             ResultSet rs = query(DatabaseManager.getQueryGen().getTicketById(ticketId));
             int results = 0;
             while (rs.next()) {
-                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new HelpRequest(
+                ReportRTS.getPlugin().requestMap.put(rs.getInt(1), new Ticket(
                         rs.getString("name"),
                         UUID.fromString(rs.getString("uuid")),
                         rs.getInt(1), 

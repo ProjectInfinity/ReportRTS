@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportClaimEvent;
+import com.nyancraft.reportrts.event.TicketClaimEvent;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -73,7 +73,7 @@ public class ClaimTicket {
         RTSFunctions.messageMods(Message.parse("claimRequest", name, args[1]), false);
 
         // Let other plugins know the request was claimed
-        plugin.getServer().getPluginManager().callEvent(new ReportClaimEvent(plugin.requestMap.get(ticketId)));
+        plugin.getServer().getPluginManager().callEvent(new TicketClaimEvent(plugin.requestMap.get(ticketId)));
 
         return true;
     }

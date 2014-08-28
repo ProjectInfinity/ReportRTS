@@ -1,15 +1,15 @@
 package com.nyancraft.reportrts.event;
 
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 
 /**
  * Event that is called when a Moderator claims
  * a request for handling.
  *
  */
-public class ReportClaimEvent extends ReportEvent {
+public class TicketClaimEvent extends TicketEvent {
 
-	public ReportClaimEvent(HelpRequest request) {
+	public TicketClaimEvent(Ticket request) {
 		super(request);
 	}
 

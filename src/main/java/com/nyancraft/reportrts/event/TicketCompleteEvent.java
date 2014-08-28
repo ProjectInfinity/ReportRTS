@@ -1,8 +1,7 @@
 package com.nyancraft.reportrts.event;
 
+import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.command.CommandSender;
-
-import com.nyancraft.reportrts.data.HelpRequest;
 
 /**
  * Event that is called when a Request is marked
@@ -11,11 +10,11 @@ import com.nyancraft.reportrts.data.HelpRequest;
  * The completer is the user that sends the command.
  *
  */
-public class ReportCompleteEvent extends ReportEvent {
+public class TicketCompleteEvent extends TicketEvent {
 
 	private CommandSender sender;
 	
-	public ReportCompleteEvent(HelpRequest request, CommandSender sender) {
+	public TicketCompleteEvent(Ticket request, CommandSender sender) {
             super(request);
             this.sender = sender;
 	}
@@ -25,7 +24,7 @@ public class ReportCompleteEvent extends ReportEvent {
 	 * used the complete command.
 	 * 
 	 * You might want to use the request's
-	 * {@link com.nyancraft.reportrts.data.HelpRequest#getModName() request.getModName()}
+	 * {@link com.nyancraft.reportrts.data.Ticket#getModName() request.getModName()}
 	 * to get the mod who handled the request.
 	 * 
 	 * @return The user who completed the request.

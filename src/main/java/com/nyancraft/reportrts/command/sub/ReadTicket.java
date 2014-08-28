@@ -7,7 +7,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
-import com.nyancraft.reportrts.data.HelpRequest;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.Database;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 
@@ -96,7 +96,7 @@ public class ReadTicket {
             return true;
         }
 
-        HelpRequest ticket = plugin.requestMap.get(id);
+        Ticket ticket = plugin.requestMap.get(id);
 
         // Request does not exist in the requestMap and must be retrieved from the database.
         if(ticket == null) {
@@ -170,12 +170,12 @@ public class ReadTicket {
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Tickets -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 
-        List<HelpRequest> tmpList = new ArrayList<>(plugin.requestMap.values());
+        List<Ticket> tmpList = new ArrayList<>(plugin.requestMap.values());
 
         // (page * requestsPerPage) - requestsPerPage = Sets the start location of the "cursor".
         for(int i = (page * plugin.requestsPerPage) - plugin.requestsPerPage; i < a && i < plugin.requestMap.size(); i++) {
             if(i < 0) i = 1;
-            HelpRequest ticket = tmpList.get(i);
+            Ticket ticket = tmpList.get(i);
 
             if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(ticket.getUUID())){
                 a++;
@@ -338,10 +338,10 @@ public class ReadTicket {
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.requestMap.size() + " Tickets From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
         if(plugin.requestMap.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
 
-        List<HelpRequest> tmpList = new ArrayList<>(plugin.requestMap.values());
+        List<Ticket> tmpList = new ArrayList<>(plugin.requestMap.values());
 
         for(int i = (page * plugin.requestsPerPage) - plugin.requestsPerPage; i < a && i < plugin.requestMap.size(); i++){
-            HelpRequest ticket = tmpList.get(i);
+            Ticket ticket = tmpList.get(i);
             if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(ticket.getUUID()) || !ticket.getBungeeCordServer().equals(server)){
                 a++;
                 continue;
@@ -383,16 +383,16 @@ public class ReadTicket {
         }
 
         int openRequests = 0;
-        for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) if(entry.getValue().getName().equals(sender.getName())) openRequests++;
+        for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()) if(entry.getValue().getName().equals(sender.getName())) openRequests++;
         int i = 0;
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " unresolved tickets " + ChatColor.AQUA + "----------");
         if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open tickets at this time.");
-        for(Map.Entry<Integer, HelpRequest> entry : plugin.requestMap.entrySet()) {
+        for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()) {
             if (entry.getValue().getName().equals(sender.getName())) {
                 i++;
                 if (i > 5) break;
             }
-            HelpRequest ticket = entry.getValue();
+            Ticket ticket = entry.getValue();
             String substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
@@ -419,19 +419,19 @@ public class ReadTicket {
     }
 
     /**
-     * Retrieve a HelpRequest from the database
+     * Retrieve a Ticket from the database
      * @param id ticket number
-     * @return HelpRequest
+     * @return Ticket
      * @throws SQLException
      */
-    private static HelpRequest getFromDB(int id) throws SQLException {
+    private static Ticket getFromDB(int id) throws SQLException {
         ResultSet rs = dbManager.getTicketById(id);
         if(rs.isBeforeFirst()) {
             if(!rs.first()) return null;
         } else {
             return null;
         }
-        HelpRequest ticket = new HelpRequest(rs.getString("name"),
+        Ticket ticket = new Ticket(rs.getString("name"),
                 UUID.fromString(rs.getString("uuid")),
                 rs.getInt(1),
                 rs.getLong("tstamp"),

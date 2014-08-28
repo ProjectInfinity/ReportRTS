@@ -4,7 +4,7 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.event.ReportModBroadcastEvent;
+import com.nyancraft.reportrts.event.TicketBroadcastEvent;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.CommandSender;
@@ -34,7 +34,7 @@ public class BroadcastMessage {
         }
         RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), false);
         // Let other plugins know about the broadcast
-        plugin.getServer().getPluginManager().callEvent(new ReportModBroadcastEvent(sender, message));
+        plugin.getServer().getPluginManager().callEvent(new TicketBroadcastEvent(sender, message));
         return true;
     }
 }
