@@ -286,11 +286,22 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     }
 
     private void assertConfigUpToDate() {
-        if(getConfig().getConfigurationSection("request") != null && getConfig().getConfigurationSection("ticket") == null) {
+        /**
+         * What it does:
+         * - - - - -
+         * Checks if the mapping "requests" is located in the config
+         * and replaces it with "ticket".
+         * - - - - -
+         * Since version:
+         * 1.2.3
+         */
+        if(getConfig().getConfigurationSection("request") != null) {
             getConfig().createSection("ticket", getConfig().getConfigurationSection("request").getValues(false));
-            //getConfig().set("request", null); // TODO: Uncomment this when proved that it works.
+            getConfig().set("request", null);
             log.info("Updated configuration. 'request' => 'ticket'.");
         }
+
+        // Save changes.
         saveConfig();
     }
 }
