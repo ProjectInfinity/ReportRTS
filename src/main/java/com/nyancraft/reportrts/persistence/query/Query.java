@@ -76,6 +76,12 @@ public abstract class Query {
         return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request WHERE mod_id = ?";
     }
 
+    public String getStats() {
+        return "SELECT `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user`.name,COUNT(`" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`.mod_id) AS tickets FROM `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request` " +
+        "LEFT JOIN `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user` ON `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`.mod_id = `" + ReportRTS.getPlugin().storagePrefix + "reportrts_user`.id WHERE `" + ReportRTS.getPlugin().storagePrefix + "reportrts_request`.`status` = 3 " +
+        "GROUP BY `name` ORDER BY tickets DESC LIMIT 10";
+    }
+
     public String getLimitedHandledBy(){
         return "SELECT * FROM " + ReportRTS.getPlugin().storagePrefix + "reportrts_request as request INNER JOIN " + ReportRTS.getPlugin().storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE request.mod_id = ? ORDER BY request.mod_timestamp DESC LIMIT ?, ? ";
     }

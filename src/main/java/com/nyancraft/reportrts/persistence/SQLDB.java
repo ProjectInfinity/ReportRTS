@@ -480,6 +480,17 @@ public abstract class SQLDB implements Database{
     }
 
     @Override
+    public ResultSet getStats() {
+        try {
+            PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getStats());
+            return ps.executeQuery();
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public ResultSet getLimitedHandledBy(String player, int from, int limit){
         try{
             PreparedStatement ps = DatabaseManager.getConnection().prepareStatement(DatabaseManager.getQueryGen().getLimitedHandledBy());

@@ -114,22 +114,14 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "STATS":
-                if(args.length < 2) return false;
                 if(!RTSPermissions.canCheckStats(sender)) return true;
-                    rs = dbManager.getHandledBy(args[1]);
-                    int currentHeld = 0;
-                    int currentClaimed = 0;
-                    int totalCompleted = 0;
+                    rs = dbManager.getStats();
+                    sender.sendMessage(ChatColor.YELLOW + "---- Top 10 ----");
+                    sender.sendMessage(ChatColor.YELLOW + "<Player> : <Resolved Tickets>");
                     while(rs.next()){
-                        if(rs.getInt("status") == 1) currentClaimed++;
-                        if(rs.getInt("status") == 2) currentHeld++;
-                        if(rs.getInt("status") == 3) totalCompleted++;
+                        sender.sendMessage(ChatColor.YELLOW + rs.getString("name") + " : " + rs.getInt("tickets"));
                     }
                     rs.close();
-                    sender.sendMessage(ChatColor.YELLOW + "---- Stats for " + args[1] + " ----");
-                    sender.sendMessage(ChatColor.YELLOW + "Currently claimed requests: " + currentClaimed);
-                    sender.sendMessage(ChatColor.YELLOW + "Currently held requests: " + currentHeld);
-                    sender.sendMessage(ChatColor.YELLOW + "Total completed requests: " + totalCompleted);
                 break;
 
             case "SEARCH":
