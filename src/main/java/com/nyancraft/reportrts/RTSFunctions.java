@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import com.nyancraft.reportrts.data.Ticket;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -14,6 +15,11 @@ import com.nyancraft.reportrts.persistence.DatabaseManager;
 public class RTSFunctions {
 
     private static ArrayList<String> columns = new ArrayList<>();
+
+    private static final int SECOND_MILLIS = 1000;
+    private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
+    private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
+    private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
     /**
      * Combines array and returns an imploded string.
@@ -229,5 +235,37 @@ public class RTSFunctions {
             i++;
         }
         return message.toString().trim();
+    }
+
+    /**
+     * Retrieves relative time for use in /ticket read.
+     * @param time Since specified time
+     * @return String with relative time
+     */
+    public static String getTimeAgo(long time) {
+        if (time < 1000000000000L) {
+            // if timestamp given in seconds, convert to millis
+            time *= 1000;
+        }
+
+        long now = System.currentTimeMillis();
+        if (time > now || time <= 0) return null;
+
+        final long diff = now - time;
+        if (diff < MINUTE_MILLIS) {
+            return ChatColor.GREEN + "just now" + ChatColor.GOLD;
+        } else if (diff < 2 * MINUTE_MILLIS) {
+            return ChatColor.GREEN + "1 minute ago" + ChatColor.GOLD; // a minute ago
+        } else if (diff < 50 * MINUTE_MILLIS) {
+            return "" + ChatColor.GREEN + diff / MINUTE_MILLIS + " min ago" + ChatColor.GOLD;
+        } else if (diff < 90 * MINUTE_MILLIS) {
+            return ChatColor.GREEN + "1 hour ago" + ChatColor.GOLD;
+        } else if (diff < 24 * HOUR_MILLIS) {
+            return "" + ChatColor.YELLOW + diff / HOUR_MILLIS + " hours ago" + ChatColor.GOLD;
+        } else if (diff < 48 * HOUR_MILLIS) {
+            return ChatColor.RED + "yesterday" + ChatColor.GOLD;
+        } else {
+            return "" + ChatColor.RED + diff / DAY_MILLIS + " days ago" + ChatColor.GOLD;
+        }
     }
 }
