@@ -44,18 +44,18 @@ public class RTSListener implements Listener{
             Map<Integer, UUID> keys = new HashMap<>();
             for(Map.Entry<Integer, UUID> entry : plugin.notificationMap.entrySet()){
                 if(entry.getValue().equals(event.getPlayer().getUniqueId())){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
+                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
                     keys.put(entry.getKey(), entry.getValue());
                 }
             }
             if(keys.size() >= 2){
                 event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size(), (plugin.legacyCommands ? plugin.commandMap.get("readTicket") + " self" : "ticket " + plugin.commandMap.get("readTicket") + " self")));
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
+                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
                 }
             }else{
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new LoginTask(plugin, event.getPlayer().getUniqueId(), entry), 100);
+                    new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
                 }
             }
 
