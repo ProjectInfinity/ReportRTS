@@ -89,7 +89,7 @@ public class MySQLDB extends SQLDB {
                 /** UUID Async data migration. Get rid of this after a while when it is no longer needed. **/
                 if(db.checkConnection()){
                     ReportRTS.getPlugin().getLogger().info("Starting UUID data migration.");
-                    BukkitTask migrationTask = new MigrationTask(ReportRTS.getPlugin()).runTaskAsynchronously(ReportRTS.getPlugin());
+                    ReportRTS.getPlugin().getServer().getScheduler().runTaskAsynchronously(ReportRTS.getPlugin(), new MigrationTask(ReportRTS.getPlugin()));
                 }
         }
             return true;
