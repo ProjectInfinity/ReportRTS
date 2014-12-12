@@ -14,28 +14,11 @@ import com.nyancraft.reportrts.persistence.DatabaseManager;
 
 public class RTSFunctions {
 
-    private static ArrayList<String> columns = new ArrayList<>();
-
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
-    /**
-     * Combines array and returns an imploded string.
-     * @param args String[] array.
-     * @return String, imploded array.
-     */
-    public static String combineString(String[] args){
-        List<String> temp_list = new LinkedList<>();
-        temp_list.addAll(Arrays.asList(args));
-        while (temp_list.contains("")) {
-            temp_list.remove("");
-        }
-        args = temp_list.toArray(new String[0]);
-
-        return implode(args, " ");
-    }
     /**
      * Join a String[] into a single string with a joiner
      */
@@ -110,20 +93,6 @@ public class RTSFunctions {
             if(player.getUniqueId().equals(uuid)) return true;
         }
         return false;
-    }
-
-    /***
-     * Attempts to parse string as integer
-     * @param i - String to be parsed
-     * @return true if possible to parse
-     */
-    public static boolean isParsableToInt(String i){
-        try{
-            Integer.parseInt(i);
-            return true;
-        } catch(NumberFormatException nfe){
-            return false;
-        }
     }
 
     /**
