@@ -15,13 +15,11 @@ import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.bukkit.scheduler.BukkitTask;
 
 public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
@@ -81,21 +79,23 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
     private String serverIP;
 
-    public void onDisable(){
+    public void onDisable() {
         DatabaseManager.getDatabase().disconnect();
-        if(apiEnabled){
+        if(apiEnabled) {
             try{
                 apiServer.getListener().close();
-            }catch(IOException e){
+            }catch(IOException e) {
                 e.printStackTrace();
             }
         }
         messageHandler.saveMessageConfig();
     }
 
-    public void onEnable(){
+    public void onEnable() {
         plugin = this;
         reloadSettings();
+
+        // Enable BungeeCord support if wanted.
         if(bungeeCordSupport) {
             if(getConfig().getString("bungeecord.serverName") == null || getConfig().getString("bungeecord.serverName").isEmpty()) {
                 plugin.getLogger().warning("BungeeCord support enabled, but server name is not set yet. Scheduling a name-update task.");
@@ -105,28 +105,35 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             }
         }
         final PluginManager pm = getServer().getPluginManager();
+
+        // Register events that ReportRTS listens to.
         pm.registerEvents(new RTSListener(plugin), plugin);
-        if(!(storageHostname.equalsIgnoreCase("localhost") && storagePort == 3306 && storageDatabase.equalsIgnoreCase("minecraft")
-        && storageUsername.equalsIgnoreCase("username") && storagePassword.equalsIgnoreCase("password")
-        && storagePrefix.equalsIgnoreCase("") && storageRefreshTime == 600)){
-            if(!DatabaseManager.load()){
+
+        // Ensure that storage information is not default as that may not work.
+        if(assertConfigIsDefault("STORAGE")) {
+            setupDone = false;
+        } else {
+            if(!DatabaseManager.load()) {
                 log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
                 pm.disablePlugin(this);
             }
             reloadPlugin();
-        }else{
-            setupDone = false;
         }
+
+        // Check if plugin is up to date. TODO: This has to be updated for Spigot's website.
         outdated = !versionChecker.upToDate();
 
+        // Enable fancier tickets if enabled and if ProtocolLib is enabled on the server.
         if(fancify && pm.getPlugin("ProtocolLib") == null) {
             log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
             fancify = false;
         }
 
+        // Store console information for performance reasons.
         consoleID = DatabaseManager.getDatabase().getUserId("CONSOLE");
         consoleUUID = DatabaseManager.getDatabase().getUserUUID(consoleID);
 
+        // Register commands.
         if(legacyCommands) {
             pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
@@ -136,20 +143,26 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         getCommand("reportrts").setExecutor(new ReportRTSCommand(plugin));
         getCommand("ticket").setExecutor(new TicketCommand(plugin));
         getCommand("ticket").setTabCompleter(new TabCompleteHelper(plugin));
+
+        // Set up Vault if it exists on the server.
         if(pm.getPlugin("Vault") != null) setupPermissions();
-        try{
+
+        // Attempt to set up Metrics.
+        try {
             MetricsLite metrics = new MetricsLite(this);
             metrics.start();
-        }catch(IOException e){
+        } catch(IOException e) {
             log.info("Unable to submit stats!");
         }
-        if(apiEnabled){
-            try{
+
+        // Enable API. (Not recommended since it is very incomplete!)
+        if(apiEnabled) {
+            try {
                 Properties props = new Properties();
                 props.load(new FileReader("server.properties"));
                 serverIP = props.getProperty("server-ip", "ANY");
                 if(serverIP.isEmpty()) serverIP = "ANY";
-                try{
+                try {
                     MessageDigest md = MessageDigest.getInstance("SHA-256");
                     apiPassword = apiPassword + "ReportRTS";
                     md.update(apiPassword.getBytes("UTF-8"));
@@ -159,52 +172,55 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                         sb.append(String.format("%02x", b));
                     }
                     apiPassword = sb.toString();
-                }catch(NoSuchAlgorithmException e){
+                } catch(NoSuchAlgorithmException e) {
                     log.warning("[ReportRTS] Unable to hash password, consider disabling the API!");
                     e.printStackTrace();
                 }
                 apiServer = new ApiServer(plugin, serverIP, apiPort, apiAllowedIPs, apiPassword);
-            }catch(IOException e){
+            } catch(IOException e) {
                 log.warning("[ReportRTS] Unable to start API server!");
                 e.printStackTrace();
             }
             apiServer.start();
         }
+
+        // Enable nagging, staff will be reminded of unresolved tickets.
         if(requestNagging > 0){
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
                     int openRequests = requestMap.size();
-                    if(requestNagHeld){
+                    if(requestNagHeld) {
                         int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
-                        if(heldRequests > 0){
+                        if(heldRequests > 0) {
                             if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
-                        }else{
+                        } else {
                             if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
-                    }else{
+                    } else {
                         if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
             }, 120L, (requestNagging * 60) * 20);
         }
 
-        if(plugin.storageRefreshTime > 0){
-            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
-                public void run(){
+        // Enable a refresh timer if it is needed to prevent interruption in the data-provider.
+        if(plugin.storageRefreshTime > 0) {
+            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                public void run() {
                     DatabaseManager.getDatabase().refresh();
                 }
             }, 4000L, plugin.storageRefreshTime * 20);
         }
 
-        if(bungeeCordSupport){
+        if(bungeeCordSupport) {
             // Register BungeeCord channels.
             getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
             getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 
             // Schedule a offline-sync in case no players are online.
-            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
-                public void run(){
-                    if(BungeeCord.isServerEmpty()){
+            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+                public void run() {
+                    if(BungeeCord.isServerEmpty()) {
                         RTSFunctions.sync();
                     }
                 }
@@ -212,12 +228,12 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         }
     }
 
-    public void reloadPlugin(){
+    public void reloadPlugin() {
         reloadSettings();
         RTSFunctions.sync();
     }
 
-    public void reloadSettings(){
+    public void reloadSettings() {
         reloadConfig();
         getConfig().options().copyDefaults(true);
         assertConfigUpToDate();
@@ -270,23 +286,23 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         // Commands registered!
     }
 
-    public static ReportRTS getPlugin(){
+    public static ReportRTS getPlugin() {
         return plugin;
     }
 
-    public static MessageHandler getMessageHandler(){
+    public static MessageHandler getMessageHandler() {
         return messageHandler;
     }
 
-    private Boolean setupPermissions(){
+    private Boolean setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if(permissionProvider != null){
+        if(permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
         return (permission != null);
     }
 
-    public void onPluginMessageReceived(String pluginChannel, Player player, byte[] bytes){
+    public void onPluginMessageReceived(String pluginChannel, Player player, byte[] bytes) {
         if(!pluginChannel.equals("BungeeCord")) return;
 
         BungeeCord.handleNotify(bytes);
@@ -310,5 +326,24 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
         // Save changes.
         saveConfig();
+    }
+
+    private boolean assertConfigIsDefault(String path) {
+        /**
+         * What it does:
+         * - - - - -
+         * Checks if the specified configuration section is default,
+         * returns a boolean depending on the result.
+         */
+
+        switch(path.toUpperCase()) {
+
+            case "STORAGE":
+
+                return (storageHostname.equalsIgnoreCase("localhost") && storagePort == 3306 && storageDatabase.equalsIgnoreCase("minecraft")
+                        && storageUsername.equalsIgnoreCase("username") && storagePassword.equalsIgnoreCase("password")
+                        && storagePrefix.equalsIgnoreCase("") && storageRefreshTime == 600);
+        }
+        return false;
     }
 }
