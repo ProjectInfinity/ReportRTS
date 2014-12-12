@@ -24,7 +24,7 @@ public class BungeeCord {
     public static void processPendingRequests(){
         if(!pendingRequests.isEmpty()){
             for(byte[] toSend : pendingRequests){
-                Player player = Bukkit.getOnlinePlayers()[0];
+                Player player = Bukkit.getOnlinePlayers().iterator().next();
                 if(player != null){
                     player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", toSend);
                     pendingRequests.remove(toSend);
@@ -36,7 +36,7 @@ public class BungeeCord {
     }
 
     public static void triggerAutoSync(){
-        noPlayersOnline = Bukkit.getOnlinePlayers().length == 0;
+        noPlayersOnline = Bukkit.getOnlinePlayers().size() == 0;
     }
 
     public static boolean isServerEmpty(){
@@ -52,7 +52,7 @@ public class BungeeCord {
         if(serverName != null){
             return serverName;
         }else{
-            Player player = Bukkit.getOnlinePlayers()[0]; // This will error if no player is online.
+            Player player = Bukkit.getOnlinePlayers().iterator().next(); // This will error if no player is online.
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);
             try{
@@ -128,7 +128,7 @@ public class BungeeCord {
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
 
-        Player player = (Bukkit.getOnlinePlayers().length == 0 ? null : Bukkit.getOnlinePlayers()[0]);
+        Player player = (Bukkit.getOnlinePlayers().size() == 0 ? null : Bukkit.getOnlinePlayers().iterator().next());
         if(player != null){
             player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", b.toByteArray());
         }else{
@@ -156,7 +156,7 @@ public class BungeeCord {
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
 
-        Player player = (Bukkit.getOnlinePlayers().length == 0 ? null : Bukkit.getOnlinePlayers()[0]);
+        Player player = (Bukkit.getOnlinePlayers().size() == 0 ? null : Bukkit.getOnlinePlayers().iterator().next());
         if(player != null){
             player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", b.toByteArray());
         }else{
