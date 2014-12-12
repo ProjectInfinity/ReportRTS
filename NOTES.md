@@ -9,3 +9,8 @@ ReportRTS v1.2.3 Changelog
     * Fix numbers from appearing in comments when closing a ticket.
     * Fix claiming and unclaiming tickets using console.
 5. The **_/reportrts stats_** command has been rewritten. It now works as a "top 10 staff", listing them by most resolved tickets.
+6. Some permission nodes have changed.
+    * **reportrts.mod** is now **reportrts.staff**, reportrts.mod has been added as a pointer to reportrts.staff in plugin.yml.
+7. Time in /ticket read is now displayed in RELATIVE time. Closed or held tickets will still show actual date.
+8. Performance improvements.
+    * Globally store Console user ID to avoid extra queries.
