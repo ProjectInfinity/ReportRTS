@@ -206,7 +206,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     return true;
                 }
                 Player player1 = (Player) sender;
-                if(!RTSPermissions.isModerator((Player)sender)) return true;
+                if(!RTSPermissions.isStaff((Player) sender)) return true;
                 if(args.length <= 1){
                     if(plugin.moderatorMap.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");

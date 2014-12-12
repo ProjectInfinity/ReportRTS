@@ -71,7 +71,7 @@ public class RTSListener implements Listener{
             }
         }
 
-        if(!RTSPermissions.isModerator(event.getPlayer())) return;
+        if(!RTSPermissions.isStaff(event.getPlayer())) return;
 
         if(!plugin.moderatorMap.contains(event.getPlayer().getUniqueId())) plugin.moderatorMap.add(event.getPlayer().getUniqueId());
 

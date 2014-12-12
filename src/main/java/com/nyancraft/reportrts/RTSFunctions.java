@@ -171,7 +171,7 @@ public class RTSFunctions {
 
     public static void populateModeratorMapWithData(){
         for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
-            if(RTSPermissions.isModerator(player)) ReportRTS.getPlugin().moderatorMap.add(player.getUniqueId());
+            if(RTSPermissions.isStaff(player)) ReportRTS.getPlugin().moderatorMap.add(player.getUniqueId());
         }
     }
 

@@ -20,6 +20,11 @@ permissions:
       reportrts.command.check.self: true
       reportrts.command.complete.self: true
   reportrts.mod:
+    description: Backwards compatibility for reportrts.staff, will be removed in the future.
+    default: op
+    children:
+      reportrts.staff: true
+  reportrts.staff:
     description: Give this to all staff members.
     default: op
   reportrts.override:

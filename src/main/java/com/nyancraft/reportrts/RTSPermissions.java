@@ -7,9 +7,9 @@ import com.nyancraft.reportrts.util.Message;
 
 public class RTSPermissions {
 
-    public static boolean isModerator(Player player){
-        if(ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.mod");
-        return player.hasPermission("reportrts.mod");
+    public static boolean isStaff(Player player){
+        if(ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.staff");
+        return player.hasPermission("reportrts.staff");
     }
 
     public static boolean canFileRequest(CommandSender sender){
