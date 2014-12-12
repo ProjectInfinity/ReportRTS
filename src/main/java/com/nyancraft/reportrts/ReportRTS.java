@@ -99,7 +99,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         if(bungeeCordSupport) {
             if(getConfig().getString("bungeecord.serverName") == null || getConfig().getString("bungeecord.serverName").isEmpty()) {
                 plugin.getLogger().warning("BungeeCord support enabled, but server name is not set yet. Scheduling a name-update task.");
-                getServer().getScheduler().runTaskTimer(plugin, new BungeeNameTask(plugin), 160L, 480L);
+                new BungeeNameTask(plugin).runTaskTimer(plugin, 160L, 480L);
             } else {
                 BungeeCord.setServer(getConfig().getString("bungeecord.serverName"));
             }

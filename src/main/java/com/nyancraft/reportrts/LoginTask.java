@@ -3,13 +3,14 @@ package com.nyancraft.reportrts;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
-public class LoginTask implements Runnable {
+public class LoginTask extends BukkitRunnable {
 
     private final ReportRTS plugin;
     private final UUID uuid;

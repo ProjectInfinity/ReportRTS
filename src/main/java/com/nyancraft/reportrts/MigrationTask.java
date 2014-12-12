@@ -3,6 +3,7 @@ package com.nyancraft.reportrts;
 import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class MigrationTask implements Runnable {
+public class MigrationTask extends BukkitRunnable {
 
     private ReportRTS plugin;
 
@@ -21,7 +22,7 @@ public class MigrationTask implements Runnable {
     @Override
     public void run() {
         if(!DatabaseManager.getDatabase().isLoaded()){
-            Thread.currentThread().interrupt();
+            this.cancel();
             return;
         }
         ArrayList<String> players = new ArrayList<>();
@@ -88,12 +89,12 @@ public class MigrationTask implements Runnable {
                 }
             });
 
-            Thread.currentThread().interrupt();
+            this.cancel();
             return;
 
             } catch (Exception e) {
             e.printStackTrace();
-            Thread.currentThread().interrupt();
+            this.cancel();
             return;
         }
     }

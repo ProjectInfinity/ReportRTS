@@ -1,8 +1,9 @@
 package com.nyancraft.reportrts;
 
 import com.nyancraft.reportrts.util.BungeeCord;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class BungeeNameTask implements Runnable {
+public class BungeeNameTask extends BukkitRunnable {
 
     private ReportRTS plugin;
 
@@ -12,11 +13,10 @@ public class BungeeNameTask implements Runnable {
 
     @Override
     public void run() {
-        // TODO: Verify that this works.
-        if(plugin.getServer().getOnlinePlayers().size() > 0 && (BungeeCord.getServerName() == null || BungeeCord.getServerName().isEmpty())) {
+        if(plugin.getServer().getOnlinePlayers().size() > 0) {
             plugin.getLogger().info("Server name updated, task is shutting down.");
             BungeeCord.getServer();
-            Thread.currentThread().interrupt();
+            this.cancel();
         }
     }
 }
