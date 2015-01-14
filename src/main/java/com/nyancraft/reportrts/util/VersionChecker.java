@@ -13,7 +13,12 @@ import java.net.URLConnection;
 public class VersionChecker {
 
     public boolean upToDate(){
-        if(!ReportRTS.getPlugin().getConfig().getBoolean("versionCheck")) return true;
+
+        // TODO: Rewrite this for Spigot.
+        return true;
+        // Return true because Bukkit.org is unsupported.
+
+        /*if(!ReportRTS.getPlugin().getConfig().getBoolean("versionCheck")) return true;
         try {
             final String currentVersion = ReportRTS.getPlugin().getDescription().getVersion().substring(0,ReportRTS.getPlugin().getDescription().getVersion().lastIndexOf("-"));
             final URLConnection connection = new URL("https://api.curseforge.com/servermods/files?projectIds=36853").openConnection();
@@ -42,6 +47,6 @@ public class VersionChecker {
             }
         } catch (final Exception e) {
             return true;
-        }
+        }   */
     }
 }
