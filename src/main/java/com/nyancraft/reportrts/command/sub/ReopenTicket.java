@@ -4,17 +4,20 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketReopenEvent;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.IOException;
 
 public class ReopenTicket {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
+    private static DataProvider data = plugin.getDataProvider();
 
     /**
      * Initial handling of the Reopen sub-command.
@@ -36,8 +39,10 @@ public class ReopenTicket {
 
         int ticketId = Integer.parseInt(args[1]);
 
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 0, "", 0, System.currentTimeMillis() / 1000, true)) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen request #" + args[1]));
+        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, "", false, System.currentTimeMillis() / 1000) < 1) {
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to close ticket #" + args[0]));
             return true;
         }
 
@@ -48,8 +53,8 @@ public class ReopenTicket {
                 e.printStackTrace();
             }
             RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
-            // Let other plugins know the request was assigned.
-            plugin.getServer().getPluginManager().callEvent(new TicketReopenEvent(plugin.requestMap.get(ticketId), sender));
+            // Let other plugins know the ticket was reopened.
+            plugin.getServer().getPluginManager().callEvent(new TicketReopenEvent(plugin.tickets.get(ticketId), sender));
             sender.sendMessage(Message.parse("reopenedRequestSelf", args[1]));
 
             return true;

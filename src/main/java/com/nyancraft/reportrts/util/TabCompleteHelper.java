@@ -36,14 +36,14 @@ public class TabCompleteHelper implements TabCompleter{
                 response.add("");
                 return response;
         }
-        if(args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName())) || plugin.requestMap.size() < 1) {
+        if(args.length < 2 || args.length >= 2 && (!RTSFunctions.isNumber(args[1]) || args[1].equalsIgnoreCase(sender.getName())) || plugin.tickets.size() < 1) {
 
             if(args.length < 2 || args[1].isEmpty()) {
                 List<String> response = new ArrayList<>();
                 if(args.length >= 2) {
-                    response.add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.requestMap.keySet().toArray()[0].toString());
+                    response.add((args[1].equalsIgnoreCase(" ") ? " " : "") + plugin.tickets.keySet().toArray()[0].toString());
                 } else {
-                    response.add(args[0] + " " + plugin.requestMap.keySet().toArray()[0].toString());
+                    response.add(args[0] + " " + plugin.tickets.keySet().toArray()[0].toString());
                 }
                 return response;
             }
@@ -51,7 +51,7 @@ public class TabCompleteHelper implements TabCompleter{
             response.add("");
             return response;
         }
-        final Set<Integer> keys = plugin.requestMap.keySet();
+        final Set<Integer> keys = plugin.tickets.keySet();
         int initialKey = Integer.parseInt(args[1]);
         if(initialKey <= 0) return null;
         int prevKey = 0;

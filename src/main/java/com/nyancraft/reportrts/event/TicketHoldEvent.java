@@ -4,17 +4,17 @@ import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.command.CommandSender;
 
 /**
- * Event that is called when a Report has been set to
+ * Event that is called when a Ticket has been set to
  * be on hold, /hold. This includes
- * the player that put the request on hold, and the reason.
+ * the player that put the ticket on hold, and the reason.
  */
 public class TicketHoldEvent extends TicketEvent {
 
 	private String reason;
 	private CommandSender sender;
 	
-	public TicketHoldEvent(Ticket request, String reason, CommandSender sender) {
-		super(request);
+	public TicketHoldEvent(Ticket ticket, String reason, CommandSender sender) {
+		super(ticket);
 		this.reason = reason;
 		this.sender = sender;
 	}
@@ -28,9 +28,9 @@ public class TicketHoldEvent extends TicketEvent {
 	}
 	
 	/**
-	 * Get the player that set the Report on hold.
+	 * Get the player that set the Ticket on hold.
 	 * @return CommandSender object of the player that
-	 * put the request on hold.
+	 * put the ticket on hold.
 	 */
 	public CommandSender getHoldPlayer(){
 		return sender;

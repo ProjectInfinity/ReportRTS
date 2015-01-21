@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Event that is called when a Moderator broadcasts a message.
+ * Event that is called when staff broadcasts a message.
  *
  */
 public class TicketBroadcastEvent extends Event {
@@ -23,14 +23,14 @@ public class TicketBroadcastEvent extends Event {
     /**
      * Get the mod-broadcast message.
      *
-     * @return a String with the mod-broadcast message.
+     * @return a String with the staff-broadcast message.
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * Get the sender of the mod-broadcast message.
+     * Get the sender of the staff-broadcast message.
      *
      * @return a CommandSender object of the user that sent the broadcast.
      */

@@ -14,3 +14,4 @@ ReportRTS v1.2.3 Changelog
 7. Time in /ticket read is now displayed in RELATIVE time. Closed or held tickets will still show actual date.
 8. Performance improvements.
     * Globally store Console user ID to avoid extra queries.
+9. Completely rewritten data-provider system! Massive improvements.

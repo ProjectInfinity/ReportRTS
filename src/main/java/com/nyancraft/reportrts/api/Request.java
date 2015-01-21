@@ -54,7 +54,7 @@ public class Request extends Thread {
                     break;
                 }
 
-                out.writeBytes(Response.getRequests());
+                out.writeBytes(Response.getTickets());
                 break;
 
             case "GETREQUEST":

@@ -7,14 +7,14 @@ import java.util.Map;
 
 public class Response {
 
-    public static String getRequests(){
+    public static String getTickets(){
 
         StringBuilder resp = new StringBuilder();
         resp.append("{");
-        resp.append("\"openRequests\":");
+        resp.append("\"openTickets\":");
         resp.append("{");
         int i = 1;
-        for(Map.Entry<Integer, Ticket> entry: ReportRTS.getPlugin().requestMap.entrySet()){
+        for(Map.Entry<Integer, Ticket> entry: ReportRTS.getPlugin().tickets.entrySet()){
 
             resp.append("\"" + entry.getKey().toString() + "\":[");
             resp.append("{\"status\":").append(entry.getValue().getStatus()).append(",");
@@ -32,7 +32,7 @@ public class Response {
             resp.append("\"server\":").append("\"").append(entry.getValue().getBungeeCordServer()).append("\"").append("}");
             resp.append("]");
 
-            if(ReportRTS.getPlugin().requestMap.size() > i ) resp.append(",");
+            if(ReportRTS.getPlugin().tickets.size() > i ) resp.append(",");
             i++;
         }
         resp.append("}");
@@ -42,8 +42,8 @@ public class Response {
     }
 
     public static String getRequest(int n){
-       if(!ReportRTS.getPlugin().requestMap.containsKey(n)) return "{\"success\":\"false\",\"message\":\"Request not found\"}";
-        Ticket request = ReportRTS.getPlugin().requestMap.get(n);
+       if(!ReportRTS.getPlugin().tickets.containsKey(n)) return "{\"success\":\"false\",\"message\":\"Ticket not found\"}";
+        Ticket request = ReportRTS.getPlugin().tickets.get(n);
        return "{\"success\":\"true\",\"data\":[{\"status\":\"" + request.getStatus() + "\"," +
                "\"x\":\"" + request.getX() + "\"," + "\"y\":\"" + request.getY() + "\"," +
                "\"z\":\"" + request.getZ() + "\"," + "\"yaw\":\"" + request.getYaw() + "\"," +

@@ -5,8 +5,9 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketHoldEvent;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.CommandSender;
@@ -17,6 +18,7 @@ import java.io.IOException;
 public class HoldTicket {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
+    private static DataProvider data = plugin.getDataProvider();
 
     /**
      * Initial handling of the Hold sub-command.
@@ -32,29 +34,34 @@ public class HoldTicket {
         String reason = RTSFunctions.implode(args, " ");
         int ticketId = Integer.parseInt(args[1]);
 
-        // TODO: I forgot what this does.
         if(reason.length() <= args[1].length()) {
             reason = "None specified.";
         } else {
             reason = reason.substring(args[1].length());
         }
 
-        if(!DatabaseManager.getDatabase().setRequestStatus(ticketId, sender.getName(), 2, reason, 0, System.currentTimeMillis() / 1000, true)) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to put request #" + ticketId + " on hold."));
+        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        if(user.getUsername() == null) {
+            sender.sendMessage(Message.parse("generalInternalError", "user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
 
-        if(plugin.requestMap.containsKey(ticketId)) {
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, reason, false, System.currentTimeMillis() / 1000) < 1) {
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to put ticket #" + args[0] + " on hold."));
+            return true;
+        }
 
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
+        if(plugin.tickets.containsKey(ticketId)) {
+
+            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(player != null) {
                 player.sendMessage(Message.parse("holdUser", sender.getName()));
-                player.sendMessage(Message.parse("holdText", plugin.requestMap.get(ticketId).getMessage(), reason.trim()));
+                player.sendMessage(Message.parse("holdText", plugin.tickets.get(ticketId).getMessage(), reason.trim()));
             }
 
-            plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.requestMap.get(ticketId), reason, sender));
+            plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
 
-            plugin.requestMap.remove(ticketId);
+            plugin.tickets.remove(ticketId);
         }
 
         try {

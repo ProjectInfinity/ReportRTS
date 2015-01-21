@@ -26,6 +26,7 @@ public class Ticket {
 
     private UUID uuid;
     private UUID moduuid;
+    private boolean notified;
 
     public Ticket(String name, UUID uuid, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
         this.name = name;
@@ -230,5 +231,20 @@ public class Ticket {
      */
     public void setModComment(String modcomment){
         this.modcomment = modcomment;
+    }
+
+    /**
+     * @return Whether the user is notified of the ticket or not.
+     */
+    public boolean isNotified() {
+        return this.notified;
+    }
+
+    /**
+     * @param notified
+     * Set whether a user has been notified or not.
+     */
+    public void setNotified(boolean notified) {
+        this.notified = notified;
     }
 }

@@ -24,7 +24,7 @@ public class ListStaff {
         String staff = "";
         String separator = Message.parse("modlistMessageSeparator");
 
-        for(UUID uuid : plugin.moderatorMap) {
+        for(UUID uuid : plugin.staff) {
             Player player = plugin.getServer().getPlayer(uuid);
             if(player == null) return false;
             if(plugin.vanishSupport && sender instanceof Player) {

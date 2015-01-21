@@ -1,6 +1,6 @@
 package com.nyancraft.reportrts;
 
-import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.MySQLDataProvider;
 import com.nyancraft.reportrts.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -13,25 +13,29 @@ import java.util.UUID;
 
 public class MigrationTask extends BukkitRunnable {
 
+    /** This MigrationTask is for MySQL ONLY where UUID field does not exist. **/
+
     private ReportRTS plugin;
+    private MySQLDataProvider data;
 
     public MigrationTask(ReportRTS plugin) {
         this.plugin = plugin;
+        this.data = (MySQLDataProvider) plugin.getDataProvider();
     }
 
     @Override
     public void run() {
-        if(!DatabaseManager.getDatabase().isLoaded()){
+        if(!data.isLoaded()){
             this.cancel();
             return;
         }
         ArrayList<String> players = new ArrayList<>();
         ArrayList<String> delete = new ArrayList<>();
-        Map<String, UUID> response = new HashMap<String, UUID>();
+        Map<String, UUID> response = new HashMap<>();
         Map<String, Integer> tracking = new HashMap<>();
-        UUIDFetcher fetcher = null;
+        UUIDFetcher fetcher;
         try {
-            ResultSet preLoopRS = DatabaseManager.getDatabase().query("SELECT COUNT(`name`) FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uuid` IS NULL OR `uuid` = ''");
+            ResultSet preLoopRS = data.query("SELECT COUNT(`name`) FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uuid` IS NULL OR `uuid` = ''");
             preLoopRS.first();
             int total = preLoopRS.getInt(1);
             preLoopRS.close();
@@ -42,7 +46,7 @@ public class MigrationTask extends BukkitRunnable {
                 response.clear();
                 tempCount = 0;
 
-                ResultSet rs = DatabaseManager.getDatabase().query("SELECT `name` FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uuid` IS NULL OR `uuid` = '' LIMIT 40");
+                ResultSet rs = data.query("SELECT `name` FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uuid` IS NULL OR `uuid` = '' LIMIT 40");
                 while(rs.next()) players.add(rs.getString("name"));
                 rs.close();
                 if (players.size() < 1) break;
@@ -52,7 +56,7 @@ public class MigrationTask extends BukkitRunnable {
                 if (players.contains("CONSOLE")) response.put("CONSOLE", UUID.randomUUID());
 
                 for(Map.Entry<String, UUID> entry : response.entrySet()){
-                    DatabaseManager.getDatabase().query("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `uuid` = '" + entry.getValue().toString() + "' WHERE `name` = '" + entry.getKey() + "'");
+                    data.query("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `uuid` = '" + entry.getValue().toString() + "' WHERE `name` = '" + entry.getKey() + "'");
                     tempCount++;
                     //System.out.println("[ReportRTS] Updated player entry " + entry.getKey() + " with UUID " + entry.getValue()); // Too spammy?
                 }
@@ -74,7 +78,7 @@ public class MigrationTask extends BukkitRunnable {
 
                 if(delete.size() > 0) {
                     for(String ghost : delete) {
-                        DatabaseManager.getDatabase().query("DELETE FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `name` = '" + ghost +"'");
+                        data.query("DELETE FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `name` = '" + ghost +"'");
                         System.out.println("[ReportRTS] User " + ghost + " does not exist and was deleted.");
                     }
                     delete.clear();
@@ -90,12 +94,10 @@ public class MigrationTask extends BukkitRunnable {
             });
 
             this.cancel();
-            return;
 
             } catch (Exception e) {
             e.printStackTrace();
             this.cancel();
-            return;
         }
     }
 }

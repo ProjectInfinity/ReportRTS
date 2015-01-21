@@ -3,7 +3,6 @@ package com.nyancraft.reportrts.util;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -47,22 +46,22 @@ public class BungeeCord {
         return serverName;
     }
 
-    public static String getServer(){
-        if(!ReportRTS.getPlugin().bungeeCordSupport){ return ""; }
-        if(serverName != null){
+    public static String getServer() {
+        if(!ReportRTS.getPlugin().bungeeCordSupport) { return ""; }
+        if(serverName != null) {
             return serverName;
-        }else{
+        } else {
             Player player = Bukkit.getOnlinePlayers().iterator().next(); // This will error if no player is online.
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);
-            try{
+            try {
                 out.writeUTF("GetServer");
-            }catch(IOException e){
+            } catch(IOException e) {
                 e.printStackTrace();
             }
-            if(player != null){
+            if(player != null) {
                 player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", b.toByteArray());
-            }else{
+            } else {
                 pendingRequests.add(b.toByteArray());
             }
         }
@@ -168,63 +167,63 @@ public class BungeeCord {
         try{
             DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
             String subChannel = in.readUTF();
-            if(subChannel.equals("ReportRTS")){
+            if(subChannel.equals("ReportRTS")) {
                 short len = in.readShort();
                 byte[] msgbytes = new byte[len];
                 in.readFully(msgbytes);
                 DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
                 String function = msgin.readUTF();
-                if(function.equals("NotifyAndSync")){
+                if(function.equals("NotifyAndSync")) {
                     int ticketId = msgin.readInt();
                     NotificationType notifType = NotificationType.getTypeByCode(msgin.readInt());
                     String msg = msgin.readUTF();
-                    if(notifType.getCode() == 0 || notifType.getCode() == 1){
+                    if(notifType.getCode() == 0 || notifType.getCode() == 1) {
                         if(RTSFunctions.syncTicket(ticketId)){
                             RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
                         }
-                    }else if(notifType.getCode() == 3 || notifType.getCode() == 4){
+                    } else if(notifType.getCode() == 3 || notifType.getCode() == 4) {
                         RTSFunctions.messageMods(msg, false);
-                    }else if(notifType.getCode() == 2 || notifType.getCode() == 5){
-                        if(RTSFunctions.syncTicket(ticketId)){
-                            if(notifType.getCode() == 2) ReportRTS.getPlugin().notificationMap.put(ticketId, ReportRTS.getPlugin().requestMap.get(ticketId).getUUID());
-                            ReportRTS.getPlugin().requestMap.remove(ticketId);
+                    } else if(notifType.getCode() == 2 || notifType.getCode() == 5) {
+                        if(RTSFunctions.syncTicket(ticketId)) {
+                            if(notifType.getCode() == 2) ReportRTS.getPlugin().notifications.put(ticketId, ReportRTS.getPlugin().tickets.get(ticketId).getUUID());
+                            ReportRTS.getPlugin().tickets.remove(ticketId);
                             RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
                         }
-                    }else if(notifType.getCode() == 6){
-                        ReportRTS.getPlugin().requestMap.remove(ticketId);
+                    } else if(notifType.getCode() == 6) {
+                        ReportRTS.getPlugin().tickets.remove(ticketId);
                         RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
                     }
-                }else if(function.equals("NotifyUserAndSync")){
+                } else if(function.equals("NotifyUserAndSync")) {
                     int ticketId = msgin.readInt();
                     UUID uuid = UUID.fromString(msgin.readUTF());
                     String msg = msgin.readUTF();
                     if(RTSFunctions.syncTicket(ticketId)){
                         Player player = Bukkit.getPlayer(uuid);
-                        if(player != null){
+                        if(player != null) {
                             player.sendMessage(msg);
-                            if(!DatabaseManager.getDatabase().setNotificationStatus(ticketId, 1)) ReportRTS.getPlugin().getLogger().warning("Unable to set notification status to 1.");
+                            if(ReportRTS.getPlugin().getDataProvider().setNotificationStatus(ticketId, true) < 1) ReportRTS.getPlugin().getLogger().warning("Unable to set notification status to 1.");
                         }
                     }
-                }else if(function.equals("TeleportNotify")){
+                }else if(function.equals("TeleportNotify")) {
                     int ticketId = msgin.readInt();
                     UUID uuid = UUID.fromString(msgin.readUTF());
-                    if(RTSFunctions.isUserOnline(uuid)){
+                    if(RTSFunctions.isUserOnline(uuid)) {
                         Player player = Bukkit.getPlayer(uuid);
-                        if(player != null){
+                        if(player != null) {
                             player.sendMessage(Message.parse("teleportedUser", "/tp-id " + Integer.toString(ticketId)));
                             Bukkit.dispatchCommand(player, "tp-id " + Integer.toString(ticketId));
-                        }else{
+                        } else {
                             ReportRTS.getPlugin().teleportMap.put(uuid, ticketId);
                         }
-                    }else{
+                    } else {
                         ReportRTS.getPlugin().teleportMap.put(uuid, ticketId);
                     }
                 }
-            }else if(subChannel.equals("GetServer")){
+            } else if(subChannel.equals("GetServer")) {
                 String serverName = in.readUTF();
                 setServer(serverName);
             }
-        }catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }

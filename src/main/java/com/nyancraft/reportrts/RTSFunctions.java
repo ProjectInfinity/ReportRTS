@@ -1,18 +1,18 @@
 package com.nyancraft.reportrts;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
 
 import com.nyancraft.reportrts.data.Ticket;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import com.nyancraft.reportrts.persistence.DatabaseManager;
-
 public class RTSFunctions {
+
+    private static ReportRTS plugin = ReportRTS.getPlugin();
+    private static DataProvider data = plugin.getDataProvider();
 
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
@@ -39,10 +39,10 @@ public class RTSFunctions {
     return out;
     }
 
-    public static String cleanUpSign(String[] lines){
+    public static String cleanUpSign(String[] lines) {
 
         String out = "";
-        for(String part : lines){
+        for(String part : lines) {
             if(part.length() > 0) out = out + part.trim() + " ";
         }
         return out;
@@ -52,8 +52,8 @@ public class RTSFunctions {
      * @param message - message to be displayed
      * @param playSound - boolean play sound or not.
      */
-    public static void messageMods(String message, boolean playSound){
-        for(UUID uuid : ReportRTS.getPlugin().moderatorMap){
+    public static void messageMods(String message, boolean playSound) {
+        for(UUID uuid : ReportRTS.getPlugin().staff){
             Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
             if(player == null) return;
             player.sendMessage(message);
@@ -66,21 +66,26 @@ public class RTSFunctions {
      * @param ticketId - ticket ID to be synchronized.
      */
     public static boolean syncTicket(int ticketId) {
-        int updateResult = DatabaseManager.getDatabase().updateTicket(ticketId);
-        return updateResult > 0;
+
+        Ticket ticket = ReportRTS.getPlugin().getDataProvider().getTicket(ticketId);
+
+        plugin.tickets.put(ticketId, ticket);
+
+        return plugin.tickets.get(ticketId).equals(ticket);
+
     }
 
     /**
      * Synchronizes everything.
      */
-    public static void sync(){
-        ReportRTS.getPlugin().requestMap.clear();
-        ReportRTS.getPlugin().notificationMap.clear();
-        ReportRTS.getPlugin().moderatorMap.clear();
-        DatabaseManager.getDatabase().populateRequestMap();
-        RTSFunctions.populateHeldRequestsWithData();
-        RTSFunctions.populateNotificationMapWithData();
-        RTSFunctions.populateModeratorMapWithData();
+    public static void sync() {
+        ReportRTS.getPlugin().tickets.clear();
+        ReportRTS.getPlugin().notifications.clear();
+        ReportRTS.getPlugin().staff.clear();
+
+        data.load();
+
+        RTSFunctions.populateStaffMap();
     }
 
     /**
@@ -89,50 +94,7 @@ public class RTSFunctions {
      * @return boolean
      */
     public static boolean isUserOnline(UUID uuid){
-        for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
-            if(player.getUniqueId().equals(uuid)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Populates the requestMap with data regarding held requests.
-     */
-    public static void populateHeldRequestsWithData(){
-        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getStatus() == 1){
-                int ticketId = entry.getValue().getId();
-                ResultSet rs = DatabaseManager.getDatabase().getHeldTicketById(ticketId);
-                try {
-                    if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
-                        if(rs.isBeforeFirst()) rs.next();
-                    }
-                    entry.getValue().setModUUID(UUID.fromString(rs.getString("uuid")));
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * Populates the notificationMap with data.
-     */
-    public static void populateNotificationMapWithData(){
-        try{
-            ResultSet rs = DatabaseManager.getDatabase().getUnnotifiedUsers();
-            if(!rs.isBeforeFirst()) return;
-            if(ReportRTS.getPlugin().storageType.equalsIgnoreCase("mysql")){
-                rs.first();
-            }
-            while(rs.next()){
-                ReportRTS.getPlugin().notificationMap.put(rs.getInt(1), UUID.fromString(rs.getString("uuid")));
-            }
-            rs.close();
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
+        return plugin.getServer().getPlayer(uuid) != null;
     }
 
     /**
@@ -140,18 +102,18 @@ public class RTSFunctions {
      * @param uuid - UUID of user that sent the command.
      * @return amount of open requests by a specific user
      */
-    public static int getOpenRequestsByUser(UUID uuid){
-        int openRequestsByUser = 0;
-        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
-            if(entry.getValue().getUUID().equals(uuid)) openRequestsByUser++;
+    public static int getOpenTicketsByUser(UUID uuid){
+        int i = 0;
+        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()){
+            if(entry.getValue().getUUID().equals(uuid)) i++;
         }
-        return openRequestsByUser;
+        return i;
     }
 
-    public static long checkTimeBetweenRequests(UUID uuid){
-        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().requestMap.entrySet()){
+    public static long checkTimeBetweenTickets(UUID uuid){
+        for(Map.Entry<Integer, Ticket> entry : ReportRTS.getPlugin().tickets.entrySet()){
             if(entry.getValue().getUUID().equals(uuid)){
-                if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().requestDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().requestDelay);
+                if(entry.getValue().getTimestamp() > ((System.currentTimeMillis() / 1000) - ReportRTS.getPlugin().ticketDelay)) return entry.getValue().getTimestamp() - (System.currentTimeMillis() / 1000 - ReportRTS.getPlugin().ticketDelay);
             }
         }
         return 0;
@@ -169,9 +131,9 @@ public class RTSFunctions {
         return message;
     }
 
-    public static void populateModeratorMapWithData(){
+    public static void populateStaffMap(){
         for(Player player : ReportRTS.getPlugin().getServer().getOnlinePlayers()){
-            if(RTSPermissions.isStaff(player)) ReportRTS.getPlugin().moderatorMap.add(player.getUniqueId());
+            if(RTSPermissions.isStaff(player)) ReportRTS.getPlugin().staff.add(player.getUniqueId());
         }
     }
 

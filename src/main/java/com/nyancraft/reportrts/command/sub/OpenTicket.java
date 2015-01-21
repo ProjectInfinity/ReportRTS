@@ -5,9 +5,9 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketCreateEvent;
-import com.nyancraft.reportrts.persistence.Database;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.CommandSender;
@@ -16,19 +16,12 @@ import org.bukkit.Location;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class OpenTicket {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
-    private static Database dbManager = DatabaseManager.getDatabase();
-
-    // We store everything in variables then poll the information later.
-    private static String username;
-    private static Location location;
-    private static int userId;
-    private static UUID uuid;
+    private static DataProvider data = plugin.getDataProvider();
 
     /**
      * Initial handling of the Open sub-command.
@@ -42,34 +35,44 @@ public class OpenTicket {
         if(args.length < 2) return false;
 
         // Check if ticket message is too short.
-        if(plugin.requestMinimumWords > (args.length - 1)) {
-            sender.sendMessage(Message.parse("modreqTooShort", plugin.requestMinimumWords));
+        if(plugin.ticketMinimumWords > (args.length - 1)) {
+            sender.sendMessage(Message.parse("modreqTooShort", plugin.ticketMinimumWords));
             return true;
         }
 
-        username = sender.getName();
+        // Store these variables, we're gonna need them.
+        User user = new User();
+        user.setUsername(sender.getName());
+        Location location;
+
         if(!(sender instanceof Player)) {
             // Sender is more than likely Console.
-            userId = dbManager.getUserId(username);
+            user = data.getConsole();
             location = plugin.getServer().getWorlds().get(0).getSpawnLocation();
-            uuid = dbManager.getUserUUID(userId);
         }
         else {
+            // Sender is a Player.
             Player player = (Player) sender;
-            userId = dbManager.getUserId(sender.getName(), player.getUniqueId(), true);
+            user = data.getUser(player.getUniqueId(), 0, true);
             location = player.getLocation();
-            uuid = player.getUniqueId();
         }
 
-        if(RTSFunctions.getOpenRequestsByUser(uuid) >= plugin.maxRequests && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
+        // The user is banned and can not create a ticket.
+        if(user.getBanned()) {
+            sender.sendMessage(Message.parse("generalInternalError", "You are banned from opening tickets."));
+            return true;
+        }
+
+        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
             sender.sendMessage(Message.parse("modreqTooManyOpen"));
             return true;
         }
 
-        if(plugin.requestDelay > 0){
+        // Check if the sender can open another ticket yet.
+        if(plugin.ticketDelay > 0) {
             if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))){
-                long timeBetweenRequest = RTSFunctions.checkTimeBetweenRequests(uuid);
-                if(timeBetweenRequest > 0){
+                long timeBetweenRequest = RTSFunctions.checkTimeBetweenTickets(user.getUuid());
+                if(timeBetweenRequest > 0) {
                     sender.sendMessage(Message.parse("modreqTooFast", timeBetweenRequest));
                     return true;
                 }
@@ -80,38 +83,40 @@ public class OpenTicket {
         String message = RTSFunctions.implode(args, " ");
 
         // Prevent duplicate requests by comparing UUID and message to other currently open requests.
-        if(plugin.requestPreventDuplicate) {
-            for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()){
-                if(!entry.getValue().getUUID().equals(uuid)) continue;
+        if(plugin.ticketPreventDuplicate) {
+            for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()){
+                if(!entry.getValue().getUUID().equals(user.getUuid())) continue;
                 if(!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
                 sender.sendMessage(Message.parse("modreqDuplicate"));
                 return true;
             }
         }
 
-        if(!dbManager.fileRequest(username, location.getWorld().getName(), location, message, userId)) {
-            sender.sendMessage(Message.parse("generalInternalError", "Request could not be filed."));
+        // Create a ticket and store the ticket ID.
+        int ticketId = data.createTicket(user, location, message);
+        // If less than 1, then the creation of the ticket failed.
+        if(ticketId < 1) {
+            sender.sendMessage(Message.parse("generalInternalError", "Ticket could not be opened."));
             return true;
         }
-        int ticketId = dbManager.getLatestTicketIdByUser(userId);
 
         sender.sendMessage(Message.parse("modreqFiledUser"));
-        plugin.getLogger().log(Level.INFO, "" + username + " filed a request.");
+        plugin.getLogger().log(Level.INFO, "" + user.getUsername() + " filed a request.");
 
         // Notify staff members about the new request.
         if(plugin.notifyStaffOnNewRequest) {
             try {
                 // Attempt to notify all servers connected to BungeeCord that run ReportRTS.
-                BungeeCord.globalNotify(Message.parse("modreqFiledMod", username, Integer.toString(ticketId)), ticketId, NotificationType.NEW);
+                BungeeCord.globalNotify(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), ticketId, NotificationType.NEW);
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("modreqFiledMod", username, Integer.toString(ticketId)), true);
+            RTSFunctions.messageMods(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), true);
         }
 
-        Ticket request = new Ticket(username, uuid, ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
+        Ticket request = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
         plugin.getServer().getPluginManager().callEvent(new TicketCreateEvent(request));
-        plugin.requestMap.put(ticketId, request);
+        plugin.tickets.put(ticketId, request);
 
         return true;
     }

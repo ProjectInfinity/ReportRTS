@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Base class for all event regarding Reports.
+ * Base class for all event regarding Tickets.
  *
  */
 public abstract class TicketEvent extends Event {
@@ -13,23 +13,23 @@ public abstract class TicketEvent extends Event {
 private static final HandlerList handlers = new HandlerList();
 	
 	/**
-	 * The request that the event regards.
+	 * The ticket that the event regards.
 	 */
 	private Ticket ticket;
 
-	public TicketEvent(Ticket request){
-		this.ticket = request;
+	public TicketEvent(Ticket ticket){
+		this.ticket = ticket;
 	}
 	
 	/**
-	 * Get the request that this event regards.
-	 * This will have the data of the request after
+	 * Get the ticket that this event regards.
+	 * This will have the data of the ticket after
 	 * the event has happened.
 	 * 
 	 * i.e. a claim event will have the .getModName() equal
-	 * to the user claiming the request.
+	 * to the user claiming the ticket.
 	 * 
-	 * @return a HelpRequst object with all the request data in it.
+	 * @return a Ticket object with all the request data in it.
 	 */
 	public Ticket getTicket(){
 		return this.ticket;

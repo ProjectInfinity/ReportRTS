@@ -8,9 +8,10 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import com.nyancraft.reportrts.api.ApiServer;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.command.*;
 import com.nyancraft.reportrts.data.Ticket;
+import com.nyancraft.reportrts.persistence.DataProvider;
+import com.nyancraft.reportrts.persistence.MySQLDataProvider;
 import com.nyancraft.reportrts.util.*;
 
 import net.milkbowl.vault.permission.Permission;
@@ -27,12 +28,13 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private final Logger log = Logger.getLogger("Minecraft");
     private static MessageHandler messageHandler = new MessageHandler();
     private VersionChecker versionChecker = new VersionChecker();
+    private DataProvider provider;
 
-    public Map<Integer, Ticket> requestMap = new LinkedHashMap<>();
-    public Map<Integer, UUID> notificationMap = new HashMap<>();
+    public Map<Integer, Ticket> tickets = new LinkedHashMap<>();
+    public Map<Integer, UUID> notifications = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();
-    public ArrayList<UUID> moderatorMap = new ArrayList<>();
+    public ArrayList<UUID> staff = new ArrayList<>();
 
     public boolean notifyStaffOnNewRequest;
     public boolean notificationSound;
@@ -43,19 +45,18 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public boolean vanishSupport;
     public boolean bungeeCordSupport;
     public boolean setupDone = true;
-    public boolean requestNagHeld;
-    public boolean requestPreventDuplicate;
+    public boolean ticketNagHeld;
+    public boolean ticketPreventDuplicate;
     public boolean apiEnabled;
     public boolean legacyCommands;
     public boolean fancify;
 
-    public int maxRequests;
-    public int requestDelay;
-    public int requestMinimumWords;
-    public int requestsPerPage;
+    public int maxTickets;
+    public int ticketDelay;
+    public int ticketMinimumWords;
+    public int ticketsPerPage;
     public int storagePort;
-    public int consoleID;
-    public long requestNagging;
+    public long ticketNagging;
     public long storageRefreshTime;
     public long bungeeCordSync;
     public String storageType;
@@ -68,8 +69,6 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     public String bungeeCordServerPrefix;
     public String lineSeparator = System.lineSeparator();
 
-    public UUID consoleUUID;
-
     public static Permission permission = null;
 
     private ApiServer apiServer;
@@ -80,7 +79,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private String serverIP;
 
     public void onDisable() {
-        DatabaseManager.getDatabase().disconnect();
+        provider.close();
         if(apiEnabled) {
             try{
                 apiServer.getListener().close();
@@ -113,8 +112,13 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         if(assertConfigIsDefault("STORAGE")) {
             setupDone = false;
         } else {
-            if(!DatabaseManager.load()) {
-                log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
+            if(!storageType.equalsIgnoreCase("MYSQL")) {
+                log.severe("Unsupported STORAGE type specified. Allowed types are: MySQL");
+                pm.disablePlugin(this);
+            }
+            setDataProvider(new MySQLDataProvider(plugin));
+            if(!provider.load()) {
+                log.severe("Encountered an error while attempting to connect to the data-provider.  Disabling...");
                 pm.disablePlugin(this);
             }
             reloadPlugin();
@@ -128,10 +132,6 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             log.warning("Fancy messages are enabled, but ProtocolLib was not found.");
             fancify = false;
         }
-
-        // Store console information for performance reasons.
-        consoleID = DatabaseManager.getDatabase().getUserId("CONSOLE");
-        consoleUUID = DatabaseManager.getDatabase().getUserUUID(consoleID);
 
         // Register commands.
         if(legacyCommands) {
@@ -156,6 +156,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         }
 
         // Enable API. (Not recommended since it is very incomplete!)
+        apiEnabled = false; // TODO: Remove hard-coded false when this works!
         if(apiEnabled) {
             try {
                 Properties props = new Properties();
@@ -185,31 +186,22 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         }
 
         // Enable nagging, staff will be reminded of unresolved tickets.
-        if(requestNagging > 0){
+        if(ticketNagging > 0){
             getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
                 public void run(){
-                    int openRequests = requestMap.size();
-                    if(requestNagHeld) {
-                        int heldRequests = DatabaseManager.getDatabase().getNumberHeldRequests();
-                        if(heldRequests > 0) {
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldRequests", openRequests, heldRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                    int openTickets = tickets.size();
+                    if(ticketNagHeld) {
+                        int heldTickets = getDataProvider().countTickets(2);
+                        if(heldTickets > 0) {
+                            if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldTickets", openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         } else {
-                            if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                            if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
                     } else {
-                        if(openRequests > 0) RTSFunctions.messageMods(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                        if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
-            }, 120L, (requestNagging * 60) * 20);
-        }
-
-        // Enable a refresh timer if it is needed to prevent interruption in the data-provider.
-        if(plugin.storageRefreshTime > 0) {
-            getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                public void run() {
-                    DatabaseManager.getDatabase().refresh();
-                }
-            }, 4000L, plugin.storageRefreshTime * 20);
+            }, 120L, (ticketNagging * 60) * 20);
         }
 
         if(bungeeCordSupport) {
@@ -244,13 +236,13 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         notificationSound = getConfig().getBoolean("notifySound");
         hideNotification = getConfig().getBoolean("hideMessageIfEmpty");
         hideWhenOffline = getConfig().getBoolean("ticket.hideOffline");
-        maxRequests = getConfig().getInt("ticket.max");
-        requestDelay = getConfig().getInt("ticket.delay");
-        requestMinimumWords = getConfig().getInt("ticket.minimumWords");
-        requestsPerPage = getConfig().getInt("ticket.perPage");
-        requestPreventDuplicate = getConfig().getBoolean("ticket.preventDuplicates", true);
-        requestNagging = getConfig().getLong("ticket.nag");
-        requestNagHeld = getConfig().getBoolean("ticket.nagHeld", false);
+        maxTickets = getConfig().getInt("ticket.max");
+        ticketDelay = getConfig().getInt("ticket.delay");
+        ticketMinimumWords = getConfig().getInt("ticket.minimumWords");
+        ticketsPerPage = getConfig().getInt("ticket.perPage");
+        ticketPreventDuplicate = getConfig().getBoolean("ticket.preventDuplicates", true);
+        ticketNagging = getConfig().getLong("ticket.nag");
+        ticketNagHeld = getConfig().getBoolean("ticket.nagHeld", false);
         storageRefreshTime = getConfig().getLong("storage.refreshTime");
         storageType = getConfig().getString("storage.type", "mysql");
         storagePort = getConfig().getInt("storage.port");
@@ -292,6 +284,15 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
 
     public static MessageHandler getMessageHandler() {
         return messageHandler;
+    }
+
+    public DataProvider getDataProvider() {
+        return provider;
+    }
+
+    public void setDataProvider(DataProvider provider) {
+        if(provider != null) provider.close();
+        this.provider = provider;
     }
 
     private Boolean setupPermissions() {

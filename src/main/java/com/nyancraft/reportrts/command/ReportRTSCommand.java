@@ -1,14 +1,15 @@
 package com.nyancraft.reportrts.command;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
 import com.nyancraft.reportrts.data.Ticket;
+import com.nyancraft.reportrts.data.User;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,8 +20,6 @@ import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
-import com.nyancraft.reportrts.persistence.Database;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
 import com.nyancraft.reportrts.util.Message;
 import com.nyancraft.reportrts.util.BungeeCord;
 import org.bukkit.entity.Player;
@@ -28,8 +27,7 @@ import org.bukkit.entity.Player;
 public class ReportRTSCommand implements CommandExecutor{
 
     private ReportRTS plugin;
-    private ResultSet rs;
-    private Database dbManager;
+    private DataProvider data;
 
     private boolean storageHostname = false;
     private boolean storagePort = false;
@@ -40,13 +38,12 @@ public class ReportRTSCommand implements CommandExecutor{
 
     public ReportRTSCommand(ReportRTS plugin) {
         this.plugin = plugin;
-        this.dbManager = DatabaseManager.getDatabase();
+        this.data = plugin.getDataProvider();
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length == 0) return false;
-        try{
-            switch(args[0].toUpperCase()){
+        switch(args[0].toUpperCase()) {
 
             case "RELOAD":
                 if(!RTSPermissions.canReloadPlugin(sender)) return true;
@@ -55,117 +52,243 @@ public class ReportRTSCommand implements CommandExecutor{
                 break;
 
             case "BAN":
-                if(args.length < 2) return false;
+
                 if(!RTSPermissions.canBanUser(sender)) return true;
-                Player p1 = plugin.getServer().getPlayer(args[1]);
-                boolean existsInDB = dbManager.userExists(args[1]);
-                if(p1 == null && !existsInDB) {
-                    boolean userFound = false;
+
+                if(args.length < 2) {
+                    sender.sendMessage(Message.parse("generalInternalError", "Please specify a player."));
+                    return true;
+                }
+
+                // Attempt to get the target that you wish to ban.
+                Player target = plugin.getServer().getPlayer(args[1]);
+
+                if(target == null) {
+
                     UUID uuid = null;
-                    for(Map.Entry<Integer, Ticket> entry : plugin.requestMap.entrySet()) {
+
+                    // Target is not online, let's attempt to find them by open tickets.
+                    for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) {
+
                         if(!entry.getValue().getName().equalsIgnoreCase(args[1])) continue;
-                        userFound = true;
+
                         uuid = entry.getValue().getUUID();
                         break;
+
                     }
-                    if(!userFound) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
-                        return true;
-                    } else {
-                        sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " was found but somehow does not exist in the user table."));
+
+                    // User did not have any open tickets, we have to get him/her from the data-provider.
+                    if(uuid == null) {
+
+                        // LAST RESORT ONLY!
+                        User user = data.getUnsafeUser(args[1]);
+
+                        // User doesn't actually exist.
+                        if(user == null) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
+                            return true;
+                        }
+
+                        if(data.setUserStatus(user.getUuid(), true) < 1) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
+                            return true;
+                        }
+                    }
+
+                    // We found the data using open tickets.
+                    if(data.setUserStatus(uuid, true) < 1) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
                         return true;
                     }
 
-                } else if(p1 != null) {
-                    if(!dbManager.setUserStatus(p1.getName(), p1.getUniqueId(), 1)) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + p1.getName() + " from filing requests."));
+                } else {
+
+                    // Target is online.
+                    if(data.setUserStatus(target.getUniqueId(), true) < 1) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + target.getName() + " from opening tickets."));
                         return true;
                     }
-                } else if(existsInDB) {
-                    if(!dbManager.setUserStatus(args[1], 1)) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Cannot ban " + args[1] + " from filing requests."));
-                        return true;
-                    }
+
                 }
-                BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+
                 RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), false);
+                try {
+                    BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
 
             case "UNBAN":
-                if(args.length < 2) return false;
+
                 if(!RTSPermissions.canBanUser(sender)) return true;
-                if(!dbManager.setUserStatus(args[1], 0)){
-                    sender.sendMessage(Message.parse("generalInternalError", "Cannot unban " + args[1] + " from filing requests."));
+
+                if(args.length < 2) {
+                    sender.sendMessage(Message.parse("generalInternalError", "Please specify a player."));
                     return true;
                 }
-                BungeeCord.globalNotify(Message.parse("unbanUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+
+                // Attempt to get the target that you wish to un-ban.
+                Player target1 = plugin.getServer().getPlayer(args[1]);
+
+                if(target1 == null) {
+
+                    UUID uuid = null;
+
+                    // Target is not online, let's attempt to find them by open tickets.
+                    for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) {
+
+                        if(!entry.getValue().getName().equalsIgnoreCase(args[1])) continue;
+
+                        uuid = entry.getValue().getUUID();
+                        break;
+
+                    }
+
+                    // User did not have any open tickets, we have to get him/her from the data-provider.
+                    if(uuid == null) {
+
+                        // LAST RESORT ONLY!
+                        User user = data.getUnsafeUser(args[1]);
+
+                        // User doesn't actually exist.
+                        if(user == null) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
+                            return true;
+                        }
+
+                        if(data.setUserStatus(user.getUuid(), false) < 1) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
+                            return true;
+                        }
+                    }
+
+                    // We found the data using open tickets.
+                    if(data.setUserStatus(uuid, false) < 1) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
+                        return true;
+                    }
+
+                } else {
+
+                    // Target is online.
+                    if(data.setUserStatus(target1.getUniqueId(), false) < 1) {
+                        sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + target1.getName() + " from opening tickets."));
+                        return true;
+                    }
+
+                }
+
+
                 RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), false);
+                try {
+                    BungeeCord.globalNotify(Message.parse("unbanUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case "RESET":
                 if(!RTSPermissions.canResetPlugin(sender)) return true;
-                if(!dbManager.resetDB()){
-                    sender.sendMessage(ChatColor.RED + "[ReportRTS] An unexpected error occurred when attempting to reset the plugin.");
-                    return true;
-                }
+
+                data.reset();
+                // Reload the plugin after resetting the data-provider.
                 plugin.reloadPlugin();
-                sender.sendMessage(ChatColor.GOLD + "[ReportRTS] You deleted all users and requests from ReportRTS.");
-                plugin.getLogger().log(Level.INFO, sender.getName() + " deleted all users and requests from ReportRTS!");
+
+                sender.sendMessage(ChatColor.GOLD + "[ReportRTS] You deleted all users and tickets from ReportRTS.");
+                plugin.getLogger().log(Level.INFO, sender.getName() + " deleted all users and tickets from ReportRTS!");
+
                 break;
 
             case "STATS":
                 if(!RTSPermissions.canCheckStats(sender)) return true;
-                    rs = dbManager.getStats();
-                    sender.sendMessage(ChatColor.YELLOW + "---- Top 10 ----");
-                    sender.sendMessage(ChatColor.YELLOW + "<Player> : <Resolved Tickets>");
-                    while(rs.next()){
-                        sender.sendMessage(ChatColor.YELLOW + rs.getString("name") + " : " + rs.getInt("tickets"));
-                    }
-                    rs.close();
+
+                // Make sure map is sorted by insert order.
+
+                LinkedHashMap<String, Integer> result = data.getTop(10);
+
+                if(result == null) {
+                    sender.sendMessage(Message.parse("generalInternalError", "No results!"));
+                    return true;
+                }
+
+                sender.sendMessage(ChatColor.YELLOW + "---- Top 10 ----");
+                sender.sendMessage(ChatColor.YELLOW + "<Player> : <Resolved Tickets>");
+
+                for(Map.Entry<String, Integer> entry : result.entrySet()) {
+                    sender.sendMessage(ChatColor.YELLOW + entry.getKey() + " : " + entry.getValue().toString());
+                }
+
                 break;
 
             case "SEARCH":
             case "FIND":
+
+                if(!RTSPermissions.canCheckStats(sender)) {
+                    sender.sendMessage(Message.parse("generalInternalError"));
+                    return true;
+                }
+
                 if(args.length < 3) return false;
-                if(!RTSPermissions.canCheckStats(sender)) return true;
+
                 String action = args[2];
-                if(!action.equalsIgnoreCase("completed") && !action.equalsIgnoreCase("created")) return false;
-                String player = args[1];
+                // Check if the provided action is valid.
+                if(!action.equalsIgnoreCase("closed") && !action.equalsIgnoreCase("opened")) return false;
+
                 int pageNumber = 1;
+                // If a page has been specified, use that instead of the default 1.
+                if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
+                // Also ensure that pageNumber is 1 or higher.
+                if(pageNumber < 1) pageNumber = 1;
+                // Start position of query.
+                int cursor = (pageNumber * plugin.ticketsPerPage) - plugin.ticketsPerPage;
 
-                if(action.equalsIgnoreCase("completed")){
-                    if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
-                    ResultSet result = dbManager.getLimitedHandledBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
-                    sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Completed by " + player + ChatColor.AQUA + " ------");
-                    String substring;
-                    SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
-                    String date;
-                    if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
-                    while(result.next()){
-                        substring = RTSFunctions.shortenMessage(result.getString("text"));
-                        date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline((UUID) result.getObject("uuid"))) ? ChatColor.GREEN : ChatColor.RED;
-                        sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
-                    }
-                    result.close();
+                User user = data.getUnsafeUser(args[1]);
+
+                // Store map as null so we can check it later.
+                LinkedHashMap<Integer, Ticket> tickets = null;
+
+                if(action.equalsIgnoreCase("closed")) {
+
+                    tickets = data.getHandledBy(
+                            sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+                            cursor, plugin.ticketsPerPage
+                    );
+
+                } else if(action.equalsIgnoreCase("opened")) {
+
+                    tickets = data.getOpenedBy(
+                            sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
+                            cursor, plugin.ticketsPerPage
+                    );
+
                 }
 
-                if(action.equalsIgnoreCase("created")){
-                    if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
-                    ResultSet result = dbManager.getLimitedCreatedBy(player, (pageNumber * plugin.requestsPerPage) - plugin.requestsPerPage, plugin.requestsPerPage);
-                    sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " Created by " + player + ChatColor.AQUA + " ------");
-                    String substring;
-                    SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
-                    String date;
-                    if(plugin.storageType.equalsIgnoreCase("mysql")) result.beforeFirst();
-                    while(result.next()){
-                        substring = RTSFunctions.shortenMessage(result.getString("text"));
-                        date = sdf.format(new java.util.Date(result.getLong("tstamp") * 1000));
-                        ChatColor online = (RTSFunctions.isUserOnline((UUID) result.getObject("uuid"))) ? ChatColor.GREEN : ChatColor.RED;
-                        sender.sendMessage(ChatColor.GOLD + "#" + result.getInt(1) + " " + date + " by " + online + result.getString("name") + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
-                    }
-                    result.close();
+                // Tickets should only be null if the player does not exist.
+                if(tickets == null) {
+                    sender.sendMessage(Message.parse("generalInternalError", "Specified player does not exist."));
+                    return true;
                 }
+
+                SimpleDateFormat sdf  = new SimpleDateFormat("MMM.dd kk:mm z");
+
+                // Send header.
+                sender.sendMessage(ChatColor.AQUA + "------ Page " + pageNumber + " - " + ChatColor.YELLOW + " " +
+                        (action.equalsIgnoreCase("closed") ? "Handled" : "Opened") + " by " + user.getUsername() + ChatColor.AQUA + " ------");
+
+                for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
+
+                    Ticket ticket = entry.getValue();
+
+                    // Is the player online?
+                    ChatColor online = RTSFunctions.isUserOnline(user.getUuid()) ? ChatColor.GREEN : ChatColor.RED;
+                    // Send body.
+                    sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) +
+                    " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + RTSFunctions.shortenMessage(ticket.getMessage()));
+
+                }
+
                 break;
 
             case "HELP":
@@ -187,7 +310,7 @@ public class ReportRTSCommand implements CommandExecutor{
             case "NOTIFICATIONS":
                 if(!RTSPermissions.canManageNotifications(sender)) return true;
                 if(args.length <= 1){
-                    sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notificationMap.size() + " players left to notify.");
+                    sender.sendMessage(ChatColor.YELLOW + "There are currently " +  plugin.notifications.size() + " players left to notify.");
                     sender.sendMessage("Reset them using /reportrts notifications reset");
                     return true;
                 }
@@ -195,8 +318,13 @@ public class ReportRTSCommand implements CommandExecutor{
                     sender.sendMessage(ChatColor.RED + "Syntax is /reportrts notifications reset");
                     return true;
                 }
-                DatabaseManager.getConnection().createStatement().executeUpdate("UPDATE `" + plugin.storagePrefix + "reportrts_request` SET `notified_of_completion` = 1 WHERE `notified_of_completion` = 0");
-                plugin.notificationMap.clear();
+
+                if(!data.resetNotifications()) {
+                    sender.sendMessage(ChatColor.RED + "Notifications did not reset correctly!");
+                    return true;
+                }
+
+                plugin.notifications.clear();
                 sender.sendMessage(ChatColor.GREEN + "Notifications have been reset.");
                 break;
 
@@ -208,7 +336,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 Player player1 = (Player) sender;
                 if(!RTSPermissions.isStaff((Player) sender)) return true;
                 if(args.length <= 1){
-                    if(plugin.moderatorMap.contains(player1.getUniqueId()))
+                    if(plugin.staff.contains(player1.getUniqueId()))
                         sender.sendMessage(ChatColor.GREEN + "You are currently on duty.");
                     else
                         sender.sendMessage(ChatColor.RED + "You are currently off duty.");
@@ -220,10 +348,10 @@ public class ReportRTSCommand implements CommandExecutor{
                     return true;
                 }
                 if(duty.equalsIgnoreCase("on")){
-                    if(!plugin.moderatorMap.contains(player1.getUniqueId())) plugin.moderatorMap.add(player1.getUniqueId());
+                    if(!plugin.staff.contains(player1.getUniqueId())) plugin.staff.add(player1.getUniqueId());
                     sender.sendMessage(ChatColor.YELLOW + "You are now on duty.");
                 }else{
-                    if(plugin.moderatorMap.contains(player1.getUniqueId())) plugin.moderatorMap.remove(player1.getUniqueId());
+                    if(plugin.staff.contains(player1.getUniqueId())) plugin.staff.remove(player1.getUniqueId());
                     sender.sendMessage(ChatColor.YELLOW + "You are now off duty.");
                 }
                 break;
@@ -248,7 +376,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -269,7 +397,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -290,7 +418,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -311,7 +439,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -332,7 +460,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -352,7 +480,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -373,7 +501,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     if(storageHostname && storagePort && storageDatabase && storageUsername && storagePassword && storageRefresh){
                         plugin.setupDone = true;
                         plugin.reloadSettings();
-                        if(DatabaseManager.load()){
+                        if(data.load()){
                             sender.sendMessage(ChatColor.GREEN + "ReportRTS should be set up now! Restart for the plugin to work correctly.");
                             plugin.getServer().getPluginManager().disablePlugin(plugin);
                         }
@@ -386,9 +514,6 @@ public class ReportRTSCommand implements CommandExecutor{
 
             default:
                 return false;
-            }
-        }catch(SQLException | IOException e){
-            return false;
         }
         return true;
     }

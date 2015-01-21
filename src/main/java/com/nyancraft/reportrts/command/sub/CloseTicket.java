@@ -5,9 +5,9 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketCompleteEvent;
-import com.nyancraft.reportrts.persistence.Database;
-import com.nyancraft.reportrts.persistence.DatabaseManager;
+import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CloseTicket {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
-    private static Database dbManager = DatabaseManager.getDatabase();
+    private static DataProvider data = plugin.getDataProvider();
 
     /**
      * Initial handling of the Close sub-command.
@@ -39,20 +39,20 @@ public class CloseTicket {
         if(!RTSPermissions.canCompleteRequests(sender)) {
             if(RTSPermissions.canCompleteOwnRequests(sender)) {
 
-                if(!plugin.requestMap.containsKey(ticketId)){
+                if(!plugin.tickets.containsKey(ticketId)){
                     sender.sendMessage(Message.parse("generalInternalError", "Ticket not found."));
                     return true;
                 }
                 Player player = (Player) sender;
-                if(!plugin.requestMap.get(ticketId).getUUID().equals(player.getUniqueId())){
+                if(!plugin.tickets.get(ticketId).getUUID().equals(player.getUniqueId())){
                     sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
                     return true;
                 }
-                dbManager.deleteEntryById(plugin.storagePrefix + "reportrts_request", ticketId);
-                plugin.requestMap.remove(ticketId);
-                try{
+                data.deleteTicket(ticketId);
+                plugin.tickets.remove(ticketId);
+                try {
                     BungeeCord.globalNotify(Message.parse("completedReq", args[1], "Cancellation System"), ticketId, NotificationType.DELETE);
-                }catch(IOException e){
+                } catch(IOException e) {
                     e.printStackTrace();
                 }
                 RTSFunctions.messageMods(Message.parse("completedReq", args[1],"Cancellation System"), false);
@@ -65,9 +65,9 @@ public class CloseTicket {
             }
         }
 
-        String user = sender.getName();
-        if(user == null){
-            sender.sendMessage(Message.parse("generalInternalError", "sender.getName() returned NULL! Are you using plugins to modify names?"));
+        User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
+        if(user.getUsername() == null) {
+            sender.sendMessage(Message.parse("generalInternalError", "user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
 
@@ -82,11 +82,11 @@ public class CloseTicket {
         int online = 0;
         boolean isClaimedByOther = false;
 
-        if(plugin.requestMap.containsKey(ticketId)) {
-            online = (RTSFunctions.isUserOnline(plugin.requestMap.get(ticketId).getUUID())) ? 1 : 0;
-            if(plugin.requestMap.get(ticketId).getStatus() == 1) {
+        if(plugin.tickets.containsKey(ticketId)) {
+            online = (RTSFunctions.isUserOnline(plugin.tickets.get(ticketId).getUUID())) ? 1 : 0;
+            if(plugin.tickets.get(ticketId).getStatus() == 1) {
                 // Holy shit.
-                isClaimedByOther = (!plugin.requestMap.get(ticketId).getModUUID().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : plugin.consoleUUID)));
+                isClaimedByOther = (!plugin.tickets.get(ticketId).getModUUID().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole())));
             }
         }
 
@@ -96,30 +96,30 @@ public class CloseTicket {
         }
 
         long timestamp = System.currentTimeMillis() / 1000;
-        if(!dbManager.setRequestStatus(ticketId, user, 3, comment, online, timestamp, true)) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to mark request #" + args[0] + " as complete"));
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, comment, online > 0, timestamp) < 1) {
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to close ticket #" + args[0]));
             return true;
         }
 
         Ticket data = null;
-        if(plugin.requestMap.containsKey(ticketId)) {
-            Player player = sender.getServer().getPlayer(plugin.requestMap.get(ticketId).getUUID());
-            if(online == 0) plugin.notificationMap.put(ticketId, plugin.requestMap.get(ticketId).getUUID());
+        if(plugin.tickets.containsKey(ticketId)) {
+            Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+            if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
             if(player != null){
                 player.sendMessage(Message.parse("completedUser", user));
                 if(comment == null) comment = "";
-                player.sendMessage(Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment));
-            }else{
-                try{
-                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getUUID(), Message.parse("completedUser", user), ticketId);
+                player.sendMessage(Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment));
+            } else {
+                try {
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedUser", user), ticketId);
                     if(comment == null) comment = "";
-                    BungeeCord.notifyUser(plugin.requestMap.get(ticketId).getUUID(), Message.parse("completedText", plugin.requestMap.get(ticketId).getMessage(), comment), ticketId);
-                }catch(IOException e){
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment), ticketId);
+                } catch(IOException e) {
                     e.printStackTrace();
                 }
             }
-            data = plugin.requestMap.get(ticketId);
-            plugin.requestMap.remove(ticketId);
+            data = plugin.tickets.get(ticketId);
+            plugin.tickets.remove(ticketId);
         }
 
         try {

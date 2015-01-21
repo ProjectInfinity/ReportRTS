@@ -4,18 +4,17 @@ import com.nyancraft.reportrts.data.Ticket;
 import org.bukkit.command.CommandSender;
 
 /**
- * Event called when a request is unclaimed, with the
- * mod who last owned the request and the person who unclaimed
- * the request.
- *
+ * Event called when a ticket is unclaimed, with the
+ * staff who last owned the ticket and the person who unclaimed
+ * the ticket.
  */
 public class TicketUnclaimEvent extends TicketEvent {
 
 	private String modName;
 	private CommandSender sender;
 	
-	public TicketUnclaimEvent(Ticket request, String modName, CommandSender sender) {
-            super(request);
+	public TicketUnclaimEvent(Ticket ticket, String modName, CommandSender sender) {
+            super(ticket);
             this.sender = sender;
             this.modName = modName;
 	}
