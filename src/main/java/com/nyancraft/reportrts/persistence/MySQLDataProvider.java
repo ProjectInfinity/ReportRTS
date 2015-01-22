@@ -114,6 +114,12 @@ public class MySQLDataProvider implements DataProvider {
             return false;
         }
 
+        // TODO: Check tables and structure
+        if(!checkStructure()) {
+            plugin.getLogger().warning("[MySQL] Structure is outdated or missing and was not created correctly.");
+            return false;
+        }
+
         // Enable a refresh timer if it is needed to prevent interruption in the data-provider.
         if(plugin.storageRefreshTime > 0) {
             taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -127,9 +133,91 @@ public class MySQLDataProvider implements DataProvider {
             }, 4000L, plugin.storageRefreshTime * 20);
         }
 
-        // TODO: Check tables.  ALSO mod_comment => comment.
-
         return loadData();
+    }
+
+    private boolean checkStructure() {
+        // TODO: Continue here, finish checking tables and creating them, then check their structure and update if necessary.
+
+        // The user table doesn't exist, we need to create it.
+        if(!tableExists(plugin.storagePrefix + "reportrts_user")) {
+
+            try(Statement stmt = db.createStatement()) {
+
+                if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_user` (" +
+                        "`uid`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
+                        "`name`  varchar(255) NOT NULL DEFAULT '' ," +
+                        "`uuid`  char(36) NULL DEFAULT NULL ," +
+                        "`banned`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 ," +
+                        "PRIMARY KEY (`uid`))" +
+                        "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
+
+                    plugin.getLogger().warning("[MySQL] Failed to create the user table!");
+                    return false;
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            plugin.getLogger().info("[MySQL] Created the user table.");
+
+        }
+
+        // The ticket table doesn't exist, we need to create it.
+        if(!tableExists(plugin.storagePrefix + "reportrts_ticket")) {
+
+            try(Statement stmt = db.createStatement()) {
+
+                if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_ticket` (" +
+                        "`id`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
+                        "`userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                        "`staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                        "`staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                        "`comment`  varchar(255) NULL DEFAULT NULL ," +
+                        "`timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                        "`world`  varchar(255) NOT NULL DEFAULT '' ," +
+                        "`server`  varchar(255) NOT NULL DEFAULT '' ," +
+                        "`x`  int(10) NOT NULL DEFAULT 0 ," +
+                        "`y`  int(10) NOT NULL DEFAULT 0 ," +
+                        "`z`  int(10) NOT NULL DEFAULT 0 ," +
+                        "`yaw`  smallint(6) NOT NULL DEFAULT 0 ," +
+                        "`pitch`  smallint(6) NOT NULL DEFAULT 0 ," +
+                        "`text`  varchar(255) NOT NULL DEFAULT '' ," +
+                        "`status`  tinyint(1) UNSIGNED NULL ," +
+                        "`notified`  tinyint(1) UNSIGNED NULL DEFAULT 0 ," +
+                        "PRIMARY KEY (`id`))" +
+                        "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
+
+                    plugin.getLogger().warning("[MySQL] Failed to create the ticket table!");
+                    return false;
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            plugin.getLogger().info("[MySQL] Created the ticket table.");
+
+        }
+
+
+        return true;
+    }
+
+    private boolean tableExists(String table) {
+
+        try(Statement stmt = db.createStatement()) {
+            stmt.executeQuery("SELECT * FROM " + table);
+            return true;
+        } catch(SQLException e) {
+            return false;
+        }
+
     }
 
     private boolean loadData() {
