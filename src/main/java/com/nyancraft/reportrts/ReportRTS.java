@@ -291,7 +291,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     }
 
     public void setDataProvider(DataProvider provider) {
-        if(provider != null) provider.close();
+        if(this.provider != null) this.provider.close();
         this.provider = provider;
     }
 
