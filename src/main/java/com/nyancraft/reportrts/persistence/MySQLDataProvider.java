@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -24,8 +25,11 @@ public class MySQLDataProvider implements DataProvider {
 
     private int taskId;
 
+    private HashMap<UUID, User> userCache;
+
     public MySQLDataProvider(ReportRTS plugin) {
         this.plugin = plugin;
+        this.userCache = new HashMap<>();
     }
 
     private boolean initialize() {
@@ -389,6 +393,9 @@ public class MySQLDataProvider implements DataProvider {
     @Override
     public User getUser(UUID uuid, int id, boolean create) {
 
+        // Check if the user exists in the UserCache and return that instead.
+        if(uuid != null && userCache.containsKey(uuid)) return userCache.get(uuid);
+
         User user = new User();
 
         if(uuid == null && id > 0) {
@@ -435,6 +442,10 @@ public class MySQLDataProvider implements DataProvider {
             e.printStackTrace();
             return null;
         }
+
+        // Store user in UserCache to save future queries. TODO: Remember to add expiry.
+        if(!userCache.containsKey(uuid)) userCache.put(uuid, user);
+
         return user;
     }
 
