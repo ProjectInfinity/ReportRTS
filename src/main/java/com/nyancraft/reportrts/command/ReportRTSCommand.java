@@ -93,12 +93,15 @@ public class ReportRTSCommand implements CommandExecutor{
                             sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
                             return true;
                         }
-                    }
 
-                    // We found the data using open tickets.
-                    if(data.setUserStatus(uuid, true) < 1) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
-                        return true;
+                    } else {
+
+                        // We found the data using open tickets.
+                        if(data.setUserStatus(uuid, true) < 1) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
+                            return true;
+                        }
+
                     }
 
                 } else {
@@ -162,12 +165,14 @@ public class ReportRTSCommand implements CommandExecutor{
                             sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
                             return true;
                         }
-                    }
+                    } else {
 
-                    // We found the data using open tickets.
-                    if(data.setUserStatus(uuid, false) < 1) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
-                        return true;
+                        // We found the data using open tickets.
+                        if(data.setUserStatus(uuid, false) < 1) {
+                            sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
+                            return true;
+                        }
+
                     }
 
                 } else {
@@ -179,7 +184,6 @@ public class ReportRTSCommand implements CommandExecutor{
                     }
 
                 }
-
 
                 RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), false);
                 try {
