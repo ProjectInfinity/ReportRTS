@@ -165,6 +165,7 @@ public class ReportRTSCommand implements CommandExecutor{
                             sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
                             return true;
                         }
+
                     } else {
 
                         // We found the data using open tickets.

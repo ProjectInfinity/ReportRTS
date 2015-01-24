@@ -477,6 +477,9 @@ public class MySQLDataProvider implements DataProvider {
             return null;
         }
 
+        // Store the user in the UserCache for next time.
+        if(!userCache.containsKey(user.getUuid())) userCache.put(user.getUuid(), user);
+
         return user;
     }
 
@@ -838,7 +841,20 @@ public class MySQLDataProvider implements DataProvider {
 
         try(Statement stmt = db.createStatement()) {
 
-            return stmt.executeUpdate("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `notified` = '" + (status ? 1 : 0) + "' WHERE `uuid` = '" + uuid.toString() + "'");
+            int result = stmt.executeUpdate("UPDATE `" + plugin.storagePrefix + "reportrts_user` SET `banned` = '" + (status ? 1 : 0) + "' WHERE `uuid` = '" + uuid.toString() + "'");
+
+            if(result > 0) {
+
+                if(userCache.containsKey(uuid)) {
+                    User user = userCache.get(uuid);
+                    user.setBanned(status);
+
+                    userCache.put(uuid, user);
+                }
+
+            }
+
+            return result;
 
         } catch (SQLException e) {
             e.printStackTrace();
