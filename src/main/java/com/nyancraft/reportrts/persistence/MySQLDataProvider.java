@@ -120,7 +120,7 @@ public class MySQLDataProvider implements DataProvider {
 
         // TODO: Check tables and structure
         if(!checkStructure()) {
-            plugin.getLogger().warning("[MySQL] Structure is outdated or missing and was not created correctly.");
+            plugin.getLogger().warning("[MySQL] Structure is outdated or missing and was not created or modified correctly.");
             return false;
         }
 
@@ -168,6 +168,9 @@ public class MySQLDataProvider implements DataProvider {
 
             plugin.getLogger().info("[MySQL] Created the user table.");
 
+        } else {
+
+            // Table exists! TODO: We have to ensure the structure is up to date.
         }
 
         // The ticket table doesn't exist, we need to create it.
@@ -209,6 +212,13 @@ public class MySQLDataProvider implements DataProvider {
 
         }
 
+        /**
+         * CHECK IF LEGACY TABLES EXIST AND MIGRATE DATA.
+         * TODO: REMOVE THIS ONCE ENOUGH TIME HAS PASSED.
+         */
+        if(tableExists(plugin.storagePrefix + "reportrts_request"));
+        if(tableExists("reportrts_request"));
+
 
         return true;
     }
@@ -227,8 +237,8 @@ public class MySQLDataProvider implements DataProvider {
     private boolean loadData() {
 
         // MySQL connected fine. Load tickets from database.
-        try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_request as request INNER JOIN " +
-                plugin.storagePrefix + "reportrts_user as user ON request.user_id = user.id WHERE `status` < 2")) {
+        try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status < 2")) {
 
             while(rs.next()) {
 
@@ -245,7 +255,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("bc_server"),
+                        rs.getString("server"),
                         rs.getString("comment")
                 );
 
@@ -298,7 +308,10 @@ public class MySQLDataProvider implements DataProvider {
             stmt.setString(2, UUID.randomUUID().toString());
             // Statement didn't run, return 0.
             if(stmt.executeUpdate() < 1) return 0;
-            id = stmt.getGeneratedKeys().getInt(1);
+            ResultSet rs = stmt.getGeneratedKeys();
+            rs.first();
+            id = rs.getInt(1);
+            rs.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -343,12 +356,10 @@ public class MySQLDataProvider implements DataProvider {
         if(!isLoaded()) return 0;
 
         // User does not exist, so we need to create it.
-        // TODO: Figure out if this need a workaround for console.
         if(user.getId() == 0) user = getUser(user.getUuid(), 0, true);
 
-        // TODO: Ensure that database fields are correct.
         try(PreparedStatement ps = db.prepareStatement("INSERT INTO `" + plugin.storagePrefix + "reportrts_ticket` (`userId`, `timestamp`, " +
-                "`world`, `x`, `y`, `z`, `yaw`, `pitch`, `text`, `status`, `notified`, `bc_server`) VALUES" +
+                "`world`, `x`, `y`, `z`, `yaw`, `pitch`, `text`, `status`, `notified`, `server`) VALUES" +
                 " (?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0', ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, user.getId());
@@ -362,7 +373,17 @@ public class MySQLDataProvider implements DataProvider {
             ps.setString(9, message);
             ps.setString(10, BungeeCord.getServer());
 
-            return ps.executeUpdate() < 1 ? -1 : ps.getGeneratedKeys().getInt(1);
+            int result = ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+
+            if(!rs.first()) return 0;
+
+            int keys = rs.getInt(1);
+
+            rs.close();
+
+            return result < 1 ? -1 : keys;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -503,10 +524,20 @@ public class MySQLDataProvider implements DataProvider {
                         plugin.getLogger().severe("Failed to create a entry for Console in the RTS user table.");
                         return null;
                     }
-                    console.setId(rs.getInt("id"));
+                    console.setId(rs1.getInt("uid"));
+                    console.setUsername(plugin.getServer().getConsoleSender().getName());
+                    console.setBanned(false);
+                    console.setUuid(UUID.fromString(rs1.getString("uuid")));
+
+                    rs1.close();
+
+                } else {
+
+                    console.setId(rs.getInt("uid"));
                     console.setUsername(plugin.getServer().getConsoleSender().getName());
                     console.setBanned(false);
                     console.setUuid(UUID.fromString(rs.getString("uuid")));
+
                 }
 
             } catch (SQLException e) {
@@ -527,7 +558,7 @@ public class MySQLDataProvider implements DataProvider {
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
-                plugin.storagePrefix + "reportrts_user as user ON ticket.user_id = user.id WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC") + " LIMIT " + cursor + ", " + limit)) {
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC") + " LIMIT " + cursor + ", " + limit)) {
 
             while(rs.next()) {
 
@@ -544,7 +575,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("bc_server"),
+                        rs.getString("server"),
                         rs.getString("comment")
                 );
 
@@ -576,7 +607,7 @@ public class MySQLDataProvider implements DataProvider {
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
-                plugin.storagePrefix + "reportrts_user as user ON ticket.user_id = user.id WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC"))) {
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC"))) {
 
             while(rs.next()) {
 
@@ -593,7 +624,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("bc_server"),
+                        rs.getString("server"),
                         rs.getString("comment")
                 );
 
@@ -638,7 +669,7 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getFloat("yaw"),
                     rs.getFloat("pitch"),
                     rs.getString("world"),
-                    rs.getString("bc_server"),
+                    rs.getString("server"),
                     rs.getString("comment")
             );
 
@@ -699,7 +730,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("bc_server"),
+                            rs.getString("server"),
                             rs.getString("comment")
                     );
 
@@ -741,7 +772,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("bc_server"),
+                            rs.getString("server"),
                             rs.getString("comment")
                     );
 
