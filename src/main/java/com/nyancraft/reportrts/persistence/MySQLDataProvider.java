@@ -420,7 +420,7 @@ public class MySQLDataProvider implements DataProvider {
         User user = new User();
 
         if(uuid == null && id > 0) {
-            try(ResultSet rs = query("SELECT * FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `id` = " + id)) {
+            try(ResultSet rs = query("SELECT * FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uid` = " + id)) {
 
                 // No hits and we can't create a user because there is no UUID.
                 if(!rs.next()) return null;
@@ -455,7 +455,7 @@ public class MySQLDataProvider implements DataProvider {
 
             user.setUsername(rs.getString("name"));
             user.setBanned(rs.getBoolean("banned"));
-            user.setId(rs.getInt("id"));
+            user.setId(rs.getInt("uid"));
 
             rs.close();
 
