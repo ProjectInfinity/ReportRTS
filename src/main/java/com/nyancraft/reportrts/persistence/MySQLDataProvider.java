@@ -838,6 +838,13 @@ public class MySQLDataProvider implements DataProvider {
 
         try(PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `status` = ?, staffId = ?, staffTime = ?, comment = ?, notified = ? WHERE `id` = ?")) {
 
+            ps.setInt(1, status);
+            ps.setInt(2, staff.getId());
+            ps.setLong(3, timestamp);
+            ps.setString(4, comment);
+            ps.setInt(5, notified ? 1 : 0);
+            ps.setInt(6, id);
+
             // Check if any rows were affected.
             if(ps.executeUpdate() < 1) return 0;
 
