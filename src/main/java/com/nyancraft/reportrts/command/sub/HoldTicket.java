@@ -31,13 +31,14 @@ public class HoldTicket {
         if(!RTSPermissions.canPutTicketOnHold(sender) || args.length < 2 || !RTSFunctions.isNumber(args[1])) return false;
 
         args[0] = "";
-        String reason = RTSFunctions.implode(args, " ");
         int ticketId = Integer.parseInt(args[1]);
+
+        String reason = RTSFunctions.implode(args, " ").trim();
 
         if(reason.length() <= args[1].length()) {
             reason = "None specified.";
         } else {
-            reason = reason.substring(args[1].length());
+            reason = reason.substring(args[1].length()).trim();
         }
 
         User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
@@ -46,7 +47,7 @@ public class HoldTicket {
             return true;
         }
 
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, reason, false, System.currentTimeMillis() / 1000) < 1) {
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 2, reason, false, System.currentTimeMillis() / 1000) < 1) {
             sender.sendMessage(Message.parse("generalInternalError", "Unable to put ticket #" + args[0] + " on hold."));
             return true;
         }

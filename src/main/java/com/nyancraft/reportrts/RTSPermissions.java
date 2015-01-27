@@ -109,7 +109,6 @@ public class RTSPermissions {
     }
 
     public static boolean canPutTicketOnHold(CommandSender sender){
-        if(!(sender instanceof Player)) return false;
         if(ReportRTS.permission != null){
             if(!ReportRTS.permission.has(sender, "reportrts.command.hold")){
                 sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.hold"));
