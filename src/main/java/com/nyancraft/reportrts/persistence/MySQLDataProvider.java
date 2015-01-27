@@ -652,7 +652,7 @@ public class MySQLDataProvider implements DataProvider {
     public Ticket getTicket(int id) {
 
         try(ResultSet rs = query("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix
-        + "reportrts_user` as user ON ticket.userId = user.id WHERE ticket.id = '" + id + "'")) {
+        + "reportrts_user` as user ON ticket.userId = user.uid WHERE ticket.id = '" + id + "'")) {
 
             if(!rs.next()) return null;
 
