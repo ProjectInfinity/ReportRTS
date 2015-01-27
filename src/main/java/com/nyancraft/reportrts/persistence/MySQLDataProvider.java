@@ -430,6 +430,8 @@ public class MySQLDataProvider implements DataProvider {
                 user.setUuid(UUID.fromString(rs.getString("uuid")));
                 user.setBanned(rs.getBoolean("banned"));
 
+                uuid = user.getUuid();
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 return null;
@@ -449,7 +451,6 @@ public class MySQLDataProvider implements DataProvider {
             if(!rs.next()) {
                 // Check if we want to create the user or not.
                 if(!create) return null;
-                // TODO: Figure out if Console needs workarounds.
                 createUser(uuid);
             }
 
