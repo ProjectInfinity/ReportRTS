@@ -106,12 +106,12 @@ public class CloseTicket {
             Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
             if(player != null){
-                player.sendMessage(Message.parse("completedUser", user));
+                player.sendMessage(Message.parse("completedUser", user.getUsername()));
                 if(comment == null) comment = "";
                 player.sendMessage(Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment));
             } else {
                 try {
-                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedUser", user), ticketId);
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedUser", user.getUsername()), ticketId);
                     if(comment == null) comment = "";
                     BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment), ticketId);
                 } catch(IOException e) {
@@ -123,11 +123,11 @@ public class CloseTicket {
         }
 
         try {
-            BungeeCord.globalNotify(Message.parse("completedReq", args[1], user), ticketId, NotificationType.COMPLETE);
+            BungeeCord.globalNotify(Message.parse("completedReq", args[1], user.getUsername()), ticketId, NotificationType.COMPLETE);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("completedReq", args[1], user), false);
+        RTSFunctions.messageMods(Message.parse("completedReq", args[1], user.getUsername()), false);
         if(data != null) {
             data.setModComment(comment);
             if (data.getModName() == null) {
