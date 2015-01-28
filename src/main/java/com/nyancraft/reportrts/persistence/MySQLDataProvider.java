@@ -340,7 +340,10 @@ public class MySQLDataProvider implements DataProvider {
             stmt.setString(2, uuid.toString());
             // Statement didn't run. Return 0.
             if(stmt.executeUpdate() < 1) return 0;
-            id = stmt.getGeneratedKeys().getInt(1);
+            ResultSet rs = stmt.getGeneratedKeys();
+            rs.first();
+            id = rs.getInt(1);
+            rs.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -451,7 +454,15 @@ public class MySQLDataProvider implements DataProvider {
             if(!rs.next()) {
                 // Check if we want to create the user or not.
                 if(!create) return null;
-                createUser(uuid);
+                rs.close();
+                // Store the ID of the created user.
+                int userId = createUser(uuid);
+                // User was not created if the ID is 0.
+                if(userId == 0) return null;
+                Statement statement = db.createStatement();
+                rs = statement.executeQuery("SELECT * FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `uid` = " + userId);
+                // Check if there is any result.
+                if(!rs.next()) return null;
             }
 
             user.setUsername(rs.getString("name"));
