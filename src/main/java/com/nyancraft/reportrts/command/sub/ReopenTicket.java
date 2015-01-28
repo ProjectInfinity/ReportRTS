@@ -41,8 +41,8 @@ public class ReopenTicket {
 
         User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
 
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, "", false, System.currentTimeMillis() / 1000) < 1) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to close ticket #" + args[0]));
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 0, "", false, System.currentTimeMillis() / 1000) < 1) {
+            sender.sendMessage(Message.parse("generalInternalError", "Unable to reopen ticket #" + args[0]));
             return true;
         }
 
