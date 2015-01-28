@@ -296,7 +296,7 @@ public class MySQLDataProvider implements DataProvider {
 
         try(Statement stmt = db.createStatement()) {
 
-            return stmt.executeUpdate("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `notified` = 1 WHERE `notified` = 0") > 0;
+            return stmt.executeUpdate("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `notified` = 1 WHERE `notified` = 0 AND `status` = 3") > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
