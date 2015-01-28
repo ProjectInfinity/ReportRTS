@@ -266,9 +266,6 @@ public class MySQLDataProvider implements DataProvider {
                     ticket.setModUUID(staff.getUuid());
                     ticket.setModComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
-                    if(ticket.getStatus() == 3 && !ticket.isNotified()) {
-                        plugin.notifications.put(ticket.getId(), ticket.getUUID());
-                    }
                 }
                 plugin.tickets.put(rs.getInt(1), ticket);
 
@@ -278,6 +275,19 @@ public class MySQLDataProvider implements DataProvider {
             e.printStackTrace();
             return false;
         }
+
+        // Load pending notifications.
+        try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = 3 AND ticket.notified = 0")) {
+
+            while(rs.next()) {
+                plugin.notifications.put(rs.getInt("id"), UUID.fromString(rs.getString("uuid")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
