@@ -30,7 +30,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private VersionChecker versionChecker = new VersionChecker();
     private DataProvider provider;
 
-    public Map<Integer, Ticket> tickets = new LinkedHashMap<>();
+    public Map<Integer, Ticket> tickets = new TreeMap<>();
     public Map<Integer, UUID> notifications = new HashMap<>();
     public Map<UUID, Integer> teleportMap = new HashMap<>();
     public Map<String, String> commandMap = new HashMap<>();
