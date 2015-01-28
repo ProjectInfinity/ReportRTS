@@ -719,8 +719,8 @@ public class MySQLDataProvider implements DataProvider {
         if(creator) {
 
             // Get tickets opened by a player.
-            try(PreparedStatement ps = db.prepareStatement("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix + "reportrts_user as user " +
-                    "ON ticket.userId = user.id WHERE ticket.userId = ? ORDER BY ticket.timestamp DESC LIMIT ?, ?")) {
+            try(PreparedStatement ps = db.prepareStatement("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix + "reportrts_user` as user " +
+                    "ON ticket.userId = user.uid WHERE ticket.userId = ? ORDER BY ticket.timestamp DESC LIMIT ?, ?")) {
 
                 ps.setInt(1, user.getId());
                 ps.setInt(2, cursor);
@@ -761,8 +761,8 @@ public class MySQLDataProvider implements DataProvider {
         } else {
 
             // Get tickets handled by a player.
-            try(PreparedStatement ps = db.prepareStatement("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix + "reportrts_user as user " +
-                    "ON ticket.userId = user.id WHERE ticket.staffId = ? ORDER BY ticket.staffTime DESC LIMIT ?, ?")) {
+            try(PreparedStatement ps = db.prepareStatement("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix + "reportrts_user` as user " +
+                    "ON ticket.userId = user.uid WHERE ticket.staffId = ? ORDER BY ticket.staffTime DESC LIMIT ?, ?")) {
 
                 ps.setInt(1, user.getId());
                 ps.setInt(2, cursor);
