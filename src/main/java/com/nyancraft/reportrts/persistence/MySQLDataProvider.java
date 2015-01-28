@@ -816,7 +816,9 @@ public class MySQLDataProvider implements DataProvider {
                 "LEFT JOIN `reportrts_user` ON `reportrts_ticket`.staffId = `reportrts_user`.uid WHERE `reportrts_ticket`.status = 3 " +
                     "GROUP BY `name` ORDER BY tickets DESC LIMIT " + limit)) {
 
-            results.put(rs.getString("name"), rs.getInt("tickets"));
+            while(rs.next()) {
+                results.put(rs.getString("name"), rs.getInt("tickets"));
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
