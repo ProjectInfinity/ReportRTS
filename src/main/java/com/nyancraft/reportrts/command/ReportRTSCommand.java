@@ -243,7 +243,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 int pageNumber = 1;
                 // If a page has been specified, use that instead of the default 1.
-                if(args.length == 4) pageNumber =  Integer.parseInt(args[3]);
+                if(args.length == 4 && RTSFunctions.isNumber(args[3])) pageNumber =  Integer.parseInt(args[3]);
                 // Also ensure that pageNumber is 1 or higher.
                 if(pageNumber < 1) pageNumber = 1;
                 // Start position of query.
