@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -170,7 +171,38 @@ public class MySQLDataProvider implements DataProvider {
 
         } else {
 
-            // Table exists! TODO: We have to ensure the structure is up to date.
+            // Table exists! We have to ensure the structure is up to date.
+            ArrayList<String> columns = new ArrayList<>();
+
+            try(ResultSet rs = query("show columns from `" + plugin.storagePrefix + "reportrts_user`")) {
+
+                while(rs.next()) {
+                    columns.add(rs.getString("Field"));
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            // If UID does not exist then chances are that the user has not migrated from ID to UID.
+            if(!columns.contains("uid")) {
+
+                if(columns.contains("id")) {
+                    try(Statement stmt = db.createStatement()) {
+
+                        stmt.execute("ALTER TABLE `" + plugin.storagePrefix + "reportrts_user` CHANGE COLUMN `id` `uid` int(10) "
+                                + "UNSIGNED NOT NULL AUTO_INCREMENT FIRST , DROP PRIMARY KEY, ADD PRIMARY KEY (`uid`)");
+
+                        plugin.getLogger().info("Migrated primary key of user table from `id` to `uid`.");
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+            }
+
         }
 
         // The ticket table doesn't exist, we need to create it.
