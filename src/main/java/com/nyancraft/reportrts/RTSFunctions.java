@@ -53,12 +53,13 @@ public class RTSFunctions {
      * @param playSound - boolean play sound or not.
      */
     public static void messageMods(String message, boolean playSound) {
-        for(UUID uuid : ReportRTS.getPlugin().staff){
+        for(UUID uuid : ReportRTS.getPlugin().staff) {
             Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
             if(player == null) return;
             player.sendMessage(message);
             if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 0);
         }
+        plugin.getServer().getConsoleSender().sendMessage(message);
     }
 
     /**
