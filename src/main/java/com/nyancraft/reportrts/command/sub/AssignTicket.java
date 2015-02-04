@@ -106,7 +106,7 @@ public class AssignTicket {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("assignRequest", assignee, ticketId), false);
+        RTSFunctions.messageStaff(Message.parse("assignRequest", assignee, ticketId), false);
         // Let other plugins know the request was assigned.
         plugin.getServer().getPluginManager().callEvent(new TicketAssignEvent(plugin.tickets.get(ticketId), sender));
 

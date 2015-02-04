@@ -193,12 +193,12 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                     if(ticketNagHeld) {
                         int heldTickets = getDataProvider().countTickets(2);
                         if(heldTickets > 0) {
-                            if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenHeldTickets", openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                            if(openTickets > 0) RTSFunctions.messageStaff(Message.parse("generalOpenHeldTickets", openTickets, heldTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         } else {
-                            if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                            if(openTickets > 0) RTSFunctions.messageStaff(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                         }
                     } else {
-                        if(openTickets > 0) RTSFunctions.messageMods(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
+                        if(openTickets > 0) RTSFunctions.messageStaff(Message.parse("generalOpenTickets", openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))), false);
                     }
                 }
             }, 120L, (ticketNagging * 60) * 20);

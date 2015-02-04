@@ -89,7 +89,7 @@ public class UnclaimTicket {
             e.printStackTrace();
         }
 
-        RTSFunctions.messageMods(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getModName(), args[1]), false);
+        RTSFunctions.messageStaff(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getModName(), args[1]), false);
 
         sender.sendMessage(Message.parse("unclaimReqSelf", args[1]));
 

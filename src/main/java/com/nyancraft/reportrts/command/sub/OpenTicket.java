@@ -111,7 +111,7 @@ public class OpenTicket {
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), true);
+            RTSFunctions.messageStaff(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), true);
         }
 
         Ticket request = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");

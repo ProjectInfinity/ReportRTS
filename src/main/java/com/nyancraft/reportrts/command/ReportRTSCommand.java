@@ -114,7 +114,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 }
 
-                RTSFunctions.messageMods(Message.parse("banUser", sender.getName(), args[1]), false);
+                RTSFunctions.messageStaff(Message.parse("banUser", sender.getName(), args[1]), false);
                 try {
                     BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 } catch (IOException e) {
@@ -186,7 +186,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 }
 
-                RTSFunctions.messageMods(Message.parse("unbanUser", sender.getName(), args[1]), false);
+                RTSFunctions.messageStaff(Message.parse("unbanUser", sender.getName(), args[1]), false);
                 try {
                     BungeeCord.globalNotify(Message.parse("unbanUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 } catch (IOException e) {

@@ -48,18 +48,26 @@ public class RTSFunctions {
         return out;
     }
     /***
-     * Messages all online moderators on the server
+     * Message all online staff on the server
      * @param message - message to be displayed
      * @param playSound - boolean play sound or not.
      */
-    public static void messageMods(String message, boolean playSound) {
+    public static void messageStaff(String message, boolean playSound) {
+
         for(UUID uuid : ReportRTS.getPlugin().staff) {
+
             Player player = ReportRTS.getPlugin().getServer().getPlayer(uuid);
+
             if(player == null) return;
+
             player.sendMessage(message);
+
             if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 0);
         }
+
+        // Make sure Console sees this too!
         plugin.getServer().getConsoleSender().sendMessage(message);
+
     }
 
     /**

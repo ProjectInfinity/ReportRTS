@@ -32,7 +32,7 @@ public class BroadcastMessage {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("broadcastMessage", sender.getName(), message), false);
+        RTSFunctions.messageStaff(Message.parse("broadcastMessage", sender.getName(), message), false);
         // Let other plugins know about the broadcast
         plugin.getServer().getPluginManager().callEvent(new TicketBroadcastEvent(sender, message));
         return true;

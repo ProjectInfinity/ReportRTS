@@ -55,7 +55,7 @@ public class CloseTicket {
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
-                RTSFunctions.messageMods(Message.parse("completedReq", args[1],"Cancellation System"), false);
+                RTSFunctions.messageStaff(Message.parse("completedReq", args[1],"Cancellation System"), false);
                 sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
 
                 return true;
@@ -127,7 +127,7 @@ public class CloseTicket {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("completedReq", args[1], user.getUsername()), false);
+        RTSFunctions.messageStaff(Message.parse("completedReq", args[1], user.getUsername()), false);
         if(data != null) {
             data.setModComment(comment);
             if (data.getModName() == null) {

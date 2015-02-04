@@ -100,7 +100,7 @@ public class ClaimTicket {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("claimRequest", name, args[1]), false);
+        RTSFunctions.messageStaff(Message.parse("claimRequest", name, args[1]), false);
 
         // Let other plugins know the request was claimed
         plugin.getServer().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));

@@ -179,19 +179,19 @@ public class BungeeCord {
                     String msg = msgin.readUTF();
                     if(notifType.getCode() == 0 || notifType.getCode() == 1) {
                         if(RTSFunctions.syncTicket(ticketId)){
-                            RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
+                            RTSFunctions.messageStaff(msg, (notifType.getCode() == 0));
                         }
                     } else if(notifType.getCode() == 3 || notifType.getCode() == 4) {
-                        RTSFunctions.messageMods(msg, false);
+                        RTSFunctions.messageStaff(msg, false);
                     } else if(notifType.getCode() == 2 || notifType.getCode() == 5) {
                         if(RTSFunctions.syncTicket(ticketId)) {
                             if(notifType.getCode() == 2) ReportRTS.getPlugin().notifications.put(ticketId, ReportRTS.getPlugin().tickets.get(ticketId).getUUID());
                             ReportRTS.getPlugin().tickets.remove(ticketId);
-                            RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
+                            RTSFunctions.messageStaff(msg, (notifType.getCode() == 0));
                         }
                     } else if(notifType.getCode() == 6) {
                         ReportRTS.getPlugin().tickets.remove(ticketId);
-                        RTSFunctions.messageMods(msg, (notifType.getCode() == 0));
+                        RTSFunctions.messageStaff(msg, (notifType.getCode() == 0));
                     }
                 } else if(function.equals("NotifyUserAndSync")) {
                     int ticketId = msgin.readInt();

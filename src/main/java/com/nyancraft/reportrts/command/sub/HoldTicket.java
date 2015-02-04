@@ -70,7 +70,7 @@ public class HoldTicket {
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageMods(Message.parse("holdRequest", args[1], sender.getName()), false);
+        RTSFunctions.messageStaff(Message.parse("holdRequest", args[1], sender.getName()), false);
         return true;
     }
 }

@@ -52,7 +52,7 @@ public class ReopenTicket {
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            RTSFunctions.messageMods(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
+            RTSFunctions.messageStaff(Message.parse("reopenedRequest", sender.getName(), args[1]), true);
             // Let other plugins know the ticket was reopened.
             plugin.getServer().getPluginManager().callEvent(new TicketReopenEvent(plugin.tickets.get(ticketId), sender));
             sender.sendMessage(Message.parse("reopenedRequestSelf", args[1]));
