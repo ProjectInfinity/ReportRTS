@@ -242,6 +242,28 @@ public class MySQLDataProvider implements DataProvider {
 
             plugin.getLogger().info("[MySQL] Created the ticket table.");
 
+        } else {
+
+            // Table exists! We have to ensure the structure is up to date.
+            ArrayList<String> columns = new ArrayList<>();
+
+            try(ResultSet rs = query("show columns from `" + plugin.storagePrefix + "reportrts_user`")) {
+
+                while(rs.next()) {
+                    columns.add(rs.getString("Field"));
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            if(!columns.contains("uuid")) {
+                plugin.getLogger().severe("The UUID field is missing, your data is probably very old. Please run a older build of ReportRTS to migrate the data.");
+                plugin.getServer().getPluginManager().disablePlugin(plugin);
+                return false;
+            }
+
         }
 
         /**
