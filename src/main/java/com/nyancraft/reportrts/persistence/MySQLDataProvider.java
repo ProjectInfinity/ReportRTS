@@ -208,37 +208,78 @@ public class MySQLDataProvider implements DataProvider {
         // The ticket table doesn't exist, we need to create it.
         if(!tableExists(plugin.storagePrefix + "reportrts_ticket")) {
 
-            try(Statement stmt = db.createStatement()) {
+            if(tableExists(plugin.storagePrefix + "reportrts_request")) {
 
-                if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_ticket` (" +
-                        "`id`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
-                        "`userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
-                        "`staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
-                        "`staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
-                        "`comment`  varchar(255) NULL DEFAULT NULL ," +
-                        "`timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
-                        "`world`  varchar(255) NOT NULL DEFAULT '' ," +
-                        "`server`  varchar(255) NOT NULL DEFAULT '' ," +
-                        "`x`  int(10) NOT NULL DEFAULT 0 ," +
-                        "`y`  int(10) NOT NULL DEFAULT 0 ," +
-                        "`z`  int(10) NOT NULL DEFAULT 0 ," +
-                        "`yaw`  smallint(6) NOT NULL DEFAULT 0 ," +
-                        "`pitch`  smallint(6) NOT NULL DEFAULT 0 ," +
-                        "`text`  varchar(255) NOT NULL DEFAULT '' ," +
-                        "`status`  tinyint(1) UNSIGNED NULL ," +
-                        "`notified`  tinyint(1) UNSIGNED NULL DEFAULT 0 ," +
-                        "PRIMARY KEY (`id`))" +
-                        "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
+                // The old table exists, alter the table to make it compatible.
+                try(Statement stmt = db.createStatement()) {
 
-                    plugin.getLogger().warning("[MySQL] Failed to create the ticket table!");
+                    stmt.addBatch("RENAME TABLE `" + plugin.storagePrefix + "reportrts_request` TO `" + plugin.storagePrefix + "reportrts_ticket`;");
+
+                    plugin.getLogger().info("Renamed request table to tickets.");
+
+                    // Ensure that there are no null data in the table where the structure is changing.
+                    stmt.addBatch("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `user_id` = '0' WHERE `user_id` IS NULL;");
+                    stmt.addBatch("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `mod_id` = '0' WHERE `mod_id` IS NULL;");
+                    stmt.addBatch("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `mod_timestamp` = '0' WHERE `mod_timestamp` IS NULL;");
+                    stmt.addBatch("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `notified_of_completion` = '0' WHERE `notified_of_completion` IS NULL;");
+
+                    stmt.addBatch("ALTER TABLE `" + plugin.storagePrefix + "reportrts_ticket` " +
+                            "CHANGE COLUMN `user_id` `userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`, " +
+                            "CHANGE COLUMN `mod_id` `staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `userId`, " +
+                            "CHANGE COLUMN `mod_timestamp` `staffTime`  int(10) UNSIGNED NOT NULL AFTER `staffId`, " +
+                            "CHANGE COLUMN `mod_comment` `comment`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `staffTime`, " +
+                            "CHANGE COLUMN `tstamp` `timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `comment`, " +
+                            "CHANGE COLUMN `bc_server` `server`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `world`, " +
+                            "CHANGE COLUMN `notified_of_completion` `notified`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `status`;");
+
+
+                    plugin.getLogger().info("Migrated ticket data to the new table structure.");
+
+                    stmt.executeBatch();
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
                     return false;
-
                 }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
+            } else {
+
+                // Old table does not exist, create a new one.
+                try(Statement stmt = db.createStatement()) {
+
+                    if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_ticket` (" +
+                            "`id`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
+                            "`userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                            "`staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                            "`staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                            "`comment`  varchar(255) NULL DEFAULT NULL ," +
+                            "`timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
+                            "`world`  varchar(255) NOT NULL DEFAULT '' ," +
+                            "`server`  varchar(255) NOT NULL DEFAULT '' ," +
+                            "`x`  int(10) NOT NULL DEFAULT 0 ," +
+                            "`y`  int(10) NOT NULL DEFAULT 0 ," +
+                            "`z`  int(10) NOT NULL DEFAULT 0 ," +
+                            "`yaw`  smallint(6) NOT NULL DEFAULT 0 ," +
+                            "`pitch`  smallint(6) NOT NULL DEFAULT 0 ," +
+                            "`text`  varchar(255) NOT NULL DEFAULT '' ," +
+                            "`status`  tinyint(1) UNSIGNED NULL ," +
+                            "`notified`  tinyint(1) UNSIGNED NULL DEFAULT 0 ," +
+                            "PRIMARY KEY (`id`))" +
+                            "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
+
+                        plugin.getLogger().warning("[MySQL] Failed to create the ticket table!");
+                        return false;
+
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
             }
+
+
 
             plugin.getLogger().info("[MySQL] Created the ticket table.");
 
@@ -265,14 +306,6 @@ public class MySQLDataProvider implements DataProvider {
             }
 
         }
-
-        /**
-         * CHECK IF LEGACY TABLES EXIST AND MIGRATE DATA.
-         * TODO: REMOVE THIS ONCE ENOUGH TIME HAS PASSED.
-         */
-        if(tableExists(plugin.storagePrefix + "reportrts_request"));
-        if(tableExists("reportrts_request"));
-
 
         return true;
     }
