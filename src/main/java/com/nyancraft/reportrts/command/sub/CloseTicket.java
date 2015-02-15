@@ -6,7 +6,7 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
-import com.nyancraft.reportrts.event.TicketCompleteEvent;
+import com.nyancraft.reportrts.event.TicketCloseEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -133,7 +133,7 @@ public class CloseTicket {
             if (data.getModName() == null) {
                 data.setModName(sender.getName());
             }
-            plugin.getServer().getPluginManager().callEvent(new TicketCompleteEvent(data, sender));
+            plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(data, sender));
         }
         return true;
     }

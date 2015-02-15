@@ -6,7 +6,7 @@ import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
-import com.nyancraft.reportrts.event.TicketCreateEvent;
+import com.nyancraft.reportrts.event.TicketOpenEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -115,7 +115,7 @@ public class OpenTicket {
         }
 
         Ticket request = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
-        plugin.getServer().getPluginManager().callEvent(new TicketCreateEvent(request));
+        plugin.getServer().getPluginManager().callEvent(new TicketOpenEvent(request));
         plugin.tickets.put(ticketId, request);
 
         return true;

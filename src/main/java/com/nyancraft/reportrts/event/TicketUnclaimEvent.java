@@ -10,31 +10,30 @@ import org.bukkit.command.CommandSender;
  */
 public class TicketUnclaimEvent extends TicketEvent {
 
-	private String modName;
+	private String staffName;
 	private CommandSender sender;
 	
-	public TicketUnclaimEvent(Ticket ticket, String modName, CommandSender sender) {
+	public TicketUnclaimEvent(Ticket ticket, String staffName, CommandSender sender) {
             super(ticket);
             this.sender = sender;
-            this.modName = modName;
+            this.staffName = staffName;
 	}
 	
 	/**
-	 * Get the mod that owned the request before
+	 * Get the staff member that owned the ticket before
 	 * it was unclaimed.
 	 * 
-	 * @return String the mod's name.
+	 * @return String the staff's name.
 	 */
-	public String getLastModName(){
-		return modName;
+	public String getLastStaffName(){
+		return staffName;
 	}
 	
 	/**
-	 * Get the user that set this request
-	 * to be unclaimed.
+	 * Get the user that unclaimed the ticket.
 	 * @return CommandSender object of the user.
 	 */
-	public CommandSender getUnclaimer(){
+	public CommandSender getSender(){
 		return sender;
 	}
 }

@@ -21,16 +21,16 @@ public class TicketBroadcastEvent extends Event {
     }
 
     /**
-     * Get the mod-broadcast message.
+     * Get the broadcast message.
      *
-     * @return a String with the staff-broadcast message.
+     * @return a String with the broadcast message.
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * Get the sender of the staff-broadcast message.
+     * Get the sender of the broadcast message.
      *
      * @return a CommandSender object of the user that sent the broadcast.
      */

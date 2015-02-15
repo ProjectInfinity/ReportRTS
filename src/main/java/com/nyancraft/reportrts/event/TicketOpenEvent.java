@@ -6,9 +6,9 @@ import com.nyancraft.reportrts.data.Ticket;
  * Event that is called when a user files a new
  * Ticket to the staff for handling.
  */
-public class TicketCreateEvent extends TicketEvent {
+public class TicketOpenEvent extends TicketEvent {
 	
-	public TicketCreateEvent(Ticket ticket){
+	public TicketOpenEvent(Ticket ticket){
 		super(ticket);
 	}
 }

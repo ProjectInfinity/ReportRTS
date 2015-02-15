@@ -20,10 +20,10 @@ public class TicketAssignEvent extends TicketEvent {
 	
 	/**
 	 * The user that assigned the request to the other user.
-	 * Get the assignee with Ticket's .getModName()
+	 * Get the assignee with Ticket's .getStaffName()
 	 * @return CommandSender object of the user that assigned the ticket.
 	 */
-	public CommandSender getAssigner(){
+	public CommandSender getSender(){
 		return sender;
 	}
 
