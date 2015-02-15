@@ -36,8 +36,8 @@ public class CloseTicket {
         }
         int ticketId = Integer.parseInt(args[1]);
 
-        if(!RTSPermissions.canCompleteRequests(sender)) {
-            if(RTSPermissions.canCompleteOwnRequests(sender)) {
+        if(!RTSPermissions.canCloseTicket(sender)) {
+            if(RTSPermissions.canCloseOwnTicket(sender)) {
 
                 if(!plugin.tickets.containsKey(ticketId)){
                     sender.sendMessage(Message.parse("generalInternalError", "Ticket not found."));

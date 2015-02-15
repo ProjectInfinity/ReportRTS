@@ -32,7 +32,7 @@ public class ReopenTicket {
             return true;
         }
 
-        if(!RTSPermissions.canCompleteRequests(sender)) {
+        if(!RTSPermissions.canReopenTicket(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete"));
             return true;
         }

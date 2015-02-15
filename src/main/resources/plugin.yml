@@ -16,9 +16,9 @@ permissions:
     description: Give this to all of your regular players.
     default: true
     children:
-      reportrts.command.modreq: true
-      reportrts.command.check.self: true
-      reportrts.command.complete.self: true
+      reportrts.command.open: true
+      reportrts.command.read.self: true
+      reportrts.command.close.self: true
   reportrts.mod:
     description: Backwards compatibility for reportrts.staff, will be removed in the future.
     default: op
@@ -30,26 +30,29 @@ permissions:
   reportrts.override:
     description: Permission to override the actions of other staff members.
     default: op
-  reportrts.command.modreq:
-    description: Permission to file a request.
+  reportrts.command.open:
+    description: Permission to open a ticket.
     default: op
-  reportrts.command.modreq.unlimited:
-    description: Permission to file unlimited amounts of requests.
+  reportrts.command.open.unlimited:
+    description: Permission to open an unlimited amounts of tickets.
     default: op
-  reportrts.command.check:
-    description: Permission to check all requests.
+  reportrts.command.read:
+    description: Permission to read all tickets.
     default: op
-  reportrts.command.check.self:
-    description: Permission to check your own requests.
+  reportrts.command.read.self:
+    description: Permission to read your own tickets.
     default: op
-  reportrts.command.complete:
-    description: Permission to complete and reopen requests.
+  reportrts.command.close:
+    description: Permission to close tickets.
     default: op
-  reportrts.command.complete.self:
-    description: Permission to complete your own requests.
+  reportrts.command.close.self:
+    description: Permission to close your own tickets.
+    default: op
+  reportrts.command.reopen:
+    description: Permission to reopen tickets.
     default: op
   reportrts.command.teleport:
-    description: Permission to teleport to requests.
+    description: Permission to teleport to ticketss.
     default: op
   reportrts.command.reload:
     description: Permission to reload configuration.
@@ -64,13 +67,13 @@ permissions:
     description: Permission to ban people from ReportRTS.
     default: op
   reportrts.command.hold:
-    description: Permission to put requests on hold.
+    description: Permission to put tickets on hold.
     default: op
   reportrts.command.claim:
-    description: Permission to claim and unclaim requests.
+    description: Permission to claim and unclaim tickets.
     default: op
-  reportrts.command.modlist:
-    description: Permission to use modlist.
+  reportrts.command.list:
+    description: Permission to list online staff.
     default: op
   reportrts.command.broadcast:
     description: Permission to broadcast to staff.
@@ -82,5 +85,5 @@ permissions:
     description: Permission to manage notifications.
     default: op
   reportrts.command.assign:
-    description: Permission to assign requests.
+    description: Permission to assign tickets.
     default: op

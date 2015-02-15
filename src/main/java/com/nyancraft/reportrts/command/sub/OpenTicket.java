@@ -31,7 +31,7 @@ public class OpenTicket {
      */
     public static boolean handleCommand(CommandSender sender, String[] args) {
 
-        if(!RTSPermissions.canFileRequest(sender)) return true;
+        if(!RTSPermissions.canOpenTicket(sender)) return true;
         if(args.length < 2) return false;
 
         // Check if ticket message is too short.

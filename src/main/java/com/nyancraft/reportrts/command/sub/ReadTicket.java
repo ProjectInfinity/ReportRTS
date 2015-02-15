@@ -85,7 +85,7 @@ public class ReadTicket {
      */
     private static boolean viewId(CommandSender sender, int id) {
 
-        if(!RTSPermissions.canCheckAllRequests(sender)) {
+        if(!RTSPermissions.canReadAll(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
             return true;
         }
@@ -149,7 +149,7 @@ public class ReadTicket {
      */
     private static boolean viewPage(CommandSender sender, int page) {
 
-        if(!RTSPermissions.canCheckAllRequests(sender)) {
+        if(!RTSPermissions.canReadAll(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
             return true;
         }
@@ -206,7 +206,7 @@ public class ReadTicket {
      */
     private static boolean viewHeld(CommandSender sender, int page) {
 
-        if(!RTSPermissions.canCheckAllRequests(sender)) {
+        if(!RTSPermissions.canReadAll(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
             return true;
         }
@@ -261,7 +261,7 @@ public class ReadTicket {
      */
     private static boolean viewClosed(CommandSender sender, int page) {
 
-        if(!RTSPermissions.canCheckAllRequests(sender)) {
+        if(!RTSPermissions.canReadAll(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
             return true;
         }
@@ -317,7 +317,7 @@ public class ReadTicket {
      */
     private static boolean viewServer(CommandSender sender, String server, int page) {
 
-        if(!RTSPermissions.canCheckAllRequests(sender)) {
+        if(!RTSPermissions.canReadAll(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
             return true;
         }
@@ -370,7 +370,7 @@ public class ReadTicket {
      */
     private static boolean viewSelf(CommandSender sender) {
 
-        if(!RTSPermissions.canCheckOwnRequests(sender)) {
+        if(!RTSPermissions.canReadOwn(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check.self"));
             return true;
         }

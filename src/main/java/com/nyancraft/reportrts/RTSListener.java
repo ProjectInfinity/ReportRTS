@@ -94,7 +94,7 @@ public class RTSListener implements Listener {
         if(!event.getLine(0).equalsIgnoreCase("[help]")) return;
 
         // Check if player can open a ticket or not.
-        if(!RTSPermissions.canFileRequest(event.getPlayer())) {
+        if(!RTSPermissions.canOpenTicket(event.getPlayer())) {
             block.breakNaturally();
             return;
         }
