@@ -119,7 +119,6 @@ public class MySQLDataProvider implements DataProvider {
             return false;
         }
 
-        // TODO: Check tables and structure
         if(!checkStructure()) {
             plugin.getLogger().warning("[MySQL] Structure is outdated or missing and was not created or modified correctly.");
             return false;
@@ -142,7 +141,6 @@ public class MySQLDataProvider implements DataProvider {
     }
 
     private boolean checkStructure() {
-        // TODO: Continue here, finish checking tables and creating them, then check their structure and update if necessary.
 
         // The user table doesn't exist, we need to create it.
         if(!tableExists(plugin.storagePrefix + "reportrts_user")) {
@@ -278,8 +276,6 @@ public class MySQLDataProvider implements DataProvider {
                 }
 
             }
-
-
 
             plugin.getLogger().info("[MySQL] Created the ticket table.");
 
