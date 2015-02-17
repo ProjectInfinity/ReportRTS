@@ -9,46 +9,46 @@ public class Ticket {
     private int x;
     private int y;
     private int z;
-    private int modid;
+    private int staffId;
 
     private float yaw;
     private float pitch;
 
-    private long tstamp;
-    private long modtstamp;
+    private long timestamp;
+    private long staffTime;
 
     private String text;
     private String name;
     private String world;
-    private String modname;
-    private String modcomment;
-    private String bc_server;
+    private String staffName;
+    private String comment;
+    private String server;
 
     private UUID uuid;
-    private UUID moduuid;
+    private UUID staffUuid;
     private boolean notified;
 
-    public Ticket(String name, UUID uuid, int id, long tstamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String bc_server, String modcomment){
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, String comment){
         this.name = name;
         this.uuid = uuid;
         this.id = id;
-        this.tstamp = tstamp;
+        this.timestamp = timestamp;
         this.text = text;
         this.status = status;
         this.x = x;
         this.y = y;
         this.z = z;
         this.world = world;
-        this.bc_server = bc_server;
+        this.server = server;
         this.yaw = yaw;
         this.pitch = pitch;
-        this.modtstamp = 0;
-        this.modcomment = modcomment;
+        this.staffTime = 0;
+        this.comment = comment;
     }
 
     /**
-     * Retrieves help request message
-     * @return String Message of request
+     * Retrieves the ticket message
+     * @return String Message of ticket
      */
     public String getMessage(){
         return this.text;
@@ -91,7 +91,7 @@ public class Ticket {
      * @return int timestamp of ticket
      */
     public long getTimestamp(){
-        return this.tstamp;
+        return this.timestamp;
     }
 
 
@@ -99,8 +99,8 @@ public class Ticket {
      * Retrieves timestamp when ticket was last interacted with by staff
      * @return int modtimestamp of ticket
      */
-    public long getModTimestamp(){
-        return this.modtstamp;
+    public long getStaffTime(){
+        return this.staffTime;
     }
 
     /**
@@ -155,34 +155,34 @@ public class Ticket {
      * Retrieves the BungeeCord server where the ticket was created
      * @return String BungeeCord server name
      */
-    public String getBungeeCordServer() { return this.bc_server; }
+    public String getServer() { return this.server; }
 
     /**
-     * Retrieves the UUID of the moderator that handled the ticket, if any
-     * @return UUID moduuid
+     * Retrieves the UUID of the player that handled the ticket, if any
+     * @return UUID staffUuid
      */
-    public UUID getModUUID(){
-        return this.moduuid;
+    public UUID getStaffUuid(){
+        return this.staffUuid;
     }
 
     /**
-     * Retrieves name of the moderator that handled the ticket, if any
-     * @return String modname
+     * Retrieves name of the player that handled the ticket, if any
+     * @return String staffName
      */
-    public String getModName(){
-        return this.modname;
+    public String getStaffName(){
+        return this.staffName;
     }
 
-    public int getModId(){
-        return this.modid;
+    public int getStaffId(){
+        return this.staffId;
     }
 
     /**
-     * Retrieves the mod comment on the ticket
-     * @return String modcomment
+     * Retrieves the comment on the ticket
+     * @return String comment
      */
-    public String getModComment(){
-        return this.modcomment;
+    public String getComment(){
+        return this.comment;
     }
 
     /**
@@ -194,47 +194,47 @@ public class Ticket {
     }
 
     /**
-     * @param moduuid
-     * Sets the moderator UUID that handled this ticket
+     * @param staffUuid
+     * Sets the player UUID that handled this ticket
      */
-    public void setModUUID(UUID moduuid){
-        this.moduuid = moduuid;
+    public void setStaffUuid(UUID staffUuid){
+        this.staffUuid = staffUuid;
     }
 
     /**
      * @param name
-     * Sets the name of the person who filed the ticket
+     * Sets the name of the player who filed the ticket
      */
     public void setName(String name){
         this.name = name;
     }
 
     /**
-     * @param modname
-     * Sets the moderator name that handled this ticket
+     * @param staffName
+     * Sets the staff name that handled this ticket
      */
-    public void setModName(String modname){
-        this.modname = modname;
+    public void setStaffName(String staffName){
+        this.staffName = staffName;
     }
 
     /**
-     * @param modTimestamp
+     * @param staffTime
      * Sets timestamp when ticket was created
      */
-    public void setModTimestamp(long modTimestamp){
-        this.modtstamp = modTimestamp;
+    public void setStaffTime(long staffTime){
+        this.staffTime = staffTime;
     }
     
     /**
-     * @param modcomment
-     * Sets the mod comment on the ticket
+     * @param comment
+     * Sets the comment on the ticket
      */
-    public void setModComment(String modcomment){
-        this.modcomment = modcomment;
+    public void setComment(String comment){
+        this.comment = comment;
     }
 
     /**
-     * @return Whether the user is notified of the ticket or not.
+     * @return Whether the player is notified of the ticket or not.
      */
     public boolean isNotified() {
         return this.notified;
@@ -242,7 +242,7 @@ public class Ticket {
 
     /**
      * @param notified
-     * Set whether a user has been notified or not.
+     * Set whether a player has been notified or not.
      */
     public void setNotified(boolean notified) {
         this.notified = notified;

@@ -86,7 +86,7 @@ public class CloseTicket {
             online = (RTSFunctions.isUserOnline(plugin.tickets.get(ticketId).getUUID())) ? 1 : 0;
             if(plugin.tickets.get(ticketId).getStatus() == 1) {
                 // Holy shit.
-                isClaimedByOther = (!plugin.tickets.get(ticketId).getModUUID().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole())));
+                isClaimedByOther = (!plugin.tickets.get(ticketId).getStaffUuid().equals((sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole())));
             }
         }
 
@@ -129,9 +129,9 @@ public class CloseTicket {
         }
         RTSFunctions.messageStaff(Message.parse("completedReq", args[1], user.getUsername()), false);
         if(data != null) {
-            data.setModComment(comment);
-            if (data.getModName() == null) {
-                data.setModName(sender.getName());
+            data.setComment(comment);
+            if (data.getStaffName() == null) {
+                data.setStaffName(sender.getName());
             }
             plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(data, sender));
         }

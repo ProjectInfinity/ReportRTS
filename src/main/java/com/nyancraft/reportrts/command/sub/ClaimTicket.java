@@ -91,9 +91,9 @@ public class ClaimTicket {
 
         plugin.tickets.get(ticketId).setStatus(1);
         // Workaround for CONSOLE.
-        plugin.tickets.get(ticketId).setModUUID((!(sender instanceof Player) ? data.getConsole().getUuid() : ((Player) sender).getUniqueId()));
-        plugin.tickets.get(ticketId).setModTimestamp(timestamp);
-        plugin.tickets.get(ticketId).setModName(name);
+        plugin.tickets.get(ticketId).setStaffUuid((!(sender instanceof Player) ? data.getConsole().getUuid() : ((Player) sender).getUniqueId()));
+        plugin.tickets.get(ticketId).setStaffTime(timestamp);
+        plugin.tickets.get(ticketId).setStaffName(name);
 
         try {
             BungeeCord.globalNotify(Message.parse("claimRequest", name, args[1]), ticketId, NotificationType.MODIFICATION);

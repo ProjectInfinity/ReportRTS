@@ -344,10 +344,10 @@ public class MySQLDataProvider implements DataProvider {
 
                 if(rs.getInt("status") > 0) {
                     User staff = getUser(null, rs.getInt("staffId"), false);
-                    ticket.setModName(staff.getUsername());
-                    ticket.setModTimestamp(rs.getLong("staffTime"));
-                    ticket.setModUUID(staff.getUuid());
-                    ticket.setModComment(rs.getString("comment"));
+                    ticket.setStaffName(staff.getUsername());
+                    ticket.setStaffTime(rs.getLong("staffTime"));
+                    ticket.setStaffUuid(staff.getUuid());
+                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
                 plugin.tickets.put(rs.getInt(1), ticket);
@@ -686,10 +686,10 @@ public class MySQLDataProvider implements DataProvider {
 
                 if(rs.getInt("status") > 0) {
                     User staff = getUser(null, rs.getInt("staffId"), false);
-                    ticket.setModName(staff.getUsername());
-                    ticket.setModTimestamp(rs.getLong("staffTime"));
-                    ticket.setModUUID(staff.getUuid());
-                    ticket.setModComment(rs.getString("comment"));
+                    ticket.setStaffName(staff.getUsername());
+                    ticket.setStaffTime(rs.getLong("staffTime"));
+                    ticket.setStaffUuid(staff.getUuid());
+                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
 
@@ -735,10 +735,10 @@ public class MySQLDataProvider implements DataProvider {
 
                 if(rs.getInt("status") > 0) {
                     User staff = getUser(null, rs.getInt("staffId"), false);
-                    ticket.setModName(staff.getUsername());
-                    ticket.setModTimestamp(rs.getLong("staffTime"));
-                    ticket.setModUUID(staff.getUuid());
-                    ticket.setModComment(rs.getString("comment"));
+                    ticket.setStaffName(staff.getUsername());
+                    ticket.setStaffTime(rs.getLong("staffTime"));
+                    ticket.setStaffUuid(staff.getUuid());
+                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
 

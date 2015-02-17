@@ -48,9 +48,9 @@ public class TeleportTicket {
                 return true;
             }
 
-            if(plugin.bungeeCordSupport && !ticket.getBungeeCordServer().equals(BungeeCord.getServer())) {
+            if(plugin.bungeeCordSupport && !ticket.getServer().equals(BungeeCord.getServer())) {
                 try {
-                    BungeeCord.teleportUser(player, ticket.getBungeeCordServer(), ticketId);
+                    BungeeCord.teleportUser(player, ticket.getServer(), ticketId);
                 } catch(IOException e) {
                     player.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
                 }
@@ -85,9 +85,9 @@ public class TeleportTicket {
         // Ticket status open.
         Ticket ticket = plugin.tickets.get(ticketId);
 
-        if(plugin.bungeeCordSupport && !ticket.getBungeeCordServer().equals(BungeeCord.getServer())) {
+        if(plugin.bungeeCordSupport && !ticket.getServer().equals(BungeeCord.getServer())) {
             try {
-                BungeeCord.teleportUser(player, ticket.getBungeeCordServer(), ticket.getId());
+                BungeeCord.teleportUser(player, ticket.getServer(), ticket.getId());
             } catch(IOException e) {
                 sender.sendMessage(ChatColor.RED + "[ReportRTS] BungeeCord teleportation failed due to an unexpected error.");
             }

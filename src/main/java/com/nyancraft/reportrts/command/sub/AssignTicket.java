@@ -97,9 +97,9 @@ public class AssignTicket {
             player.sendMessage(Message.parse("assignText", plugin.tickets.get(ticketId).getMessage()));
         }
         plugin.tickets.get(ticketId).setStatus(1);
-        plugin.tickets.get(ticketId).setModUUID(user.getUuid());
-        plugin.tickets.get(ticketId).setModTimestamp(timestamp);
-        plugin.tickets.get(ticketId).setModName(assignee);
+        plugin.tickets.get(ticketId).setStaffUuid(user.getUuid());
+        plugin.tickets.get(ticketId).setStaffTime(timestamp);
+        plugin.tickets.get(ticketId).setStaffName(assignee);
 
         try {
             BungeeCord.globalNotify(Message.parse("assignRequest", assignee, ticketId), ticketId, NotificationType.MODIFICATION);

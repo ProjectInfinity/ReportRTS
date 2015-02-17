@@ -131,12 +131,12 @@ public class ReadTicket {
         sender.sendMessage(ChatColor.YELLOW + "Opened by" + online + " " + ticket.getName() + ChatColor.YELLOW + " at " +  ChatColor.GREEN + date + ChatColor.YELLOW + " at X:" + ChatColor.GREEN + ticket.getX() + ChatColor.YELLOW + ", Y:" + ChatColor.GREEN + ticket.getY() + ChatColor.YELLOW + ", Z:" + ChatColor.GREEN + ticket.getZ());
         sender.sendMessage(ChatColor.GRAY + ticket.getMessage());
         if(ticket.getStatus() == 1) {
-            long Millis = (System.currentTimeMillis() - (ticket.getModTimestamp()) * 1000);
+            long Millis = (System.currentTimeMillis() - (ticket.getStaffTime()) * 1000);
             sender.sendMessage(ChatColor.LIGHT_PURPLE + String.format("Claimed for: %d hours, %d minutes, %d seconds",
-                    Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getModName());
+                    Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getStaffName());
         }
-        if(ticket.getModComment() != null && ticket.getStatus() >= 2) {
-            sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + ticket.getModComment());
+        if(ticket.getComment() != null && ticket.getStatus() >= 2) {
+            sender.sendMessage(ChatColor.YELLOW + "Comment: " + ChatColor.DARK_GREEN + ticket.getComment());
         }
         return true;
     }
@@ -175,8 +175,8 @@ public class ReadTicket {
 
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
-            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
-            String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
+            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
+            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
             if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
                 PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
                 chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
@@ -231,7 +231,7 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
-            String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
+            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
             if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
                 PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
@@ -286,7 +286,7 @@ public class ReadTicket {
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
-            String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
+            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
             if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
                 PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
@@ -335,12 +335,12 @@ public class ReadTicket {
 
         for(int i = (page * plugin.ticketsPerPage) - plugin.ticketsPerPage; i < a && i < plugin.tickets.size(); i++){
             Ticket ticket = tmpList.get(i);
-            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(ticket.getUUID()) || !ticket.getBungeeCordServer().equals(server)){
+            if(plugin.hideWhenOffline && !RTSFunctions.isUserOnline(ticket.getUUID()) || !ticket.getServer().equals(server)){
                 a++;
                 continue;
             }
             substring = RTSFunctions.shortenMessage(ticket.getMessage());
-            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
+            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
 
             if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
                 PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
@@ -388,8 +388,8 @@ public class ReadTicket {
             Ticket ticket = entry.getValue();
             String substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
-            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getModName() : ChatColor.GRAY + substring;
-            String bungeeServer = (ticket.getBungeeCordServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getBungeeCordServer() + ChatColor.RESET + "] ");
+            substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
+            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" : "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
 
             if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
                 PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);

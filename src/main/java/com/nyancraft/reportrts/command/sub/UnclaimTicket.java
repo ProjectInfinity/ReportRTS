@@ -40,7 +40,7 @@ public class UnclaimTicket {
         }
         // CONSOLE overrides all.
         if(sender instanceof Player) {
-            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getModUUID()) && !RTSPermissions.canOverride(sender)) return true;
+            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canOverride(sender)) return true;
         }
 
         switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
@@ -79,22 +79,22 @@ public class UnclaimTicket {
 
         Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
-            player.sendMessage(Message.parse("unclaimUser", plugin.tickets.get(ticketId).getModName()));
+            player.sendMessage(Message.parse("unclaimUser", plugin.tickets.get(ticketId).getStaffName()));
             player.sendMessage(Message.parse("unclaimText", plugin.tickets.get(ticketId).getMessage()));
         }
         plugin.tickets.get(ticketId).setStatus(0);
         try {
-            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getModName(), args[1]), ticketId, NotificationType.MODIFICATION);
+            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getStaffName(), args[1]), ticketId, NotificationType.MODIFICATION);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        RTSFunctions.messageStaff(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getModName(), args[1]), false);
+        RTSFunctions.messageStaff(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
 
         sender.sendMessage(Message.parse("unclaimReqSelf", args[1]));
 
-        plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getModName(), sender));
-        plugin.tickets.get(ticketId).setModName(null);
+        plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
+        plugin.tickets.get(ticketId).setStaffName(null);
 
         return true;
     }

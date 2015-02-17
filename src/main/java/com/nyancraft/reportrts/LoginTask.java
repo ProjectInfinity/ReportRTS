@@ -33,7 +33,7 @@ public class LoginTask extends BukkitRunnable {
         // Prevent duplicate notifications (especially across multiple servers)
         if(ticket.isNotified()) return;
 
-        String comment = ticket.getModComment();
+        String comment = ticket.getComment();
         if(comment == null) comment = "";
         if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.parse("completedText", ticket.getMessage(), comment));
 
