@@ -42,6 +42,9 @@ permissions:
   reportrts.command.read.self:
     description: Permission to read your own tickets.
     default: op
+  reportrts.command.read.self.closed:
+    description: Permission to read your own closed tickets.
+    default: op
   reportrts.command.close:
     description: Permission to close tickets.
     default: op
@@ -52,7 +55,7 @@ permissions:
     description: Permission to reopen tickets.
     default: op
   reportrts.command.teleport:
-    description: Permission to teleport to ticketss.
+    description: Permission to teleport to tickets.
     default: op
   reportrts.command.reload:
     description: Permission to reload configuration.

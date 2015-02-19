@@ -37,6 +37,11 @@ public class RTSPermissions {
         return sender.hasPermission("reportrts.command.read.self");
     }
 
+    public static boolean canReadOwnClosed(CommandSender sender) {
+        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.read.self.open");
+        return sender.hasPermission("reportrts.command.read.self.open");
+    }
+
     public static boolean canCloseTicket(CommandSender sender) {
         if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.command.close");
         return sender.hasPermission("reportrts.command.close");

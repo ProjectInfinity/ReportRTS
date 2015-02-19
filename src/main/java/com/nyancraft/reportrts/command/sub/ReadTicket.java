@@ -9,6 +9,7 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 
+import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -65,7 +66,7 @@ public class ReadTicket {
                 break;
 
             case "SELF":
-                return viewSelf(sender);
+                return viewSelf(sender, args);
 
             default:
                 // Defaults to this if not found. In this case we need to figure out what the command is trying to do.
@@ -368,12 +369,15 @@ public class ReadTicket {
      * @param sender player that sent the command
      * @return true if command handled correctly
      */
-    private static boolean viewSelf(CommandSender sender) {
+    private static boolean viewSelf(CommandSender sender, String[] args) {
 
         if(!RTSPermissions.canReadOwn(sender)) {
             sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check.self"));
             return true;
         }
+
+        // Read own closed tickets if specified.
+        if(args.length > 2 && args[2].equalsIgnoreCase("closed")) return viewSelfClosed(sender, args);
 
         int openRequests = 0;
         for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) if(entry.getValue().getName().equals(sender.getName())) openRequests++;
@@ -406,6 +410,66 @@ public class ReadTicket {
             } else {
                 sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
                         + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED) + ticket.getName() + ChatColor.GOLD +  " - " + substring);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * View tickets you have made that have been resolved.
+     * @param sender Player that sent the command
+     * @param args Arguments
+     * @return boolean
+     */
+    private static boolean viewSelfClosed(CommandSender sender, String[] args) {
+
+        if(!RTSPermissions.canReadOwnClosed(sender)) {
+            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.read.self.closed"));
+            return true;
+        }
+
+        int page = 1;
+
+        if(args.length > 3 && RTSFunctions.isNumber(args[3])) page = Integer.parseInt(args[3]);
+
+        // Set cursor position.
+        int i = (page * plugin.ticketsPerPage) - plugin.ticketsPerPage;
+
+        LinkedHashMap<Integer, Ticket> tickets = data.getOpenedBy(sender instanceof Player ?
+                ((Player) sender).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
+
+        if(tickets ==  null) {
+            sender.sendMessage(Message.parse("generalInternalError", "Can't read closed tickets, see console for errors."));
+            return true;
+        }
+
+        sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + "You have " + tickets.size() + " resolved tickets " + ChatColor.AQUA + "--------- ");
+        if(tickets.size() == 0) sender.sendMessage(Message.parse("closedNoRequests"));
+
+        for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
+
+            Ticket ticket = entry.getValue();
+
+            substring = RTSFunctions.shortenMessage(ticket.getMessage());
+
+            ChatColor online = (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED);
+            String bungeeServer = (ticket.getServer().equals(BungeeCord.getServer()) ? "" :  "[" + ChatColor.GREEN + ticket.getServer() + ChatColor.RESET + "] ");
+
+            if(plugin.fancify && (sender instanceof Player) && ticket.getMessage().length() >= 20) {
+                PacketContainer chat = new PacketContainer(PacketType.Play.Server.CHAT);
+                chat.getChatComponents().write(0, WrappedChatComponent.fromJson("{\"text\":\"" + bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " "
+                        + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) + " by " + (RTSFunctions.isUserOnline(ticket.getUUID()) ? ChatColor.GREEN : ChatColor.RED)
+                        + ticket.getName() + ChatColor.GOLD + " - " + "\", \"extra\":[{\"text\":\"" + JSONObject.escape(substring) + "\",\"color\":\"gray\",\"hoverEvent\":" +
+                        "{\"action\":\"show_text\",\"value\":\"" + JSONObject.escape(RTSFunctions.separateText(ticket.getMessage(), 6)) + "\"}}]}"));
+                try {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, chat);
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                sender.sendMessage(bungeeServer + ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000))
+                        + " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + substring);
             }
         }
         return true;
