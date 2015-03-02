@@ -224,7 +224,7 @@ public class MySQLDataProvider implements DataProvider {
                     stmt.addBatch("ALTER TABLE `" + plugin.storagePrefix + "reportrts_ticket` " +
                             "CHANGE COLUMN `user_id` `userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `id`, " +
                             "CHANGE COLUMN `mod_id` `staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `userId`, " +
-                            "CHANGE COLUMN `mod_timestamp` `staffTime`  int(10) UNSIGNED NOT NULL AFTER `staffId`, " +
+                            "CHANGE COLUMN `mod_timestamp` `staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `staffId`, " +
                             "CHANGE COLUMN `mod_comment` `comment`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER `staffTime`, " +
                             "CHANGE COLUMN `tstamp` `timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `comment`, " +
                             "CHANGE COLUMN `bc_server` `server`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `world`, " +
