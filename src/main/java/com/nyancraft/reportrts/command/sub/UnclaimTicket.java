@@ -29,13 +29,13 @@ public class UnclaimTicket {
         if(args.length < 2) return false;
         if(!RTSPermissions.canClaimTicket(sender)) return true;
         if(!RTSFunctions.isNumber(args[1])) {
-            sender.sendMessage(Message.parse("generalInternalError", "Ticket ID must be a number, provided: " + args[1]));
+            sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
         int ticketId = Integer.parseInt(args[1]);
 
         if(!plugin.tickets.containsKey(ticketId) || plugin.tickets.get(ticketId).getStatus() != 1) {
-            sender.sendMessage(Message.parse("unclaimNotClaimed"));
+            sender.sendMessage(Message.ticketNotClaimed(ticketId));
             return true;
         }
         // CONSOLE overrides all.
@@ -48,22 +48,22 @@ public class UnclaimTicket {
 
             case -3:
                 // Ticket does not exist.
-                sender.sendMessage(Message.parse("generalInternalError", "Ticket does not exist."));
+                sender.sendMessage(Message.ticketNotExists(ticketId));
                 return true;
 
             case -2:
                 // Ticket status incompatibilities.
-                sender.sendMessage(Message.parse("generalInternalError", "Ticket status incompatibilities! Check status."));
+                sender.sendMessage(Message.errorTicketStatus());
                 return true;
 
             case -1:
                 // Username is invalid or does not exist.
-                sender.sendMessage(Message.parse("generalInternalError", "Your user does not exist in the user table and was not successfully created."));
+                sender.sendMessage(Message.error("Your user does not exist in the user table and was not successfully created."));
                 return true;
 
             case 0:
                 // No row was affected...
-                sender.sendMessage(Message.parse("generalInternalError", "No entries were affected. Check console for errors."));
+                sender.sendMessage(Message.error("No entries were affected. Check console for errors."));
                 return true;
 
             case 1:
@@ -72,26 +72,24 @@ public class UnclaimTicket {
 
 
             default:
-                sender.sendMessage(Message.parse("generalInternalError", "A invalid result code has occurred."));
+                sender.sendMessage(Message.error("A invalid result code has occurred."));
                 return true;
 
         }
 
         Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
-            player.sendMessage(Message.parse("unclaimUser", plugin.tickets.get(ticketId).getStaffName()));
-            player.sendMessage(Message.parse("unclaimText", plugin.tickets.get(ticketId).getMessage()));
+            player.sendMessage(Message.ticketUnclaimUser(plugin.tickets.get(ticketId).getStaffName(), ticketId));
+            player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
         }
         plugin.tickets.get(ticketId).setStatus(0);
         try {
-            BungeeCord.globalNotify(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getStaffName(), args[1]), ticketId, NotificationType.MODIFICATION);
+            BungeeCord.globalNotify(Message.ticketUnclaim(plugin.tickets.get(ticketId).getStaffName(), args[1]), ticketId, NotificationType.MODIFICATION);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        RTSFunctions.messageStaff(Message.parse("unclaimReqMod", plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
-
-        sender.sendMessage(Message.parse("unclaimReqSelf", args[1]));
+        RTSFunctions.messageStaff(Message.ticketUnclaim(plugin.tickets.get(ticketId).getStaffName(), args[1]), false);
 
         plugin.getServer().getPluginManager().callEvent(new TicketUnclaimEvent(plugin.tickets.get(ticketId), plugin.tickets.get(ticketId).getStaffName(), sender));
         plugin.tickets.get(ticketId).setStaffName(null);

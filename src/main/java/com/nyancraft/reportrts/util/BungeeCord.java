@@ -210,8 +210,7 @@ public class BungeeCord {
                     if(RTSFunctions.isUserOnline(uuid)) {
                         Player player = Bukkit.getPlayer(uuid);
                         if(player != null) {
-                            player.sendMessage(Message.parse("teleportedUser",
-                                    (ReportRTS.getPlugin().legacyCommands ? "/" + ReportRTS.getPlugin().commandMap.get("teleportToTicket") : "/ticket " + ReportRTS.getPlugin().commandMap.get("teleportToTicket") + " " + Integer.toString(ticketId))));
+                            player.sendMessage(Message.teleportXServer((ReportRTS.getPlugin().legacyCommands ? "/" + ReportRTS.getPlugin().commandMap.get("teleportToTicket") : "/ticket " + ReportRTS.getPlugin().commandMap.get("teleportToTicket") + " " + Integer.toString(ticketId))));
                             Bukkit.dispatchCommand(player, "ticket " + ReportRTS.getPlugin().commandMap.get("teleportToTicket") + " " + Integer.toString(ticketId));
                         } else {
                             ReportRTS.getPlugin().teleportMap.put(uuid, ticketId);

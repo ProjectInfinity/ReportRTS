@@ -56,7 +56,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 if(!RTSPermissions.canBanUser(sender)) return true;
 
                 if(args.length < 2) {
-                    sender.sendMessage(Message.parse("generalInternalError", "Please specify a player."));
+                    sender.sendMessage(Message.errorUserNotSpecified());
                     return true;
                 }
 
@@ -85,12 +85,12 @@ public class ReportRTSCommand implements CommandExecutor{
 
                         // User doesn't actually exist.
                         if(user == null) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
+                            sender.sendMessage(Message.errorUserNotExists(args[1]));
                             return true;
                         }
 
                         if(data.setUserStatus(user.getUuid(), true) < 1) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
+                            sender.sendMessage(Message.errorBanUser(args[1]));
                             return true;
                         }
 
@@ -98,7 +98,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                         // We found the data using open tickets.
                         if(data.setUserStatus(uuid, true) < 1) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + args[1] + " from opening tickets."));
+                            sender.sendMessage(Message.errorBanUser(args[1]));
                             return true;
                         }
 
@@ -108,15 +108,15 @@ public class ReportRTSCommand implements CommandExecutor{
 
                     // Target is online.
                     if(data.setUserStatus(target.getUniqueId(), true) < 1) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Can't ban " + target.getName() + " from opening tickets."));
+                        sender.sendMessage(Message.errorBanUser(target.getName()));
                         return true;
                     }
 
                 }
 
-                RTSFunctions.messageStaff(Message.parse("banUser", sender.getName(), args[1]), false);
+                RTSFunctions.messageStaff(Message.banUser(sender.getName(), args[1]), false);
                 try {
-                    BungeeCord.globalNotify(Message.parse("banUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+                    BungeeCord.globalNotify(Message.banUser(sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -128,7 +128,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 if(!RTSPermissions.canBanUser(sender)) return true;
 
                 if(args.length < 2) {
-                    sender.sendMessage(Message.parse("generalInternalError", "Please specify a player."));
+                    sender.sendMessage(Message.errorUserNotSpecified());
                     return true;
                 }
 
@@ -157,12 +157,12 @@ public class ReportRTSCommand implements CommandExecutor{
 
                         // User doesn't actually exist.
                         if(user == null) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Player " + args[1] + " does not exist."));
+                            sender.sendMessage(Message.errorUserNotExists(args[1]));
                             return true;
                         }
 
                         if(data.setUserStatus(user.getUuid(), false) < 1) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
+                            sender.sendMessage(Message.errorUnbanUser(args[1]));
                             return true;
                         }
 
@@ -170,7 +170,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                         // We found the data using open tickets.
                         if(data.setUserStatus(uuid, false) < 1) {
-                            sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + args[1] + " from opening tickets."));
+                            sender.sendMessage(Message.errorUnbanUser(args[1]));
                             return true;
                         }
 
@@ -180,15 +180,15 @@ public class ReportRTSCommand implements CommandExecutor{
 
                     // Target is online.
                     if(data.setUserStatus(target1.getUniqueId(), false) < 1) {
-                        sender.sendMessage(Message.parse("generalInternalError", "Can't un-ban " + target1.getName() + " from opening tickets."));
+                        sender.sendMessage(Message.errorUnbanUser(target1.getName()));
                         return true;
                     }
 
                 }
 
-                RTSFunctions.messageStaff(Message.parse("unbanUser", sender.getName(), args[1]), false);
+                RTSFunctions.messageStaff(Message.banRemove(sender.getName(), args[1]), false);
                 try {
-                    BungeeCord.globalNotify(Message.parse("unbanUser", sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
+                    BungeeCord.globalNotify(Message.banRemove(sender.getName(), args[1]), -1, NotificationType.NOTIFYONLY);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -214,7 +214,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 LinkedHashMap<String, Integer> result = data.getTop(10);
 
                 if(result == null) {
-                    sender.sendMessage(Message.parse("generalInternalError", "No results!"));
+                    sender.sendMessage(Message.error("No results!"));
                     return true;
                 }
 
@@ -230,10 +230,7 @@ public class ReportRTSCommand implements CommandExecutor{
             case "SEARCH":
             case "FIND":
 
-                if(!RTSPermissions.canCheckStats(sender)) {
-                    sender.sendMessage(Message.parse("generalInternalError"));
-                    return true;
-                }
+                if(!RTSPermissions.canCheckStats(sender)) return true;
 
                 if(args.length < 3) return false;
 
@@ -272,7 +269,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 // Tickets should only be null if the player does not exist.
                 if(tickets == null) {
-                    sender.sendMessage(Message.parse("generalInternalError", "Specified player does not exist."));
+                    sender.sendMessage(Message.errorUserNotExists(args[1]));
                     return true;
                 }
 

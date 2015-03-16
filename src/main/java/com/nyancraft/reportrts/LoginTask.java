@@ -28,14 +28,14 @@ public class LoginTask extends BukkitRunnable {
 
         boolean online = plugin.getServer().getPlayer(uuid) != null;
 
-        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.parse("completedUserOffline"));
+        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.ticketCloseOffline());
 
         // Prevent duplicate notifications (especially across multiple servers)
         if(ticket.isNotified()) return;
 
         String comment = ticket.getComment();
         if(comment == null) comment = "";
-        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.parse("completedText", ticket.getMessage(), comment));
+        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.ticketCloseText(ticket.getMessage(), comment));
 
         if(data.setNotificationStatus(entry.getKey(), true) < 1) plugin.getLogger().warning("Unable to set notification status to 1 for ticket " + entry.getKey() + ".");
     }

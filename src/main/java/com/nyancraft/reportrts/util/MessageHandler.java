@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class MessageHandler {
+
     private FileConfiguration messageConfig = null;
     private File messageFile = null;
 

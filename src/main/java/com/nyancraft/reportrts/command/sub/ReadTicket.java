@@ -9,7 +9,6 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.Ticket;
 
-import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -71,7 +70,7 @@ public class ReadTicket {
             default:
                 // Defaults to this if not found. In this case we need to figure out what the command is trying to do.
                 if(RTSFunctions.isNumber(args[1])) return viewId(sender, Integer.parseInt(args[1]));
-                sender.sendMessage(Message.parse("generalInternalError", "No valid action specified."));
+                sender.sendMessage(Message.error("No valid action specified."));
                 break;
         }
 
@@ -87,7 +86,7 @@ public class ReadTicket {
     private static boolean viewId(CommandSender sender, int id) {
 
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
             return true;
         }
 
@@ -99,7 +98,7 @@ public class ReadTicket {
             ticket = data.getTicket(id);
 
             if(ticket == null) {
-                sender.sendMessage(Message.parse("generalRequestNotFound", Integer.toString(id)));
+                sender.sendMessage(Message.ticketNotExists(id));
                 return true;
             }
         }
@@ -110,19 +109,19 @@ public class ReadTicket {
         String date = sdf.format(new java.util.Date(ticket.getTimestamp() * 1000));
         ChatColor statusColor = null;
         String status = null;
-        if(ticket.getStatus() == 0){
+        if(ticket.getStatus() == 0) {
             status = "Open";
             statusColor = ChatColor.YELLOW;
         }
-        if(ticket.getStatus() == 1){
+        if(ticket.getStatus() == 1) {
             status = "Claimed";
             statusColor = ChatColor.RED;
         }
-        if(ticket.getStatus() == 2){
+        if(ticket.getStatus() == 2) {
             status = "On Hold";
             statusColor = ChatColor.LIGHT_PURPLE;
         }
-        if(ticket.getStatus() == 3){
+        if(ticket.getStatus() == 3) {
             status = "Closed";
             statusColor = ChatColor.GREEN;
         }
@@ -151,7 +150,7 @@ public class ReadTicket {
     private static boolean viewPage(CommandSender sender, int page) {
 
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
             return true;
         }
 
@@ -160,7 +159,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.tickets.size() + " Tickets -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-        if(plugin.tickets.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
+        if(plugin.tickets.size() == 0) sender.sendMessage(Message.ticketReadNone());
 
         List<Ticket> tmpList = new ArrayList<>(plugin.tickets.values());
 
@@ -208,7 +207,7 @@ public class ReadTicket {
     private static boolean viewHeld(CommandSender sender, int page) {
 
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
             return true;
         }
 
@@ -218,12 +217,12 @@ public class ReadTicket {
         LinkedHashMap<Integer, Ticket> tickets = data.getTickets(2, i, plugin.ticketsPerPage);
 
         if(tickets ==  null) {
-            sender.sendMessage(Message.parse("generalInternalError", "Can't read held tickets, see console for errors."));
+            sender.sendMessage(Message.error("Can't read held tickets, see console for errors."));
             return true;
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + tickets.size() + " Tickets -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
-        if(tickets.size() == 0) sender.sendMessage(Message.parse("holdNoRequests"));
+        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneHeld());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 
@@ -263,7 +262,7 @@ public class ReadTicket {
     private static boolean viewClosed(CommandSender sender, int page) {
 
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
             return true;
         }
 
@@ -273,12 +272,12 @@ public class ReadTicket {
         LinkedHashMap<Integer, Ticket> tickets = data.getTickets(3, i, plugin.ticketsPerPage);
 
         if(tickets ==  null) {
-            sender.sendMessage(Message.parse("generalInternalError", "Can't read closed tickets, see console for errors."));
+            sender.sendMessage(Message.error("Can't read closed tickets, see console for errors."));
             return true;
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + tickets.size() + " Tickets -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
-        if(tickets.size() == 0) sender.sendMessage(Message.parse("closedNoRequests"));
+        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneClosed());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 
@@ -319,7 +318,7 @@ public class ReadTicket {
     private static boolean viewServer(CommandSender sender, String server, int page) {
 
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
             return true;
         }
 
@@ -330,7 +329,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.tickets.size() + " Tickets From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-        if(plugin.tickets.size() == 0) sender.sendMessage(Message.parse("checkNoRequests"));
+        if(plugin.tickets.size() == 0) sender.sendMessage(Message.ticketReadNone());
 
         List<Ticket> tmpList = new ArrayList<>(plugin.tickets.values());
 
@@ -372,7 +371,7 @@ public class ReadTicket {
     private static boolean viewSelf(CommandSender sender, String[] args) {
 
         if(!RTSPermissions.canReadOwn(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.check.self"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read.self"));
             return true;
         }
 
@@ -383,7 +382,7 @@ public class ReadTicket {
         for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) if(entry.getValue().getName().equals(sender.getName())) openRequests++;
         int i = 0;
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " unresolved tickets " + ChatColor.AQUA + "----------");
-        if(openRequests == 0) sender.sendMessage(ChatColor.GOLD + "You have no open tickets at this time.");
+        if(openRequests == 0) sender.sendMessage(Message.ticketReadNoneSelf());
         for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) {
             if (entry.getValue().getName().equals(sender.getName())) {
                 i++;
@@ -424,7 +423,7 @@ public class ReadTicket {
     private static boolean viewSelfClosed(CommandSender sender, String[] args) {
 
         if(!RTSPermissions.canReadOwnClosed(sender)) {
-            sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.read.self.closed"));
+            sender.sendMessage(Message.errorPermission("reportrts.command.read.self.closed"));
             return true;
         }
 
@@ -439,12 +438,12 @@ public class ReadTicket {
                 ((Player) sender).getUniqueId() : plugin.getDataProvider().getConsole().getUuid(), i, plugin.ticketsPerPage);
 
         if(tickets ==  null) {
-            sender.sendMessage(Message.parse("generalInternalError", "Can't read closed tickets, see console for errors."));
+            sender.sendMessage(Message.error("Can't read closed tickets, see console for errors."));
             return true;
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + "You have " + tickets.size() + " resolved tickets " + ChatColor.AQUA + "--------- ");
-        if(tickets.size() == 0) sender.sendMessage(Message.parse("closedNoRequests"));
+        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneClosed());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 

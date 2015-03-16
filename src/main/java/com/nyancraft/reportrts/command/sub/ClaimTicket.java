@@ -30,20 +30,20 @@ public class ClaimTicket {
 
         if(!RTSPermissions.canClaimTicket(sender)) return true;
         if(!RTSFunctions.isNumber(args[1])) {
-            sender.sendMessage(Message.parse("generalInternalError", "Ticket ID must be a number, provided: " + args[1]));
+            sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
         int ticketId = Integer.parseInt(args[1]);
 
         // The ticket the user is trying to claim is not open.
         if(!plugin.tickets.containsKey(ticketId)){
-            sender.sendMessage(Message.parse("claimNotOpen"));
+            sender.sendMessage(Message.ticketNotOpen(ticketId));
             return true;
         }
 
         String name = sender.getName();
         if(name == null) {
-            sender.sendMessage(Message.parse("generalInternalError", "Name is null! Try again."));
+            sender.sendMessage(Message.error("Name is null! Try again."));
             return true;
         }
 
@@ -54,39 +54,38 @@ public class ClaimTicket {
 
             case -3:
                 // Ticket does not exist.
-                sender.sendMessage(Message.parse("generalInternalError", "Ticket does not exist."));
+                sender.sendMessage(Message.ticketNotExists(ticketId));
                 return true;
 
             case -2:
                 // Ticket status incompatibilities.
-                sender.sendMessage(Message.parse("generalInternalError", "Ticket status incompatibilities! Check status."));
+                sender.sendMessage(Message.errorTicketStatus());
                 return true;
 
             case -1:
                 // Username is invalid or does not exist.
-                sender.sendMessage(Message.parse("generalInternalError", "Your user does not exist in the user table and was not successfully created."));
+                sender.sendMessage(Message.error("Your user does not exist in the user table and was not successfully created."));
                 return true;
 
             case 0:
                 // No row was affected...
-                sender.sendMessage(Message.parse("generalInternalError", "No entries were affected. Check console for errors."));
+                sender.sendMessage(Message.error("No entries were affected. Check console for errors."));
                 return true;
 
             case 1:
                 // Everything went swimmingly if case is 1.
                 break;
 
-
             default:
-                sender.sendMessage(Message.parse("generalInternalError", "A invalid result code has occurred."));
+                sender.sendMessage(Message.error("A invalid result code has occurred."));
                 return true;
 
         }
 
         Player player = plugin.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
         if(player != null) {
-            player.sendMessage(Message.parse("claimUser", name));
-            player.sendMessage(Message.parse("claimText", plugin.tickets.get(ticketId).getMessage()));
+            player.sendMessage(Message.ticketClaimUser(name));
+            player.sendMessage(Message.ticketText(plugin.tickets.get(ticketId).getMessage()));
         }
 
         plugin.tickets.get(ticketId).setStatus(1);
@@ -96,11 +95,11 @@ public class ClaimTicket {
         plugin.tickets.get(ticketId).setStaffName(name);
 
         try {
-            BungeeCord.globalNotify(Message.parse("claimRequest", name, args[1]), ticketId, NotificationType.MODIFICATION);
+            BungeeCord.globalNotify(Message.ticketClaim(name, args[1]), ticketId, NotificationType.MODIFICATION);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageStaff(Message.parse("claimRequest", name, args[1]), false);
+        RTSFunctions.messageStaff(Message.ticketClaim(name, args[1]), false);
 
         // Let other plugins know the request was claimed
         plugin.getServer().getPluginManager().callEvent(new TicketClaimEvent(plugin.tickets.get(ticketId)));

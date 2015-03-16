@@ -31,7 +31,7 @@ public class CloseTicket {
         if(args.length < 2) return false;
 
         if(!RTSFunctions.isNumber(args[1])) {
-            sender.sendMessage(Message.parse("generalInternalError", "Argument must be a number, provided: " + args[1]));
+            sender.sendMessage(Message.errorTicketNaN(args[1]));
             return true;
         }
         int ticketId = Integer.parseInt(args[1]);
@@ -40,34 +40,34 @@ public class CloseTicket {
             if(RTSPermissions.canCloseOwnTicket(sender)) {
 
                 if(!plugin.tickets.containsKey(ticketId)){
-                    sender.sendMessage(Message.parse("generalInternalError", "Ticket not found."));
+                    sender.sendMessage(Message.ticketNotExists(ticketId));
                     return true;
                 }
                 Player player = (Player) sender;
                 if(!plugin.tickets.get(ticketId).getUUID().equals(player.getUniqueId())){
-                    sender.sendMessage(Message.parse("generalInternalError", "You are not the owner of that ticket."));
+                    sender.sendMessage(Message.errorTicketOwner());
                     return true;
                 }
                 data.deleteTicket(ticketId);
                 plugin.tickets.remove(ticketId);
                 try {
-                    BungeeCord.globalNotify(Message.parse("completedReq", args[1], "Cancellation System"), ticketId, NotificationType.DELETE);
+                    BungeeCord.globalNotify(Message.ticketClose(args[1], "Cancellation System"), ticketId, NotificationType.DELETE);
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
-                RTSFunctions.messageStaff(Message.parse("completedReq", args[1],"Cancellation System"), false);
-                sender.sendMessage(Message.parse("completedUser", "Cancellation System"));
+                RTSFunctions.messageStaff(Message.ticketClose(args[1],"Cancellation System"), false);
+                sender.sendMessage(Message.ticketCloseUser(args[1], "Cancellation System"));
 
                 return true;
             } else {
-                sender.sendMessage(Message.parse("generalPermissionError", "reportrts.command.complete or reportrts.command.complete.self"));
+                sender.sendMessage(Message.errorPermission("reportrts.command.close or reportrts.command.close.self"));
                 return true;
             }
         }
 
         User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
-            sender.sendMessage(Message.parse("generalInternalError", "user.getUsername() returned NULL! Are you using plugins to modify names?"));
+            sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
 
@@ -90,14 +90,14 @@ public class CloseTicket {
             }
         }
 
-        if(isClaimedByOther && !sender.hasPermission("reportrts.override")) {
-            sender.sendMessage(Message.parse("generalInternalError", "Request #" + ticketId + " is claimed by someone else."));
+        if(isClaimedByOther && !sender.hasPermission("reportrts.bypass.claim")) {
+            sender.sendMessage(Message.errorTicketClaim(ticketId, plugin.tickets.get(ticketId).getStaffName()));
             return true;
         }
 
         long timestamp = System.currentTimeMillis() / 1000;
         if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, comment, online > 0, timestamp) < 1) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to close ticket #" + args[0]));
+            sender.sendMessage(Message.error("Unable to close ticket #" + args[0]));
             return true;
         }
 
@@ -105,15 +105,15 @@ public class CloseTicket {
         if(plugin.tickets.containsKey(ticketId)) {
             Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
-            if(player != null){
-                player.sendMessage(Message.parse("completedUser", user.getUsername()));
+            if(player != null) {
+                player.sendMessage(Message.ticketCloseUser(args[1], user.getUsername()));
                 if(comment == null) comment = "";
-                player.sendMessage(Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment));
+                player.sendMessage(Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage(), comment));
             } else {
                 try {
-                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedUser", user.getUsername()), ticketId);
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseUser(Integer.toString(ticketId), user.getUsername()), ticketId);
                     if(comment == null) comment = "";
-                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.parse("completedText", plugin.tickets.get(ticketId).getMessage(), comment), ticketId);
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage(), comment), ticketId);
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
@@ -123,11 +123,11 @@ public class CloseTicket {
         }
 
         try {
-            BungeeCord.globalNotify(Message.parse("completedReq", args[1], user.getUsername()), ticketId, NotificationType.COMPLETE);
+            BungeeCord.globalNotify(Message.ticketClose(args[1], user.getUsername()), ticketId, NotificationType.COMPLETE);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageStaff(Message.parse("completedReq", args[1], user.getUsername()), false);
+        RTSFunctions.messageStaff(Message.ticketClose(args[1], user.getUsername()), false);
         if(data != null) {
             data.setComment(comment);
             if (data.getStaffName() == null) {

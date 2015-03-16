@@ -22,7 +22,7 @@ public class ListStaff {
         // TODO: Possible to-do. No cross server functionality!
         if(!RTSPermissions.canListStaff(sender)) return true;
         String staff = "";
-        String separator = Message.parse("modlistMessageSeparator");
+        String separator = Message.staffListSeparator();
 
         for(UUID uuid : plugin.staff) {
             Player player = plugin.getServer().getPlayer(uuid);
@@ -33,12 +33,12 @@ public class ListStaff {
             staff = staff + player.getDisplayName() + separator;
         }
         if(staff.length() == 0) {
-            sender.sendMessage(Message.parse("modlistNoMods"));
+            sender.sendMessage(Message.staffListEmpty());
             return true;
         }
         staff = staff.substring(0, staff.length() - separator.length());
 
-        sender.sendMessage(Message.parse("modlistMessage", staff));
+        sender.sendMessage(Message.staffListOnline(staff));
         return true;
     }
 }

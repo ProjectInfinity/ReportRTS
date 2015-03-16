@@ -28,11 +28,11 @@ public class BroadcastMessage {
         args[0] = null;
         String message = RTSFunctions.implode(args, " ");
         try {
-            BungeeCord.globalNotify(Message.parse("broadcastMessage", sender.getName(), message), -1, NotificationType.NOTIFYONLY);
+            BungeeCord.globalNotify(Message.broadcast(sender.getName(), message), -1, NotificationType.NOTIFYONLY);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageStaff(Message.parse("broadcastMessage", sender.getName(), message), false);
+        RTSFunctions.messageStaff(Message.broadcast(sender.getName(), message), false);
         // Let other plugins know about the broadcast
         plugin.getServer().getPluginManager().callEvent(new TicketBroadcastEvent(sender, message));
         return true;

@@ -36,19 +36,19 @@ public class HoldTicket {
         String reason = RTSFunctions.implode(args, " ").trim();
 
         if(reason.length() <= args[1].length()) {
-            reason = "None specified.";
+            reason = "No reason provided.";
         } else {
             reason = reason.substring(args[1].length()).trim();
         }
 
         User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
         if(user.getUsername() == null) {
-            sender.sendMessage(Message.parse("generalInternalError", "user.getUsername() returned NULL! Are you using plugins to modify names?"));
+            sender.sendMessage(Message.error("user.getUsername() returned NULL! Are you using plugins to modify names?"));
             return true;
         }
 
         if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 2, reason, false, System.currentTimeMillis() / 1000) < 1) {
-            sender.sendMessage(Message.parse("generalInternalError", "Unable to put ticket #" + args[0] + " on hold."));
+            sender.sendMessage(Message.error("Unable to put ticket #" + args[0] + " on hold."));
             return true;
         }
 
@@ -56,8 +56,8 @@ public class HoldTicket {
 
             Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
             if(player != null) {
-                player.sendMessage(Message.parse("holdUser", sender.getName()));
-                player.sendMessage(Message.parse("holdText", plugin.tickets.get(ticketId).getMessage(), reason.trim()));
+                player.sendMessage(Message.ticketHoldUser(sender.getName(), ticketId));
+                player.sendMessage(Message.ticketHoldText(plugin.tickets.get(ticketId).getMessage(), reason.trim()));
             }
 
             plugin.getServer().getPluginManager().callEvent(new TicketHoldEvent(plugin.tickets.get(ticketId), reason, sender));
@@ -66,11 +66,11 @@ public class HoldTicket {
         }
 
         try {
-            BungeeCord.globalNotify(Message.parse("holdRequest", args[1], sender.getName()), ticketId, NotificationType.HOLD);
+            BungeeCord.globalNotify(Message.ticketHold(args[1], sender.getName()), ticketId, NotificationType.HOLD);
         } catch(IOException e) {
             e.printStackTrace();
         }
-        RTSFunctions.messageStaff(Message.parse("holdRequest", args[1], sender.getName()), false);
+        RTSFunctions.messageStaff(Message.ticketHold(args[1], sender.getName()), false);
         return true;
     }
 }

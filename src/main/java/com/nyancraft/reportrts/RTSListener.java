@@ -46,7 +46,7 @@ public class RTSListener implements Listener {
                 }
             }
             if(keys.size() >= 2) {
-                event.getPlayer().sendMessage(Message.parse("completedReqMulti", keys.size(), (plugin.legacyCommands ? plugin.commandMap.get("readTicket") + " self" : "ticket " + plugin.commandMap.get("readTicket") + " self")));
+                event.getPlayer().sendMessage(Message.ticketCloseOfflineMulti(keys.size(), (plugin.legacyCommands ? plugin.commandMap.get("readTicket") + " self" : "ticket " + plugin.commandMap.get("readTicket") + " self")));
                 for(Map.Entry<Integer, UUID> entry : keys.entrySet()){
                     new LoginTask(plugin, event.getPlayer().getUniqueId(), entry).runTaskLater(plugin, 100L);
                 }
@@ -61,7 +61,7 @@ public class RTSListener implements Listener {
             if(!plugin.teleportMap.isEmpty()){
                 Integer g = plugin.teleportMap.get(event.getPlayer().getUniqueId());
                 if(g != null){
-                    event.getPlayer().sendMessage(Message.parse("teleportedUser", "/" + (plugin.legacyCommands ? plugin.commandMap.get("teleportToTicket") : "ticket " + plugin.commandMap.get("teleportToTicket")) + " " + Integer.toString(g)));
+                    event.getPlayer().sendMessage(Message.teleportXServer("/" + (plugin.legacyCommands ? plugin.commandMap.get("teleportToTicket") : "ticket " + plugin.commandMap.get("teleportToTicket")) + " " + Integer.toString(g)));
                     Bukkit.dispatchCommand(event.getPlayer(), "ticket " + plugin.commandMap.get("teleportToTicket") + " " + Integer.toString(g));
                     plugin.teleportMap.remove(event.getPlayer().getUniqueId());
                 }
@@ -72,17 +72,17 @@ public class RTSListener implements Listener {
 
         if(!plugin.staff.contains(event.getPlayer().getUniqueId())) plugin.staff.add(event.getPlayer().getUniqueId());
 
-        int openRequests = plugin.staff.size();
+        int openTickets = plugin.staff.size();
 
-        if(openRequests < 1 && !plugin.hideNotification)
-            event.getPlayer().sendMessage(Message.parse("generalNoRequests"));
+        if(openTickets < 1 && !plugin.hideNotification)
+            event.getPlayer().sendMessage(Message.ticketReadNone());
 
-        if(openRequests > 0)
-            event.getPlayer().sendMessage(Message.parse("generalOpenRequests", openRequests, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))));
+        if(openTickets > 0)
+            event.getPlayer().sendMessage(Message.ticketUnresolved(openTickets, (plugin.legacyCommands ? plugin.commandMap.get("readTicket") : "ticket " + plugin.commandMap.get("readTicket"))));
 
         if(event.getPlayer().isOp()) {
-            if(plugin.outdated) event.getPlayer().sendMessage(Message.parse("outdatedPlugin", plugin.versionString));
-            if(!plugin.setupDone) event.getPlayer().sendMessage(Message.parse("generalSetupNotDone"));
+            if(plugin.outdated) event.getPlayer().sendMessage(Message.outdated(plugin.versionString));
+            if(!plugin.setupDone) event.getPlayer().sendMessage(Message.setup());
         }
     }
 
@@ -101,7 +101,7 @@ public class RTSListener implements Listener {
 
         // Check if the player has more open tickets than he or she is allowed.
         if(RTSFunctions.getOpenTicketsByUser(event.getPlayer().getUniqueId()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(event.getPlayer(), "reportrts.command.modreq.unlimited") : event.getPlayer().hasPermission("reportrts.command.modreq.unlimited"))) {
-            event.getPlayer().sendMessage(Message.parse("modreqTooManyOpen"));
+            event.getPlayer().sendMessage(Message.ticketTooMany());
             block.breakNaturally();
             return;
         }
@@ -109,7 +109,7 @@ public class RTSListener implements Listener {
         String[] text = new String[3]; System.arraycopy(event.getLines(), 1, text, 0, 3);
         String message = RTSFunctions.cleanUpSign(text);
         if(message.length() == 0) {
-            event.getPlayer().sendMessage(Message.parse("generalInternalError", "Help signs can't be empty."));
+            event.getPlayer().sendMessage(Message.error("Help signs can't be empty."));
             block.breakNaturally();
             return;
         }

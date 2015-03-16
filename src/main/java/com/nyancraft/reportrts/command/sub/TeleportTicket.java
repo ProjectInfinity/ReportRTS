@@ -44,7 +44,7 @@ public class TeleportTicket {
             Ticket ticket = data.getTicket(ticketId);
 
             if(ticket == null) {
-                player.sendMessage(Message.parse("generalRequestNotFound", ticketId));
+                player.sendMessage(Message.ticketNotExists(ticketId));
                 return true;
             }
 
@@ -78,7 +78,7 @@ public class TeleportTicket {
 
             }
 
-            player.sendMessage(Message.parse("teleportToRequest", args[1]));
+            player.sendMessage(Message.teleport(args[1]));
             return true;
         }
 
@@ -115,7 +115,7 @@ public class TeleportTicket {
 
         }
 
-        player.sendMessage(Message.parse("teleportToRequest", args[1]));
+        player.sendMessage(Message.teleport(args[1]));
         return true;
     }
 }

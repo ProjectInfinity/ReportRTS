@@ -36,7 +36,7 @@ public class OpenTicket {
 
         // Check if ticket message is too short.
         if(plugin.ticketMinimumWords > (args.length - 1)) {
-            sender.sendMessage(Message.parse("modreqTooShort", plugin.ticketMinimumWords));
+            sender.sendMessage(Message.ticketTooShort(plugin.ticketMinimumWords));
             return true;
         }
 
@@ -59,21 +59,21 @@ public class OpenTicket {
 
         // The user is banned and can not create a ticket.
         if(user.getBanned()) {
-            sender.sendMessage(Message.parse("generalInternalError", "You are banned from opening tickets."));
+            sender.sendMessage(Message.errorBanned());
             return true;
         }
 
-        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))) {
-            sender.sendMessage(Message.parse("modreqTooManyOpen"));
+        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.bypass.ticket") : sender.hasPermission("reportrts.bypass.ticket"))) {
+            sender.sendMessage(Message.ticketTooMany());
             return true;
         }
 
         // Check if the sender can open another ticket yet.
         if(plugin.ticketDelay > 0) {
-            if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.command.modreq.unlimited") : sender.hasPermission("reportrts.command.modreq.unlimited"))){
+            if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.bypass.ticket") : sender.hasPermission("reportrts.bypass.ticket"))){
                 long timeBetweenRequest = RTSFunctions.checkTimeBetweenTickets(user.getUuid());
                 if(timeBetweenRequest > 0) {
-                    sender.sendMessage(Message.parse("modreqTooFast", timeBetweenRequest));
+                    sender.sendMessage(Message.ticketTooFast(timeBetweenRequest));
                     return true;
                 }
             }
@@ -87,7 +87,7 @@ public class OpenTicket {
             for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()){
                 if(!entry.getValue().getUUID().equals(user.getUuid())) continue;
                 if(!entry.getValue().getMessage().equalsIgnoreCase(message)) continue;
-                sender.sendMessage(Message.parse("modreqDuplicate"));
+                sender.sendMessage(Message.ticketDuplicate());
                 return true;
             }
         }
@@ -96,22 +96,22 @@ public class OpenTicket {
         int ticketId = data.createTicket(user, location, message);
         // If less than 1, then the creation of the ticket failed.
         if(ticketId < 1) {
-            sender.sendMessage(Message.parse("generalInternalError", "Ticket could not be opened."));
+            sender.sendMessage(Message.error("Ticket could not be opened."));
             return true;
         }
 
-        sender.sendMessage(Message.parse("modreqFiledUser"));
+        sender.sendMessage(Message.ticketOpenUser(Integer.toString(ticketId)));
         plugin.getLogger().log(Level.INFO, "" + user.getUsername() + " filed a request.");
 
         // Notify staff members about the new request.
         if(plugin.notifyStaffOnNewRequest) {
             try {
                 // Attempt to notify all servers connected to BungeeCord that run ReportRTS.
-                BungeeCord.globalNotify(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), ticketId, NotificationType.NEW);
+                BungeeCord.globalNotify(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), ticketId, NotificationType.NEW);
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            RTSFunctions.messageStaff(Message.parse("modreqFiledMod", user.getUsername(), Integer.toString(ticketId)), true);
+            RTSFunctions.messageStaff(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), true);
         }
 
         Ticket request = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
