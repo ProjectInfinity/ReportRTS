@@ -32,6 +32,22 @@ public class MessageHandler {
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultMessageStream);
             messageConfig.setDefaults(defaultConfig);
         }
+
+        // Ensure that the messages file is not from prior to the rewrite.
+        if(messageConfig.getString("modreqFiledUser") != null) {
+
+            // Rename the old messages file.
+            if(!messageFile.renameTo(new File(ReportRTS.getPlugin().getDataFolder(), "messages.yml.old"))) {
+                ReportRTS.getPlugin().getLogger().warning("Failed to move the old messages file. Does a backup already exist?");
+                return;
+            }
+
+            // Get the new configuration.
+            messageConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(ReportRTS.getPlugin().getResource("messages.yml")));
+
+            // Save to disk.
+            saveMessageConfig();
+        }
     }
 
     public FileConfiguration getMessageConfig() {
