@@ -17,7 +17,7 @@ public class TicketCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-        /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION *
+        /** Argument checker, DO NOT LEAVE THIS UNCOMMENTED IN PRODUCTION */
         int i = -1;
         for(String arg : args) {
             i++;
@@ -99,6 +99,13 @@ public class TicketCommand implements CommandExecutor {
             if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
             return result;
         }
+        /** Comment on a ticket. **/
+        if(args[0].equalsIgnoreCase(plugin.commandMap.get("commentTicket"))) {
+            result = CommentTicket.handleCommand(sender, args);
+            if(plugin.debugMode) Message.debug(sender.getName(), this.getClass().getSimpleName(), start, cmd.getName(), args);
+            return result;
+        }
+
         return true;
     }
 }

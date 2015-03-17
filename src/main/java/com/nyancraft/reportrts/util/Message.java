@@ -132,6 +132,14 @@ public class Message {
         return parse("ticket-unclaim-user", player, ticketId);
     }
 
+    public static String ticketComment(String ticketId, String player) {
+        return parse("ticket-comment", ticketId, player);
+    }
+
+    public static String ticketCommentUser(String ticketId) {
+        return parse("ticket-comment-user", ticketId);
+    }
+
     public static String ticketClaim(String player, String ticketId) {
         return parse("ticket-claim", player, ticketId);
     }

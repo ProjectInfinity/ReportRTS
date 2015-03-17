@@ -45,6 +45,9 @@ permissions:
   reportrts.command.read.self.closed:
     description: Permission to read your own closed tickets.
     default: op
+  reportrts.command.comment:
+    description: Permission to comment on a ticket.
+    default: op
   reportrts.command.close:
     description: Permission to close tickets.
     default: op

@@ -42,6 +42,7 @@ command:
   teleportToTicket: 'tp'
   broadcastToStaff: 'broadcast'
   listStaff: 'staff'
+  commentTicket: 'comment'
 
 ticket:
   delay: 60

@@ -21,6 +21,8 @@ teleport-x-server: '%gold%You were teleported to a different server to handle a 
 ticket-assign: '%gold%{0} has been assigned to ticket #{1}.'
 ticket-assign-user: '%gold%Your ticket has been assigned to {0}.'
 
+ticket-comment: '%gold%A comment was added to ticket #{0} by {1}.'
+ticket-comment-user: '%gold%Your comment was added to ticket #{0}.'
 ticket-claim: '%gold%{0} is now handling ticket #{1}.'
 ticket-claim-user: '%gold%{0} is now handling your ticket.'
 ticket-close: '%gold%Ticket #{0} was closed by {1}.'

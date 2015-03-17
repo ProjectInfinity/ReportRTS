@@ -137,7 +137,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         if(legacyCommands) {
             pm.registerEvents(new LegacyCommandListener(commandMap.get("readTicket"), commandMap.get("openTicket"), commandMap.get("closeTicket"), commandMap.get("reopenTicket"),
                     commandMap.get("claimTicket"), commandMap.get("unclaimTicket"), commandMap.get("holdTicket"), commandMap.get("teleportToTicket"), commandMap.get("broadcastToStaff"),
-                    commandMap.get("listStaff")), plugin);
+                    commandMap.get("listStaff"), commandMap.get("commentTicket")), plugin);
         }
 
         getCommand("reportrts").setExecutor(new ReportRTSCommand(plugin));
@@ -275,6 +275,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
         commandMap.put("broadcastToStaff",getConfig().getString("command.broadcastToStaff"));
         commandMap.put("listStaff",getConfig().getString("command.listStaff"));
         commandMap.put("assignTicket",getConfig().getString("command.assignTicket"));
+        commandMap.put("commentTicket",getConfig().getString("command.commentTicket"));
         // Commands registered!
     }
 

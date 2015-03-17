@@ -303,6 +303,34 @@ public class MySQLDataProvider implements DataProvider {
 
         }
 
+        // Comment table doesn't exist, let's create it.
+        if(!tableExists(plugin.storagePrefix + "reportrts_comment")) {
+
+            try(Statement stmt = db.createStatement()) {
+
+                if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_comment` (" +
+                        "`id`int(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                        "`name` varchar(255) NOT NULL, " +
+                        "`timestamp` int(11) UNSIGNED NOT NULL, " +
+                        "`comment`  varchar(255) NOT NULL, " +
+                        "`ticket`  int(11) UNSIGNED NOT NULL, " +
+                        "PRIMARY KEY (`id`))" +
+                        "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
+
+                    plugin.getLogger().warning("[MySQL] Failed to create the ticket table!");
+                    return false;
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            plugin.getLogger().info("[MySQL] Created the comment table.");
+
+        }
+
         return true;
     }
 
@@ -444,6 +472,39 @@ public class MySQLDataProvider implements DataProvider {
         }
 
         return id;
+    }
+
+    @Override
+    public int createComment(String name, long timestamp, String comment, int ticketId) {
+
+        if(!isLoaded()) return 0;
+
+        long current = System.currentTimeMillis() / 1000;
+
+        if(timestamp > current || (current - 120) > timestamp || ticketId < 1) return 0;
+
+        try(PreparedStatement ps = db.prepareStatement("INSERT INTO `" + plugin.storagePrefix + "reportrts_comment` (`name`, `timestamp`, `comment`, `ticket`) " +
+        "VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, name);
+            ps.setLong(2, timestamp);
+            ps.setString(3, comment);
+            ps.setInt(4, ticketId);
+
+            int result = ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+
+            if(!rs.first()) return 0;
+
+            int keys = rs.getInt(1);
+
+            return result < 1 ? -1 : keys;
+
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override

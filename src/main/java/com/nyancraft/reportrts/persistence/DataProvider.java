@@ -48,6 +48,17 @@ public interface DataProvider {
     public int createUser(UUID uuid);
 
     /**
+     * Creates a new comment and returns
+     * the ID of the newly created comment.
+     * @param name of player
+     * @param timestamp when comment was made
+     * @param comment in a string
+     * @param ticketId of the ticket
+     * @return Comment ID
+     */
+    public int createComment(String name, long timestamp, String comment, int ticketId);
+
+    /**
      * Creates a ticket and returns the
      * ID of the newly created ticket.
      * @param user Map containing all info about the user

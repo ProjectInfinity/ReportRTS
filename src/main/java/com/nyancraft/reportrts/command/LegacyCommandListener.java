@@ -17,8 +17,9 @@ public class LegacyCommandListener implements Listener {
     private String teleportToTicket;
     private String broadcastToStaff;
     private String listStaff;
+    private String commentTicket;
 
-    public LegacyCommandListener(String readTicket, String openTicket, String closeTicket, String reopenTicket, String claimTicket, String unclaimTicket, String holdTicket, String teleportToTicket, String broadcastToStaff, String listStaff) {
+    public LegacyCommandListener(String readTicket, String openTicket, String closeTicket, String reopenTicket, String claimTicket, String unclaimTicket, String holdTicket, String teleportToTicket, String broadcastToStaff, String listStaff, String commentTicket) {
         this.readTicket = readTicket;
         this.openTicket = openTicket;
         this.closeTicket = closeTicket;
@@ -29,6 +30,7 @@ public class LegacyCommandListener implements Listener {
         this.teleportToTicket = teleportToTicket;
         this.broadcastToStaff = broadcastToStaff;
         this.listStaff = listStaff;
+        this.commentTicket = commentTicket;
     }
     @EventHandler
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
@@ -71,6 +73,10 @@ public class LegacyCommandListener implements Listener {
             event.setCancelled(true);
         }
         if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + listStaff)) {
+            ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
+            event.setCancelled(true);
+        }
+        if(event.getMessage().split(" ")[0].equalsIgnoreCase("/" + commentTicket)) {
             ReportRTS.getPlugin().getServer().dispatchCommand(event.getPlayer(), "ticket " + event.getMessage().replaceFirst("/", ""));
             event.setCancelled(true);
         }

@@ -307,6 +307,7 @@ public class ReportRTSCommand implements CommandExecutor{
                 sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("reopenTicket") : "/ticket " + plugin.commandMap.get("reopenTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Reopens a held or closed ticket");
                 sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("teleportToTicket") : "/ticket " + plugin.commandMap.get("teleportToTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Teleport to specified ticket");
                 sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("unclaimTicket") : "/ticket " + plugin.commandMap.get("unclaimTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID]" + ChatColor.RESET + ChatColor.YELLOW + " - Unclaim ticket");
+                sender.sendMessage(ChatColor.RED + (plugin.legacyCommands ? "/" + plugin.commandMap.get("commentTicket") : "/ticket " + plugin.commandMap.get("commentTicket")) + ChatColor.GOLD + ChatColor.BOLD + " [ID] [COMMENT]" + ChatColor.RESET + ChatColor.YELLOW + " - Comments on a ticket");
                 break;
 
             case "NOTIFICATIONS":

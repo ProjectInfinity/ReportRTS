@@ -188,6 +188,21 @@ public class RTSPermissions {
         return true;
     }
 
+    public static boolean canComment(CommandSender sender) {
+        if(ReportRTS.permission != null) {
+            if(!ReportRTS.permission.has(sender, "reportrts.command.comment")) {
+                sender.sendMessage(Message.errorPermission("reportrts.command.comment"));
+                return false;
+            }
+            return true;
+        }
+        if(!sender.hasPermission("reportrts.command.comment")) {
+            sender.sendMessage(Message.errorPermission("reportrts.command.comment"));
+            return false;
+        }
+        return true;
+    }
+
     public static boolean canOverride(CommandSender sender) {
         if(ReportRTS.permission != null) {
             if(!ReportRTS.permission.has(sender, "reportrts.override")) {
