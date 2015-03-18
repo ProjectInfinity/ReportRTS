@@ -5,6 +5,7 @@ import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
+import com.nyancraft.reportrts.event.TicketCommentEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.BungeeCord;
 import com.nyancraft.reportrts.util.Message;
@@ -83,7 +84,7 @@ public class CommentTicket {
 
         RTSFunctions.messageStaff(Message.ticketComment(Integer.toString(ticketId), user.getUsername()), true);
 
-        // TODO: plugin.getServer().getPluginManager().callEvent(new TicketCommentEvent());
+        plugin.getServer().getPluginManager().callEvent(new TicketCommentEvent(plugin.tickets.get(ticketId), sender, comment));
 
         return true;
     }
