@@ -28,7 +28,7 @@ public class Response {
             resp.append("\"message\":").append("\"").append(entry.getValue().getMessage()).append("\"").append(",");
             resp.append("\"uuid\":").append("\"").append(entry.getValue().getUUID()).append("\"").append(",");
             resp.append("\"moduuid\":").append("\"").append(entry.getValue().getStaffUuid()).append("\"").append(",");
-            resp.append("\"comment\":").append("\"").append(entry.getValue().getComment()).append("\"").append(",");
+            //resp.append("\"comment\":").append("\"").append(entry.getValue().getComment()).append("\"").append(",");
             resp.append("\"server\":").append("\"").append(entry.getValue().getServer()).append("\"").append("}");
             resp.append("]");
 
@@ -50,7 +50,7 @@ public class Response {
                "\"pitch\":\"" + request.getPitch() + "\"," + "\"timestamp\":\"" + request.getTimestamp() + "\"," +
                "\"modtimestamp\":\"" + request.getStaffTime() + "\"," + "\"message\":\"" + request.getMessage() + "\"," +
                "\"uuid\":\"" + request.getUUID() + "\"," + "\"moduuid\":\"" + request.getStaffUuid() + "\"," +
-               "\"comment\":\"" + request.getComment() + "\"," + "\"server\":\"" + request.getServer() + "\"," +
+               //"\"comment\":\"" + request.getComment() + "\"," + "\"server\":\"" + request.getServer() + "\"," +
                "]}";
     }
 

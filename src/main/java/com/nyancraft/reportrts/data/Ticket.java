@@ -1,5 +1,7 @@
 package com.nyancraft.reportrts.data;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class Ticket {
@@ -21,14 +23,15 @@ public class Ticket {
     private String name;
     private String world;
     private String staffName;
-    private String comment;
     private String server;
 
     private UUID uuid;
     private UUID staffUuid;
     private boolean notified;
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, String comment){
+    private TreeSet<Comment> comments;
+
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, TreeSet<Comment> comments){
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -43,7 +46,7 @@ public class Ticket {
         this.yaw = yaw;
         this.pitch = pitch;
         this.staffTime = 0;
-        this.comment = comment;
+        this.comments = comments;
     }
 
     /**
@@ -178,11 +181,11 @@ public class Ticket {
     }
 
     /**
-     * Retrieves the comment on the ticket
-     * @return String comment
+     * Retrieves the comments on the ticket
+     * @return TreeSet comment
      */
-    public String getComment(){
-        return this.comment;
+    public TreeSet<Comment> getComments(){
+        return this.comments;
     }
 
     /**
@@ -226,11 +229,11 @@ public class Ticket {
     }
     
     /**
-     * @param comment
-     * Sets the comment on the ticket
+     * @param comments
+     * Sets the comments on the ticket
      */
-    public void setComment(String comment){
-        this.comment = comment;
+    public void setComments(TreeSet<Comment> comments){
+        this.comments = comments;
     }
 
     /**

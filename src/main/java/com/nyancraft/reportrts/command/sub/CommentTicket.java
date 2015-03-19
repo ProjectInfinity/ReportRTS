@@ -3,7 +3,9 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.NotificationType;
+import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 import com.nyancraft.reportrts.event.TicketCommentEvent;
 import com.nyancraft.reportrts.persistence.DataProvider;
@@ -13,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.util.TreeSet;
 
 public class CommentTicket {
 
@@ -56,6 +59,10 @@ public class CommentTicket {
             return true;
         }
 
+        Ticket ticket = plugin.tickets.get(ticketId);
+        TreeSet<Comment> comments = ticket.getComments();
+
+
         // Clean up arguments before combining the remaining into a comment.
         args[0] = null;
         args[1] = null;
@@ -64,8 +71,10 @@ public class CommentTicket {
 
         String name = sender instanceof Player ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
 
+        long timestamp = System.currentTimeMillis() / 1000;
+
         // Create a comment and store the comment ID.
-        int commentId = data.createComment(name, System.currentTimeMillis() / 1000, comment, ticketId);
+        int commentId = data.createComment(name, timestamp, comment, ticketId);
         // If less than 1, then the creation of the comment failed.
         if(commentId < 1) {
             sender.sendMessage(Message.error("Comment could not be created."));
@@ -83,6 +92,12 @@ public class CommentTicket {
         }
 
         RTSFunctions.messageStaff(Message.ticketComment(Integer.toString(ticketId), user.getUsername()), true);
+
+        // Add a comment to the comment set.
+        comments.add(new Comment(timestamp, ticketId, commentId, sender.getName(), comment));
+        // Update the comments on the ticket.
+        ticket.setComments(comments);
+        plugin.tickets.put(ticketId, ticket);
 
         plugin.getServer().getPluginManager().callEvent(new TicketCommentEvent(plugin.tickets.get(ticketId), sender, comment));
 

@@ -136,6 +136,10 @@ public class Message {
         return parse("ticket-comment", ticketId, player);
     }
 
+    public static String ticketCommentText(String player, String comment) {
+        return parse("ticket-comment-text", player, comment);
+    }
+
     public static String ticketCommentUser(String ticketId) {
         return parse("ticket-comment-user", ticketId);
     }
@@ -215,6 +219,7 @@ public class Message {
     public static String ticketReadNone() {
         return parse("ticket-read-none");
     }
+
     public static String ticketReadNoneSelf() {
         return parse("ticket-read-none-self");
     }

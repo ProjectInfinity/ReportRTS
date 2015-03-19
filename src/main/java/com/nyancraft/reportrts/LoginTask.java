@@ -1,11 +1,15 @@
 package com.nyancraft.reportrts;
 
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.persistence.DataProvider;
 import com.nyancraft.reportrts.util.Message;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class LoginTask extends BukkitRunnable {
@@ -33,9 +37,23 @@ public class LoginTask extends BukkitRunnable {
         // Prevent duplicate notifications (especially across multiple servers)
         if(ticket.isNotified()) return;
 
-        String comment = ticket.getComment();
-        if(comment == null) comment = "";
-        if(online) plugin.getServer().getPlayer(uuid).sendMessage(Message.ticketCloseText(ticket.getMessage(), comment));
+        if(online) {
+            Player player = plugin.getServer().getPlayer(uuid);
+
+            player.sendMessage(Message.ticketCloseText(ticket.getMessage()));
+
+            TreeSet<Comment> comments = ticket.getComments();
+
+            if(comments.size() > 0) {
+                Iterator it = comments.iterator();
+                while(it.hasNext()) {
+                    Comment comment = (Comment) it.next();
+                    player.sendMessage(Message.ticketCommentText(comment.getName(), comment.getComment()));
+                }
+            }
+        }
+
+
 
         if(data.setNotificationStatus(entry.getKey(), true) < 1) plugin.getLogger().warning("Unable to set notification status to 1 for ticket " + entry.getKey() + ".");
     }

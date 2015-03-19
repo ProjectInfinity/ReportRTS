@@ -1,12 +1,12 @@
 package com.nyancraft.reportrts.persistence;
 
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 
 import org.bukkit.Location;
 
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public interface DataProvider {
@@ -102,6 +102,21 @@ public interface DataProvider {
      * @return Console's User class
      */
     public User getConsole();
+
+    /**
+     * Gets a TreeSet containing all comments for that ticket.
+     * @param ticketId ID specifying target ticket
+     * @return TreeSet
+     */
+    public TreeSet<Comment> getComments(int ticketId);
+
+    /**
+     * Gets a HashMap containing TreeSets with comments for all
+     * tickets of the specified status.
+     * @param status status of ticket
+     * @return HashMap
+     */
+    public HashMap<Integer, TreeSet<Comment>> getAllComments(int status);
 
     /**
      * Gets all tickets of specified status starting at cursor and ending at limit.

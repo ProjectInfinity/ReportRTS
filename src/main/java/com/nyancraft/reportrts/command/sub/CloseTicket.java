@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.IOException;
+import java.util.TreeSet;
 
 public class CloseTicket {
 
@@ -72,12 +74,29 @@ public class CloseTicket {
         }
 
         args[0] = null;
+        int commentId = 0;
         String comment = RTSFunctions.implode(args, " ");
+        String name = sender.getName();
 
-        if(args[1].length() == comment.length())
+        long timestamp = System.currentTimeMillis() / 1000;
+
+
+        if(args[1].length() == comment.length()) {
             comment = null;
-        else
+        } else {
             comment = comment.substring(args[1].length()).trim();
+
+            name = sender instanceof Player ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
+
+            // Create a comment and store the comment ID.
+            commentId = data.createComment(name, timestamp, comment, ticketId);
+            // If less than 1, then the creation of the comment failed.
+            if(commentId < 1) {
+                sender.sendMessage(Message.error("Comment could not be created."));
+                return true;
+            }
+        }
+
 
         int online = 0;
         boolean isClaimedByOther = false;
@@ -95,30 +114,33 @@ public class CloseTicket {
             return true;
         }
 
-        long timestamp = System.currentTimeMillis() / 1000;
         if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, comment, online > 0, timestamp) < 1) {
             sender.sendMessage(Message.error("Unable to close ticket #" + args[0]));
             return true;
         }
 
-        Ticket data = null;
+        Ticket ticket = null;
         if(plugin.tickets.containsKey(ticketId)) {
+
             Player player = sender.getServer().getPlayer(plugin.tickets.get(ticketId).getUUID());
+
             if(online == 0) plugin.notifications.put(ticketId, plugin.tickets.get(ticketId).getUUID());
+
             if(player != null) {
+                // If player is online, send him closing message and comments.
                 player.sendMessage(Message.ticketCloseUser(args[1], user.getUsername()));
-                if(comment == null) comment = "";
-                player.sendMessage(Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage(), comment));
+                player.sendMessage(Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage()));
+                if(commentId > 0) player.sendMessage(Message.ticketCommentText(name, comment));
             } else {
                 try {
                     BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseUser(Integer.toString(ticketId), user.getUsername()), ticketId);
-                    if(comment == null) comment = "";
-                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage(), comment), ticketId);
+                    BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCloseText(plugin.tickets.get(ticketId).getMessage()), ticketId);
+                    if(commentId > 0) BungeeCord.notifyUser(plugin.tickets.get(ticketId).getUUID(), Message.ticketCommentText(name, comment), ticketId);
                 } catch(IOException e) {
                     e.printStackTrace();
                 }
             }
-            data = plugin.tickets.get(ticketId);
+            ticket = plugin.tickets.get(ticketId);
             plugin.tickets.remove(ticketId);
         }
 
@@ -128,12 +150,18 @@ public class CloseTicket {
             e.printStackTrace();
         }
         RTSFunctions.messageStaff(Message.ticketClose(args[1], user.getUsername()), false);
-        if(data != null) {
-            data.setComment(comment);
-            if (data.getStaffName() == null) {
-                data.setStaffName(sender.getName());
+        if(ticket != null) {
+
+            if(commentId > 0) {
+                TreeSet<Comment> comments = plugin.tickets.get(ticketId).getComments();
+                comments.add(new Comment(timestamp, ticketId, commentId, name, comment));
+                ticket.setComments(comments);
             }
-            plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(data, sender));
+
+            if (ticket.getStaffName() == null) {
+                ticket.setStaffName(sender.getName());
+            }
+            plugin.getServer().getPluginManager().callEvent(new TicketCloseEvent(ticket, sender));
         }
         return true;
     }

@@ -1,6 +1,7 @@
 package com.nyancraft.reportrts.persistence;
 
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.User;
 
@@ -9,10 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class MySQLDataProvider implements DataProvider {
 
@@ -230,6 +228,8 @@ public class MySQLDataProvider implements DataProvider {
                             "CHANGE COLUMN `bc_server` `server`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `world`, " +
                             "CHANGE COLUMN `notified_of_completion` `notified`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `status`;");
 
+                    // Ensure that we remove the comment column in favor of the comment table.
+                    stmt.addBatch("ALTER TABLE `" + plugin.storagePrefix + "reportrts_ticket` DROP COLUMN `comment`, MODIFY COLUMN `timestamp` int(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `staffTime`;");
 
                     plugin.getLogger().info("Migrated ticket data to the new table structure.");
 
@@ -250,7 +250,6 @@ public class MySQLDataProvider implements DataProvider {
                             "`userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
                             "`staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
                             "`staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
-                            "`comment`  varchar(255) NULL DEFAULT NULL ," +
                             "`timestamp`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
                             "`world`  varchar(255) NOT NULL DEFAULT '' ," +
                             "`server`  varchar(255) NOT NULL DEFAULT '' ," +
@@ -309,7 +308,7 @@ public class MySQLDataProvider implements DataProvider {
             try(Statement stmt = db.createStatement()) {
 
                 if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_comment` (" +
-                        "`id`int(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                        "`cid`int(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
                         "`name` varchar(255) NOT NULL, " +
                         "`timestamp` int(11) UNSIGNED NOT NULL, " +
                         "`comment`  varchar(255) NOT NULL, " +
@@ -347,6 +346,35 @@ public class MySQLDataProvider implements DataProvider {
 
     private boolean loadData() {
 
+        Map<Integer, TreeSet<Comment>> comments = new HashMap<>();
+
+        try(ResultSet rs = query("SELECT " +
+                "`" + plugin.storagePrefix + "reportrts_comment`.ticket, " +
+                        plugin.storagePrefix + "reportrts_comment.cid, " +
+                        plugin.storagePrefix + "reportrts_comment.`name`, " +
+                        plugin.storagePrefix + "reportrts_comment.`timestamp`, " +
+                        plugin.storagePrefix + "reportrts_comment.`comment`, " +
+                        plugin.storagePrefix + "reportrts_ticket.`status`, " +
+                        plugin.storagePrefix + "reportrts_ticket.id FROM " +
+                        plugin.storagePrefix + "reportrts_comment " +
+                        "INNER JOIN " + plugin.storagePrefix + "reportrts_ticket ON " +
+                        plugin.storagePrefix + "reportrts_comment.ticket = " +
+                        plugin.storagePrefix + "reportrts_ticket.id WHERE " +
+                        plugin.storagePrefix + "reportrts_ticket.`status` < 2 ORDER BY " +
+                        plugin.storagePrefix + "reportrts_comment.`timestamp` ASC")) {
+
+            while(rs.next()) {
+                if(comments.get(rs.getInt(1)) == null) comments.put(rs.getInt(1), new TreeSet<Comment>());
+                TreeSet<Comment> commentSet = comments.get(rs.getInt(1));
+                commentSet.add(new Comment(rs.getLong("timestamp"), rs.getInt("ticket"), rs.getInt("cid"), rs.getString("name"), rs.getString("comment")));
+                comments.put(rs.getInt(1), commentSet);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
         // MySQL connected fine. Load tickets from database.
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
                 plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status < 2")) {
@@ -367,7 +395,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("pitch"),
                         rs.getString("world"),
                         rs.getString("server"),
-                        rs.getString("comment")
+                        comments.get(rs.getInt(1)) != null ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
                 );
 
                 if(rs.getInt("status") > 0) {
@@ -375,7 +403,6 @@ public class MySQLDataProvider implements DataProvider {
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
-                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
                 plugin.tickets.put(rs.getInt(1), ticket);
@@ -717,9 +744,69 @@ public class MySQLDataProvider implements DataProvider {
     }
 
     @Override
+    public TreeSet<Comment> getComments(int ticketId) {
+
+        if(ticketId < 1) return null;
+
+        TreeSet<Comment> comments = new TreeSet<>();
+
+        try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_comment WHERE `ticket` = " + ticketId)) {
+
+            while(rs.next()) {
+                comments.add(new Comment(rs.getLong("timestamp"), rs.getInt("ticket"), rs.getInt("cid"), rs.getString("name"), rs.getString("comment")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return comments;
+    }
+
+    @Override
+    public HashMap<Integer, TreeSet<Comment>> getAllComments(int status) {
+
+        if(status < 0 || status > 3) return null;
+
+        HashMap<Integer, TreeSet<Comment>> comments = new HashMap<>();
+
+        try(ResultSet rs = query("SELECT " +
+                "`" + plugin.storagePrefix + "reportrts_comment`.ticket, " +
+                plugin.storagePrefix + "reportrts_comment.cid, " +
+                plugin.storagePrefix + "reportrts_comment.`name`, " +
+                plugin.storagePrefix + "reportrts_comment.`timestamp`, " +
+                plugin.storagePrefix + "reportrts_comment.`comment`, " +
+                plugin.storagePrefix + "reportrts_ticket.`status`, " +
+                plugin.storagePrefix + "reportrts_ticket.id FROM " +
+                plugin.storagePrefix + "reportrts_comment " +
+                "INNER JOIN " + plugin.storagePrefix + "reportrts_ticket ON " +
+                plugin.storagePrefix + "reportrts_comment.ticket = " +
+                plugin.storagePrefix + "reportrts_ticket.id WHERE " +
+                plugin.storagePrefix + "reportrts_ticket.`status` < " + status + " ORDER BY " +
+                plugin.storagePrefix + "reportrts_comment.`timestamp` ASC")) {
+
+            while(rs.next()) {
+                if(comments.get(rs.getInt(1)) == null) comments.put(rs.getInt(1), new TreeSet<Comment>());
+                TreeSet<Comment> commentSet = comments.get(rs.getInt(1));
+                commentSet.add(new Comment(rs.getLong("timestamp"), rs.getInt("ticket"), rs.getInt("cid"), rs.getString("name"), rs.getString("comment")));
+                comments.put(rs.getInt(1), commentSet);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return comments;
+    }
+
+    @Override
     public LinkedHashMap<Integer, Ticket> getTickets(int status, int cursor, int limit) {
 
         if(status < 1 || cursor < 0 || limit < 0) return null;
+
+        HashMap<Integer, TreeSet<Comment>> comments = getAllComments(status);
 
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
@@ -742,7 +829,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("pitch"),
                         rs.getString("world"),
                         rs.getString("server"),
-                        rs.getString("comment")
+                        comments.containsKey(rs.getInt(1)) ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
                 );
 
                 if(rs.getInt("status") > 0) {
@@ -750,7 +837,6 @@ public class MySQLDataProvider implements DataProvider {
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
-                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
 
@@ -769,6 +855,8 @@ public class MySQLDataProvider implements DataProvider {
     public LinkedHashMap<Integer, Ticket> getTickets(int status) {
 
         if(status < 0) return null;
+
+        HashMap<Integer, TreeSet<Comment>> comments = getAllComments(status);
 
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
@@ -791,7 +879,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("pitch"),
                         rs.getString("world"),
                         rs.getString("server"),
-                        rs.getString("comment")
+                        comments.containsKey(rs.getInt(1)) ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
                 );
 
                 if(rs.getInt("status") > 0) {
@@ -799,7 +887,6 @@ public class MySQLDataProvider implements DataProvider {
                     ticket.setStaffName(staff.getUsername());
                     ticket.setStaffTime(rs.getLong("staffTime"));
                     ticket.setStaffUuid(staff.getUuid());
-                    ticket.setComment(rs.getString("comment"));
                     ticket.setNotified(rs.getBoolean("notified"));
                 }
 
@@ -816,6 +903,8 @@ public class MySQLDataProvider implements DataProvider {
 
     @Override
     public Ticket getTicket(int id) {
+
+        TreeSet<Comment> comments = getComments(id);
 
         try(ResultSet rs = query("SELECT * FROM `" + plugin.storagePrefix + "reportrts_ticket` as ticket INNER JOIN `" + plugin.storagePrefix
         + "reportrts_user` as user ON ticket.userId = user.uid WHERE ticket.id = '" + id + "'")) {
@@ -836,7 +925,7 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getFloat("pitch"),
                     rs.getString("world"),
                     rs.getString("server"),
-                    rs.getString("comment")
+                    comments
             );
 
             if(rs.getInt("notified") > 0) ticket.setNotified(true);
@@ -897,7 +986,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("pitch"),
                             rs.getString("world"),
                             rs.getString("server"),
-                            rs.getString("comment")
+                            new TreeSet<Comment>() // We don't need to get comments here because they wouldn't be displayed anyway.
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);
@@ -939,7 +1028,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("pitch"),
                             rs.getString("world"),
                             rs.getString("server"),
-                            rs.getString("comment")
+                            new TreeSet<Comment>()
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);

@@ -3,6 +3,7 @@ package com.nyancraft.reportrts.command.sub;
 import com.nyancraft.reportrts.RTSFunctions;
 import com.nyancraft.reportrts.RTSPermissions;
 import com.nyancraft.reportrts.ReportRTS;
+import com.nyancraft.reportrts.data.Comment;
 import com.nyancraft.reportrts.data.Ticket;
 import com.nyancraft.reportrts.data.NotificationType;
 import com.nyancraft.reportrts.data.User;
@@ -16,6 +17,7 @@ import org.bukkit.Location;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 public class OpenTicket {
@@ -114,9 +116,9 @@ public class OpenTicket {
             RTSFunctions.messageStaff(Message.ticketOpen(user.getUsername(), Integer.toString(ticketId)), true);
         }
 
-        Ticket request = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), "");
-        plugin.getServer().getPluginManager().callEvent(new TicketOpenEvent(request));
-        plugin.tickets.put(ticketId, request);
+        Ticket ticket = new Ticket(user.getUsername(), user.getUuid(), ticketId, System.currentTimeMillis()/1000, message, 0, location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch(), location.getWorld().getName(), BungeeCord.getServer(), new TreeSet<Comment>());
+        plugin.getServer().getPluginManager().callEvent(new TicketOpenEvent(ticket));
+        plugin.tickets.put(ticketId, ticket);
 
         return true;
     }
