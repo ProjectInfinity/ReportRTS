@@ -153,7 +153,7 @@ public class CloseTicket {
         if(ticket != null) {
 
             if(commentId > 0) {
-                TreeSet<Comment> comments = plugin.tickets.get(ticketId).getComments();
+                TreeSet<Comment> comments = ticket.getComments();
                 comments.add(new Comment(timestamp, ticketId, commentId, name, comment));
                 ticket.setComments(comments);
             }

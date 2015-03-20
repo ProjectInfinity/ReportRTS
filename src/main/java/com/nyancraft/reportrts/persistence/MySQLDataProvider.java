@@ -394,9 +394,11 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server"),
-                        comments.get(rs.getInt(1)) != null ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
+                        rs.getString("server")
                 );
+
+                // Attach comments if there are any.
+                if(comments.containsKey(rs.getInt(1))) ticket.setComments(comments.get(rs.getInt(1)));
 
                 if(rs.getInt("status") > 0) {
                     User staff = getUser(null, rs.getInt("staffId"), false);
@@ -806,8 +808,6 @@ public class MySQLDataProvider implements DataProvider {
 
         if(status < 1 || cursor < 0 || limit < 0) return null;
 
-        HashMap<Integer, TreeSet<Comment>> comments = getAllComments(status);
-
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
@@ -828,8 +828,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server"),
-                        comments.containsKey(rs.getInt(1)) ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
+                        rs.getString("server")
                 );
 
                 if(rs.getInt("status") > 0) {
@@ -856,8 +855,6 @@ public class MySQLDataProvider implements DataProvider {
 
         if(status < 0) return null;
 
-        HashMap<Integer, TreeSet<Comment>> comments = getAllComments(status);
-
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
@@ -878,8 +875,7 @@ public class MySQLDataProvider implements DataProvider {
                         rs.getInt("yaw"),
                         rs.getInt("pitch"),
                         rs.getString("world"),
-                        rs.getString("server"),
-                        comments.containsKey(rs.getInt(1)) ? comments.get(rs.getInt(1)) : new TreeSet<Comment>()
+                        rs.getString("server")
                 );
 
                 if(rs.getInt("status") > 0) {
@@ -924,9 +920,10 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getFloat("yaw"),
                     rs.getFloat("pitch"),
                     rs.getString("world"),
-                    rs.getString("server"),
-                    comments
+                    rs.getString("server")
             );
+
+            if(comments.size() > 0) ticket.setComments(comments);
 
             if(rs.getInt("notified") > 0) ticket.setNotified(true);
 
@@ -985,8 +982,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("server"),
-                            new TreeSet<Comment>() // We don't need to get comments here because they wouldn't be displayed anyway.
+                            rs.getString("server")
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);
@@ -1027,8 +1023,7 @@ public class MySQLDataProvider implements DataProvider {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch"),
                             rs.getString("world"),
-                            rs.getString("server"),
-                            new TreeSet<Comment>()
+                            rs.getString("server")
                     );
 
                     if(rs.getInt("notified") > 0) ticket.setNotified(true);

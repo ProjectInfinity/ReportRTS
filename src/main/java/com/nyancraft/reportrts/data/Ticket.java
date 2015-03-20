@@ -31,7 +31,7 @@ public class Ticket {
 
     private TreeSet<Comment> comments;
 
-    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server, TreeSet<Comment> comments){
+    public Ticket(String name, UUID uuid, int id, long timestamp, String text, int status, int x, int y, int z, float yaw, float pitch, String world, String server){
         this.name = name;
         this.uuid = uuid;
         this.id = id;
@@ -46,7 +46,7 @@ public class Ticket {
         this.yaw = yaw;
         this.pitch = pitch;
         this.staffTime = 0;
-        this.comments = comments;
+        comments = new TreeSet<>();
     }
 
     /**
