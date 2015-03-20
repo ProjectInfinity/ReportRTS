@@ -364,7 +364,7 @@ public class MySQLDataProvider implements DataProvider {
                         plugin.storagePrefix + "reportrts_comment.`timestamp` ASC")) {
 
             while(rs.next()) {
-                if(comments.get(rs.getInt(1)) == null) comments.put(rs.getInt(1), new TreeSet<Comment>());
+                if(!comments.containsKey(rs.getInt(1))) comments.put(rs.getInt(1), new TreeSet<Comment>());
                 TreeSet<Comment> commentSet = comments.get(rs.getInt(1));
                 commentSet.add(new Comment(rs.getLong("timestamp"), rs.getInt("ticket"), rs.getInt("cid"), rs.getString("name"), rs.getString("comment")));
                 comments.put(rs.getInt(1), commentSet);
@@ -787,7 +787,7 @@ public class MySQLDataProvider implements DataProvider {
                 plugin.storagePrefix + "reportrts_comment.`timestamp` ASC")) {
 
             while(rs.next()) {
-                if(comments.get(rs.getInt(1)) == null) comments.put(rs.getInt(1), new TreeSet<Comment>());
+                if(!comments.containsKey(rs.getInt(1))) comments.put(rs.getInt(1), new TreeSet<Comment>());
                 TreeSet<Comment> commentSet = comments.get(rs.getInt(1));
                 commentSet.add(new Comment(rs.getLong("timestamp"), rs.getInt("ticket"), rs.getInt("cid"), rs.getString("name"), rs.getString("comment")));
                 comments.put(rs.getInt(1), commentSet);

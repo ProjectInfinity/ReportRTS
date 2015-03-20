@@ -61,6 +61,6 @@ public class Comment implements Comparable<Comment> {
     @Override
     public int compareTo(Comment comment) {
         int id = comment.getId();
-        return comment.getId() - id;
+        return this.getId() - id;
     }
 }

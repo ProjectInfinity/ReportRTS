@@ -121,7 +121,8 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
                 log.severe("Encountered an error while attempting to connect to the data-provider.  Disabling...");
                 pm.disablePlugin(this);
             }
-            reloadPlugin();
+            reloadSettings();
+            RTSFunctions.populateStaffMap();
         }
 
         // Check if plugin is up to date. TODO: This has to be updated for Spigot's website.
