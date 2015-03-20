@@ -86,14 +86,22 @@ public class ReadTicket {
      */
     private static boolean viewId(CommandSender sender, int id) {
 
+        boolean restrict = false;
+
         if(!RTSPermissions.canReadAll(sender)) {
-            sender.sendMessage(Message.errorPermission("reportrts.command.read"));
-            return true;
+
+            if(!RTSPermissions.canReadOwnClosed(sender)) {
+                sender.sendMessage(Message.errorPermission("reportrts.command.read"));
+                return true;
+            }
+
+            restrict = true;
+
         }
 
         Ticket ticket = plugin.tickets.get(id);
 
-        // Request does not exist in the requestMap and must be retrieved from the database.
+        // Ticket does not exist in the tickets map and must be retrieved from the database.
         if(ticket == null) {
 
             ticket = data.getTicket(id);
@@ -102,6 +110,12 @@ public class ReadTicket {
                 sender.sendMessage(Message.ticketNotExists(id));
                 return true;
             }
+        }
+
+        // If the user does not have access to readAll then ensure that the ticket is owned by that player.
+        if(restrict && !ticket.getUUID().equals(sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid())) {
+            sender.sendMessage(Message.errorTicketOwner());
+            return true;
         }
 
         // Sets the colour of the player's name depending on whether they are online or not.
@@ -393,11 +407,14 @@ public class ReadTicket {
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + " You have " + openRequests + " unresolved tickets " + ChatColor.AQUA + "----------");
         if(openRequests == 0) sender.sendMessage(Message.ticketReadNoneSelf());
         for(Map.Entry<Integer, Ticket> entry : plugin.tickets.entrySet()) {
-            if (entry.getValue().getName().equals(sender.getName())) {
-                i++;
-                if (i > 5) break;
-            }
+
             Ticket ticket = entry.getValue();
+
+            if (!ticket.getName().equals(sender.getName())) continue;
+
+            i++;
+            if (i > 5) break;
+
             String substring = RTSFunctions.shortenMessage(ticket.getMessage());
 
             substring = (ticket.getStatus() == 1) ? ChatColor.LIGHT_PURPLE + "Claimed by " + ticket.getStaffName() : ChatColor.GRAY + substring;
