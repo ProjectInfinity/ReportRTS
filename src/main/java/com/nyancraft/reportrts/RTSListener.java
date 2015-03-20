@@ -72,7 +72,7 @@ public class RTSListener implements Listener {
 
         if(!plugin.staff.contains(event.getPlayer().getUniqueId())) plugin.staff.add(event.getPlayer().getUniqueId());
 
-        int openTickets = plugin.staff.size();
+        int openTickets = plugin.tickets.size();
 
         if(openTickets < 1 && !plugin.hideNotification)
             event.getPlayer().sendMessage(Message.ticketReadNone());
