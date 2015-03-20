@@ -1,7 +1,7 @@
 # ReportRTS
 ![ReportRTS Logo](http://dev.bukkit.org/media/images/74/716/V1.png)
 
-_Development builds of this project can be acquired at the following continuous integration server._
+_Development builds of this project can be acquired at the following [continuous integration server](ci.regularbox.com/job/ReportRTS/)._
 
 _These builds have not been tested for production usage. Use them at your own risk._
 
