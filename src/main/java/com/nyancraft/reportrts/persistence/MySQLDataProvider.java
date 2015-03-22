@@ -811,7 +811,7 @@ public class MySQLDataProvider implements DataProvider {
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
-                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC") + " LIMIT " + cursor + ", " + limit)) {
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id DESC LIMIT " + cursor + ", " + limit)) {
 
             while(rs.next()) {
 
@@ -858,7 +858,7 @@ public class MySQLDataProvider implements DataProvider {
         LinkedHashMap<Integer, Ticket> tickets = new LinkedHashMap<>();
 
         try(ResultSet rs = query("SELECT * FROM " + plugin.storagePrefix + "reportrts_ticket as ticket INNER JOIN " +
-                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id " + (status == 3 ? "ASC" : "DESC"))) {
+                plugin.storagePrefix + "reportrts_user as user ON ticket.userId = user.uid WHERE ticket.status = " + status + " ORDER BY ticket.id DESC")) {
 
             while(rs.next()) {
 
