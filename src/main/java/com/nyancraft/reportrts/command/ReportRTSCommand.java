@@ -248,6 +248,11 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 User user = data.getUnsafeUser(args[1]);
 
+                if(user == null) {
+                    sender.sendMessage(Message.errorUserNotExists(args[1]));
+                    return true;
+                }
+
                 // Store map as null so we can check it later.
                 LinkedHashMap<Integer, Ticket> tickets = null;
 
