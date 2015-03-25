@@ -258,17 +258,11 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 if(action.equalsIgnoreCase("closed")) {
 
-                    tickets = data.getHandledBy(
-                            sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
-                            cursor, plugin.ticketsPerPage
-                    );
+                    tickets = data.getHandledBy(user.getUuid(), cursor, plugin.ticketsPerPage);
 
                 } else if(action.equalsIgnoreCase("opened")) {
 
-                    tickets = data.getOpenedBy(
-                            sender instanceof Player ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
-                            cursor, plugin.ticketsPerPage
-                    );
+                    tickets = data.getOpenedBy(user.getUuid(), cursor, plugin.ticketsPerPage);
 
                 }
 
