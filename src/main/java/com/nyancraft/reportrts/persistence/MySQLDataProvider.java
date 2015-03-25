@@ -313,7 +313,7 @@ public class MySQLDataProvider implements DataProvider {
                         "`timestamp` int(11) UNSIGNED NOT NULL, " +
                         "`comment`  varchar(255) NOT NULL, " +
                         "`ticket`  int(11) UNSIGNED NOT NULL, " +
-                        "PRIMARY KEY (`id`))" +
+                        "PRIMARY KEY (`cid`))" +
                         "DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;") > 0) {
 
                     plugin.getLogger().warning("[MySQL] Failed to create the ticket table!");
