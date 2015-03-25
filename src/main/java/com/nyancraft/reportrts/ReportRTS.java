@@ -120,6 +120,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
             if(!provider.load()) {
                 log.severe("Encountered an error while attempting to connect to the data-provider.  Disabling...");
                 pm.disablePlugin(this);
+                return;
             }
             reloadSettings();
             RTSFunctions.populateStaffMap();
