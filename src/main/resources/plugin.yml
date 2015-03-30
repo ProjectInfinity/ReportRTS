@@ -27,8 +27,11 @@ permissions:
   reportrts.staff:
     description: Give this to all staff members.
     default: op
-  reportrts.override:
-    description: Permission to override the actions of other staff members.
+  reportrts.bypass.claim:
+    description: Permission to bypass the claim of other staff members.
+    default: op
+  reportrts.bypass.limit:
+    description: Permission to bypass the limits in this plugin.
     default: op
   reportrts.command.open:
     description: Permission to open a ticket.

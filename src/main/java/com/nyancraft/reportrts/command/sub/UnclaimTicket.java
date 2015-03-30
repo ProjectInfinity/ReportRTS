@@ -40,7 +40,7 @@ public class UnclaimTicket {
         }
         // CONSOLE overrides all.
         if(sender instanceof Player) {
-            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canOverride(sender)) return true;
+            if(!((Player)sender).getUniqueId().equals(plugin.tickets.get(ticketId).getStaffUuid()) && !RTSPermissions.canBypassClaim(sender)) return true;
         }
 
         switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),

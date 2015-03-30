@@ -203,19 +203,20 @@ public class RTSPermissions {
         return true;
     }
 
-    public static boolean canOverride(CommandSender sender) {
-        if(ReportRTS.permission != null) {
-            if(!ReportRTS.permission.has(sender, "reportrts.override")) {
-                sender.sendMessage(Message.errorPermission("reportrts.override"));
-                return false;
-            }
-            return true;
-        }
-        if(!sender.hasPermission("reportrts.override")) {
-            sender.sendMessage(Message.errorPermission("reportrts.override"));
-            return false;
-        }
-        return true;
+    public static boolean canBypassClaim(CommandSender sender) {
+
+        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.claim");
+
+        return sender.hasPermission("reportrts.bypass.claim");
+
+    }
+
+    public static boolean canBypassLimit(CommandSender sender) {
+
+        if(ReportRTS.permission != null) return ReportRTS.permission.has(sender, "reportrts.bypass.limit");
+
+        return sender.hasPermission("reportrts.bypass.limit");
+
     }
 
     public static boolean canSeeHelpPage(CommandSender sender) {

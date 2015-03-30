@@ -17,7 +17,6 @@ import org.bukkit.Location;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.logging.Level;
 
 public class OpenTicket {
@@ -65,14 +64,14 @@ public class OpenTicket {
             return true;
         }
 
-        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.bypass.ticket") : sender.hasPermission("reportrts.bypass.ticket"))) {
+        if(RTSFunctions.getOpenTicketsByUser(user.getUuid()) >= plugin.maxTickets && !RTSPermissions.canBypassLimit(sender)) {
             sender.sendMessage(Message.ticketTooMany());
             return true;
         }
 
         // Check if the sender can open another ticket yet.
         if(plugin.ticketDelay > 0) {
-            if(!(ReportRTS.permission != null ? ReportRTS.permission.has(sender, "reportrts.bypass.ticket") : sender.hasPermission("reportrts.bypass.ticket"))){
+            if(!RTSPermissions.canBypassLimit(sender)){
                 long timeBetweenRequest = RTSFunctions.checkTimeBetweenTickets(user.getUuid());
                 if(timeBetweenRequest > 0) {
                     sender.sendMessage(Message.ticketTooFast(timeBetweenRequest));

@@ -109,7 +109,7 @@ public class CloseTicket {
             }
         }
 
-        if(isClaimedByOther && !sender.hasPermission("reportrts.bypass.claim")) {
+        if(isClaimedByOther && !RTSPermissions.canBypassClaim(sender)) {
             sender.sendMessage(Message.errorTicketClaim(ticketId, plugin.tickets.get(ticketId).getStaffName()));
             return true;
         }

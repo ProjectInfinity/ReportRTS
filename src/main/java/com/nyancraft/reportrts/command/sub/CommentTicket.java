@@ -54,7 +54,7 @@ public class CommentTicket {
             return true;
         }
 
-        if(sender instanceof Player && plugin.tickets.get(ticketId).getUUID() != ((Player) sender).getUniqueId() && !RTSPermissions.canOverride(sender)) {
+        if(sender instanceof Player && plugin.tickets.get(ticketId).getUUID() != ((Player) sender).getUniqueId() && !RTSPermissions.isStaff((Player) sender)) {
             sender.sendMessage(Message.errorTicketOwner());
             return true;
         }
