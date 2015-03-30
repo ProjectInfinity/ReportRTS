@@ -88,6 +88,16 @@ public interface DataProvider {
     public User getUser(UUID uuid, int id, boolean create);
 
     /**
+     * Gets an array list containing
+     * all users of specified status.
+     * Returns an empty array if
+     * none are found.
+     * @param banned Status of player
+     * @return ArrayList
+     */
+    public ArrayList<User> getUsers(boolean banned);
+
+    /**
      * Attempts to get a player by
      * name, this will only be used
      * as a LAST RESORT in case we cannot

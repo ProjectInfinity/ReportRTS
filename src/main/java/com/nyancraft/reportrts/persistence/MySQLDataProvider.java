@@ -666,6 +666,35 @@ public class MySQLDataProvider implements DataProvider {
     }
 
     @Override
+    public ArrayList<User> getUsers(boolean status) {
+
+        ArrayList<User> users = new ArrayList<>();
+
+        try(ResultSet rs = query("SELECT * FROM `" + plugin.storagePrefix + "reportrts_user` WHERE `banned` = " + (status ? 1 : 0))) {
+
+            while(rs.next()) {
+
+                User user = new User();
+
+                user.setId(rs.getInt("uid"));
+                user.setBanned(rs.getBoolean("banned"));
+                user.setUsername(rs.getString("name"));
+                user.setUuid(UUID.fromString(rs.getString("uuid")));
+
+                users.add(user);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return users;
+
+    }
+
+    @Override
     public User getUnsafeUser(String name) {
 
         User user = new User();

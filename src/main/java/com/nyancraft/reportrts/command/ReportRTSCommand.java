@@ -2,9 +2,7 @@ package com.nyancraft.reportrts.command;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 import com.nyancraft.reportrts.data.Ticket;
@@ -512,6 +510,34 @@ public class ReportRTSCommand implements CommandExecutor{
                 }
 
                 sender.sendMessage(ChatColor.RED + "Wrong argument! Valid arguments: HOSTNAME, PORT, DATABASE, USERNAME, PASSWORD, PREFIX, REFRESH");
+                break;
+
+            case "BANLIST":
+
+                if(!RTSPermissions.canBanUser(sender)) return true;
+
+                ArrayList<User> users = data.getUsers(true);
+
+                if(users == null || users.size() == 0) {
+                    sender.sendMessage(Message.error("There are no banned users."));
+                    return true;
+                }
+
+                sender.sendMessage(ChatColor.YELLOW + "Listing banned users (" + users.size() + " total):");
+
+                Iterator it = users.iterator();
+
+                int i = 0;
+                while(it.hasNext()) {
+
+                    User user1 = (User) it.next();
+
+                    i++;
+
+                    sender.sendMessage(ChatColor.GREEN + "" + i + ": " + ChatColor.BOLD + ChatColor.AQUA + user1.getUsername() + ChatColor.GRAY + " - " + user1.getUuid().toString());
+
+                }
+
                 break;
 
             default:
