@@ -114,7 +114,7 @@ public class CloseTicket {
             return true;
         }
 
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, comment, online > 0, timestamp) < 1) {
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 3, online > 0, timestamp) < 1) {
             sender.sendMessage(Message.error("Unable to close ticket #" + args[0]));
             return true;
         }

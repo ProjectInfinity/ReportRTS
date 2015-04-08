@@ -38,7 +38,7 @@ public class ReopenTicket {
 
         User user = sender instanceof Player ? data.getUser(((Player) sender).getUniqueId(), 0, true) : data.getConsole();
 
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 0, "", false, System.currentTimeMillis() / 1000) < 1) {
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 0, false, System.currentTimeMillis() / 1000) < 1) {
             sender.sendMessage(Message.errorTicketNotClosed(args[0]));
             return true;
         }

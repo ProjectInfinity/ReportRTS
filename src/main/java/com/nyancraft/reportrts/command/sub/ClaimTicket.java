@@ -50,7 +50,7 @@ public class ClaimTicket {
         long timestamp = System.currentTimeMillis() / 1000;
 
         switch(data.setTicketStatus(ticketId, (sender instanceof Player) ? ((Player) sender).getUniqueId() : data.getConsole().getUuid(),
-                sender.getName(), 1, "", false, System.currentTimeMillis() / 1000)) {
+                sender.getName(), 1, false, System.currentTimeMillis() / 1000)) {
 
             case -3:
                 // Ticket does not exist.

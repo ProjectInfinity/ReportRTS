@@ -81,6 +81,7 @@ public class MySQLDataProvider implements DataProvider {
 
             stmt.addBatch("TRUNCATE TABLE `" + plugin.storagePrefix + "reportrts_user`");
             stmt.addBatch("TRUNCATE TABLE `" + plugin.storagePrefix + "reportrts_ticket`");
+            stmt.addBatch("TRUNCATE TABLE `" + plugin.storagePrefix + "reportrts_comment`");
 
             stmt.executeBatch();
 
@@ -178,6 +179,12 @@ public class MySQLDataProvider implements DataProvider {
 
             } catch (SQLException e) {
                 e.printStackTrace();
+                return false;
+            }
+
+            if(!columns.contains("uuid")) {
+                plugin.getLogger().severe("The UUID field is missing, your data is probably very old. Please run a older build of ReportRTS to migrate the data.");
+                plugin.getServer().getPluginManager().disablePlugin(plugin);
                 return false;
             }
 
@@ -283,7 +290,7 @@ public class MySQLDataProvider implements DataProvider {
             // Table exists! We have to ensure the structure is up to date.
             ArrayList<String> columns = new ArrayList<>();
 
-            try(ResultSet rs = query("show columns from `" + plugin.storagePrefix + "reportrts_user`")) {
+            try(ResultSet rs = query("show columns from `" + plugin.storagePrefix + "reportrts_ticket`")) {
 
                 while(rs.next()) {
                     columns.add(rs.getString("Field"));
@@ -294,10 +301,17 @@ public class MySQLDataProvider implements DataProvider {
                 return false;
             }
 
-            if(!columns.contains("uuid")) {
-                plugin.getLogger().severe("The UUID field is missing, your data is probably very old. Please run a older build of ReportRTS to migrate the data.");
-                plugin.getServer().getPluginManager().disablePlugin(plugin);
-                return false;
+            if(columns.contains("comment")) {
+
+                try(Statement stmt = db.createStatement()) {
+                    stmt.executeUpdate("ALTER TABLE `" + plugin.storagePrefix + "reportrts_ticket` DROP COLUMN `comment`");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
+                plugin.getLogger().info("Updated ticket table : Removed comment column.");
+
             }
 
         }
@@ -1096,7 +1110,7 @@ public class MySQLDataProvider implements DataProvider {
     }
 
     @Override
-    public int setTicketStatus(int id, UUID uuid, String username, int status, String comment, boolean notified, long timestamp) {
+    public int setTicketStatus(int id, UUID uuid, String username, int status, boolean notified, long timestamp) {
 
         if(!isLoaded()) return 0;
 
@@ -1117,14 +1131,13 @@ public class MySQLDataProvider implements DataProvider {
         // Make sure tickets do not clash.
         if(ticket.getStatus() == status || (status == 2 && ticket.getStatus() == 3)) return -2;
 
-        try(PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `status` = ?, staffId = ?, staffTime = ?, comment = ?, notified = ? WHERE `id` = ?")) {
+        try(PreparedStatement ps = db.prepareStatement("UPDATE `" + plugin.storagePrefix + "reportrts_ticket` SET `status` = ?, staffId = ?, staffTime = ?, notified = ? WHERE `id` = ?")) {
 
             ps.setInt(1, status);
             ps.setInt(2, staff.getId());
             ps.setLong(3, timestamp);
-            ps.setString(4, comment);
-            ps.setInt(5, notified ? 1 : 0);
-            ps.setInt(6, id);
+            ps.setInt(4, notified ? 1 : 0);
+            ps.setInt(5, id);
 
             // Check if any rows were affected.
             if(ps.executeUpdate() < 1) return 0;

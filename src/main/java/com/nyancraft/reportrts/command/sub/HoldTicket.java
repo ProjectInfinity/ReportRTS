@@ -47,7 +47,7 @@ public class HoldTicket {
             return true;
         }
 
-        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 2, reason, false, System.currentTimeMillis() / 1000) < 1) {
+        if(data.setTicketStatus(ticketId, user.getUuid(), sender.getName(), 2, false, System.currentTimeMillis() / 1000) < 1) {
             sender.sendMessage(Message.error("Unable to put ticket #" + args[0] + " on hold."));
             return true;
         }

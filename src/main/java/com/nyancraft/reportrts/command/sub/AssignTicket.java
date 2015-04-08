@@ -58,7 +58,7 @@ public class AssignTicket {
         long timestamp = System.currentTimeMillis() / 1000;
 
         switch(data.setTicketStatus(ticketId, user.getUuid(),
-                user.getUsername(), 1, "", false, System.currentTimeMillis() / 1000)) {
+                user.getUsername(), 1, false, System.currentTimeMillis() / 1000)) {
 
             case -3:
                 // Ticket does not exist.

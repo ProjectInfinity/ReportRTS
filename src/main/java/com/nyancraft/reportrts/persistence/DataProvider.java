@@ -182,12 +182,11 @@ public interface DataProvider {
      * @param uuid uuid of player changing ticket status
      * @param username name of player changing ticket status
      * @param status status to change ticket to
-     * @param comment closing comment on ticket
      * @param notified whether the player is notified or not
      * @param timestamp timestamp of when the ticket was changed
      * @return resultcode as a number
      */
-    public int setTicketStatus(int id, UUID uuid, String username, int status, String comment, boolean notified, long timestamp);
+    public int setTicketStatus(int id, UUID uuid, String username, int status, boolean notified, long timestamp);
 
     /**
      * Sets the status of a notification to the provided status and
