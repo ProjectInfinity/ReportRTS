@@ -1200,7 +1200,7 @@ public class MySQLDataProvider implements DataProvider {
 
         if(!isLoaded()) return;
 
-        try(ResultSet rs = query("DELETE FROM `" + plugin.storagePrefix + "` WHERE `id` = '" + ticketId + "'")) {
+        try(ResultSet rs = query("DELETE FROM `" + plugin.storagePrefix + "reportrts_ticket` WHERE `id` = '" + ticketId + "'")) {
 
         } catch (SQLException e) {
             e.printStackTrace();
