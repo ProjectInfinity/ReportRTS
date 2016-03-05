@@ -62,7 +62,7 @@ public class RTSFunctions {
 
             player.sendMessage(message);
 
-            if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 0);
+            if(ReportRTS.getPlugin().notificationSound && playSound) player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
         }
 
         // Make sure Console sees this too!
