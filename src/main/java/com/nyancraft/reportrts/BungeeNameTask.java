@@ -13,7 +13,7 @@ public class BungeeNameTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if(plugin.getServer().getOnlinePlayers().size() > 0) {
+        if(!plugin.getServer().getOnlinePlayers().isEmpty()) {
             plugin.getLogger().info("Server name updated, task is shutting down.");
             BungeeCord.getServer();
             this.cancel();

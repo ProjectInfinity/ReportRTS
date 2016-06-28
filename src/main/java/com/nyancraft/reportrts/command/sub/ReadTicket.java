@@ -152,7 +152,7 @@ public class ReadTicket {
                     Millis/(1000*60*60), (Millis%(1000*60*60))/(1000*60), ((Millis%(1000*60*60))%(1000*60))/1000) + " by " + ticket.getStaffName());
         }
 
-        if(ticket.getComments() != null && ticket.getComments().size() > 0) {
+        if(ticket.getComments() != null && !ticket.getComments().isEmpty()) {
             sender.sendMessage(ChatColor.YELLOW + "Comments: ");
             Iterator it = ticket.getComments().iterator();
             while(it.hasNext()) {
@@ -182,7 +182,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.tickets.size() + " Tickets -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-        if(plugin.tickets.size() == 0) sender.sendMessage(Message.ticketReadNone());
+        if(plugin.tickets.isEmpty()) sender.sendMessage(Message.ticketReadNone());
 
         List<Ticket> tmpList = new ArrayList<>(plugin.tickets.values());
 
@@ -245,7 +245,7 @@ public class ReadTicket {
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + tickets.size() + " Tickets -" + ChatColor.YELLOW + " Held " + ChatColor.AQUA + "---------");
-        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneHeld());
+        if(tickets.isEmpty()) sender.sendMessage(Message.ticketReadNoneHeld());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 
@@ -300,7 +300,7 @@ public class ReadTicket {
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + tickets.size() + " Tickets -" + ChatColor.YELLOW + " Closed " + ChatColor.AQUA + "--------- ");
-        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneClosed());
+        if(tickets.isEmpty()) sender.sendMessage(Message.ticketReadNoneClosed());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 
@@ -352,7 +352,7 @@ public class ReadTicket {
 
         // Compile a response for the user.
         sender.sendMessage(ChatColor.AQUA + "--------- " + plugin.tickets.size() + " Tickets From Server " + server + " -" + ChatColor.YELLOW + " Open " + ChatColor.AQUA + "---------");
-        if(plugin.tickets.size() == 0) sender.sendMessage(Message.ticketReadNone());
+        if(plugin.tickets.isEmpty()) sender.sendMessage(Message.ticketReadNone());
 
         List<Ticket> tmpList = new ArrayList<>(plugin.tickets.values());
 
@@ -469,7 +469,7 @@ public class ReadTicket {
         }
 
         sender.sendMessage(ChatColor.AQUA + "--------- " + ChatColor.YELLOW + "You have " + tickets.size() + " resolved tickets " + ChatColor.AQUA + "--------- ");
-        if(tickets.size() == 0) sender.sendMessage(Message.ticketReadNoneClosed());
+        if(tickets.isEmpty()) sender.sendMessage(Message.ticketReadNoneClosed());
 
         for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()) {
 

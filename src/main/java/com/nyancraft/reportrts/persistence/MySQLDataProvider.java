@@ -966,7 +966,7 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getString("server")
             );
 
-            if(comments.size() > 0) ticket.setComments(comments);
+            if(!comments.isEmpty()) ticket.setComments(comments);
 
             if(rs.getInt("notified") > 0) ticket.setNotified(true);
 
