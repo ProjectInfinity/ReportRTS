@@ -283,7 +283,7 @@ public class ReportRTSCommand implements CommandExecutor{
                     // Is the player online?
                     ChatColor online = RTSFunctions.isUserOnline(user.getUuid()) ? ChatColor.GREEN : ChatColor.RED;
                     // Send body.
-                    sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new java.util.Date(ticket.getTimestamp() * 1000)) +
+                    sender.sendMessage(ChatColor.GOLD + "#" + ticket.getId() + " " + sdf.format(new Date(ticket.getTimestamp() * 1000)) +
                     " by " + online + ticket.getName() + ChatColor.GOLD + " - " + ChatColor.GRAY + RTSFunctions.shortenMessage(ticket.getMessage()));
 
                 }
