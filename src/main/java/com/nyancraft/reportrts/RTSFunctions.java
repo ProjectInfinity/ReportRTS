@@ -43,7 +43,7 @@ public class RTSFunctions {
 
         String out = "";
         for(String part : lines) {
-            if(part.length() > 0) out = out + part.trim() + " ";
+            if(!part.isEmpty()) out = out + part.trim() + " ";
         }
         return out;
     }

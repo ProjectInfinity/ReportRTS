@@ -32,7 +32,7 @@ public class ListStaff {
             }
             staff = staff + player.getDisplayName() + separator;
         }
-        if(staff.length() == 0) {
+        if(staff.isEmpty()) {
             sender.sendMessage(Message.staffListEmpty());
             return true;
         }

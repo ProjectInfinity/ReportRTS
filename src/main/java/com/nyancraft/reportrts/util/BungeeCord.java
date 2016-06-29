@@ -35,7 +35,7 @@ public class BungeeCord {
     }
 
     public static void triggerAutoSync(){
-        noPlayersOnline = Bukkit.getOnlinePlayers().size() == 0;
+        noPlayersOnline = Bukkit.getOnlinePlayers().isEmpty();
     }
 
     public static boolean isServerEmpty(){
@@ -127,7 +127,7 @@ public class BungeeCord {
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
 
-        Player player = (Bukkit.getOnlinePlayers().size() == 0 ? null : Bukkit.getOnlinePlayers().iterator().next());
+        Player player = (Bukkit.getOnlinePlayers().isEmpty() ? null : Bukkit.getOnlinePlayers().iterator().next());
         if(player != null){
             player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", b.toByteArray());
         }else{
@@ -155,7 +155,7 @@ public class BungeeCord {
         out.writeShort(msgbytes.toByteArray().length);
         out.write(msgbytes.toByteArray());
 
-        Player player = (Bukkit.getOnlinePlayers().size() == 0 ? null : Bukkit.getOnlinePlayers().iterator().next());
+        Player player = (Bukkit.getOnlinePlayers().isEmpty() ? null : Bukkit.getOnlinePlayers().iterator().next());
         if(player != null){
             player.sendPluginMessage(ReportRTS.getPlugin(), "BungeeCord", b.toByteArray());
         }else{

@@ -518,7 +518,7 @@ public class ReportRTSCommand implements CommandExecutor{
 
                 ArrayList<User> users = data.getUsers(true);
 
-                if(users == null || users.size() == 0) {
+                if(users == null || users.isEmpty()) {
                     sender.sendMessage(Message.error("There are no banned users."));
                     return true;
                 }
