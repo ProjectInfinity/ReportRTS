@@ -18,6 +18,9 @@ public class UnclaimTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private UnclaimTicket() {
+    }
+
     /**
      * Initial handling of the Unclaim sub-command.
      * @param sender player that sent the command

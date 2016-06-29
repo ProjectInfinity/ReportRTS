@@ -24,6 +24,9 @@ public class OpenTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private OpenTicket() {
+    }
+
     /**
      * Initial handling of the Open sub-command.
      * @param sender player that sent the command

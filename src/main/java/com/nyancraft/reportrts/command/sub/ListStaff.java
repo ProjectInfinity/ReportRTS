@@ -12,6 +12,9 @@ public class ListStaff {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
 
+    private ListStaff() {
+    }
+
     /**
      * Initial handling of the Staff sub-command.
      * @param sender player that sent the command

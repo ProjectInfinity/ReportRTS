@@ -20,6 +20,9 @@ public class BungeeCord {
 
     private static String serverName;
 
+    private BungeeCord() {
+    }
+
     public static void processPendingRequests(){
         if(!pendingRequests.isEmpty()){
             for(byte[] toSend : pendingRequests){

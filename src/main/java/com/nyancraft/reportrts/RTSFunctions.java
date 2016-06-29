@@ -19,6 +19,9 @@ public class RTSFunctions {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    private RTSFunctions() {
+    }
+
     /**
      * Join a String[] into a single string with a joiner
      */

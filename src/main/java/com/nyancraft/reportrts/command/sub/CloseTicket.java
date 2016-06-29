@@ -22,6 +22,9 @@ public class CloseTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private CloseTicket() {
+    }
+
     /**
      * Initial handling of the Close sub-command.
      * @param sender player that sent the command

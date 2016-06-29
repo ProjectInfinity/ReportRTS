@@ -7,6 +7,9 @@ import com.nyancraft.reportrts.util.Message;
 
 public class RTSPermissions {
 
+    private RTSPermissions() {
+    }
+
     public static boolean isStaff(Player player) {
         if(ReportRTS.permission != null) return ReportRTS.permission.playerHas(player, "reportrts.staff");
         return player.hasPermission("reportrts.staff");
