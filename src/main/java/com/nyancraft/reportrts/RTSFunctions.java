@@ -23,27 +23,29 @@ public class RTSFunctions {
      * Join a String[] into a single string with a joiner
      */
     public static String implode( String[] array, String glue ) {
-        if (array.length == 0) {
-            return "";
-        }
-        StringBuilder out = new StringBuilder();
-        for (String part : array) {
-            if (part == null) continue;
-            out.append(part);
-            out.append(glue);
-        }
-        return out.substring(0, out.length() - glue.length());
+
+    String out = "";
+
+    if( array.length == 0 ) {
+        return out;
+    }
+
+    for( String part : array ) {
+        if(part == null) continue;
+        out = out + part + glue;
+    }
+    out = out.substring(0, out.length() - glue.length() );
+
+    return out;
     }
 
     public static String cleanUpSign(String[] lines) {
-        StringBuilder out = new StringBuilder();
+
+        String out = "";
         for(String part : lines) {
-            if(part.length() > 0) {
-                out.append(part.trim());
-                out.append(" ");
-            }
+            if(!part.isEmpty()) out = out + part.trim() + " ";
         }
-        return out.toString();
+        return out;
     }
     /***
      * Message all online staff on the server
