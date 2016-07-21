@@ -37,7 +37,7 @@ public class RTSListener implements Listener {
             }, 60L);
         }
 
-        if(plugin.notifications.size() > 0){
+        if(!plugin.notifications.isEmpty()){
             Map<Integer, UUID> keys = new HashMap<>();
             for(Map.Entry<Integer, UUID> entry : plugin.notifications.entrySet()){
                 if(entry.getValue().equals(event.getPlayer().getUniqueId())){
@@ -108,7 +108,7 @@ public class RTSListener implements Listener {
 
         String[] text = new String[3]; System.arraycopy(event.getLines(), 1, text, 0, 3);
         String message = RTSFunctions.cleanUpSign(text);
-        if(message.length() == 0) {
+        if(message.isEmpty()) {
             event.getPlayer().sendMessage(Message.error("Help signs can't be empty."));
             block.breakNaturally();
             return;

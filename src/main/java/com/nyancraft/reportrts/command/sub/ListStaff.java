@@ -21,7 +21,7 @@ public class ListStaff {
 
         // TODO: Possible to-do. No cross server functionality!
         if(!RTSPermissions.canListStaff(sender)) return true;
-        String staff = "";
+        StringBuilder staff = new StringBuilder();
         String separator = Message.staffListSeparator();
 
         for(UUID uuid : plugin.staff) {
@@ -30,15 +30,16 @@ public class ListStaff {
             if(plugin.vanishSupport && sender instanceof Player) {
                 if(!((Player) sender).canSee(player)) continue;
             }
-            staff = staff + player.getDisplayName() + separator;
+            staff.append(player.getDisplayName());
+            staff.append(separator);
         }
-        if(staff.length() == 0) {
+        if(staff.isEmpty()) {
             sender.sendMessage(Message.staffListEmpty());
             return true;
         }
-        staff = staff.substring(0, staff.length() - separator.length());
+        String staffString = staff.substring(0, staff.length() - separator.length());
 
-        sender.sendMessage(Message.staffListOnline(staff));
+        sender.sendMessage(Message.staffListOnline(staffString));
         return true;
     }
 }

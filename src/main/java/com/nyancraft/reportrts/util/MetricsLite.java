@@ -189,7 +189,7 @@ public class MetricsLite {
     /**
      * Enables metrics for the server by setting "opt-out" to false in the config file and starting the metrics task.
      *
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void enable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.
@@ -210,7 +210,7 @@ public class MetricsLite {
     /**
      * Disables metrics for the server by setting "opt-out" to true in the config file and canceling the metrics task.
      *
-     * @throws java.io.IOException
+     * @throws IOException
      */
     public void disable() throws IOException {
         // This has to be synchronized or it can collide with the check in the task.

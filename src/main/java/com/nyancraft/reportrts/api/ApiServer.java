@@ -27,7 +27,7 @@ public class ApiServer extends Thread {
         this.password = password;
         if(allowedIPs == null || allowedIPs.isEmpty() || allowedIPs.get(0).equalsIgnoreCase("0.0.0.0")){
             this.restrictIP = false;
-        }else if(allowedIPs.size() > 0){
+        }else if(!allowedIPs.isEmpty()){
             this.restrictIP = true;
         }
 
