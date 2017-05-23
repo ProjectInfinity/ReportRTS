@@ -44,7 +44,7 @@ public class LoginTask extends BukkitRunnable {
 
             TreeSet<Comment> comments = ticket.getComments();
 
-            if(comments.size() > 0) {
+            if(!comments.isEmpty()) {
                 Iterator it = comments.iterator();
                 while(it.hasNext()) {
                     Comment comment = (Comment) it.next();

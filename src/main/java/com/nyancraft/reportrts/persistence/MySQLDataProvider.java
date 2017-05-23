@@ -147,7 +147,7 @@ public class MySQLDataProvider implements DataProvider {
             try(Statement stmt = db.createStatement()) {
 
                 if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_user` (" +
-                        "`uid`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
+                        "`uid`  int(10) UNSIGNED NOT NULL AUTO_INCREMENT ," +
                         "`name`  varchar(255) NOT NULL DEFAULT '' ," +
                         "`uuid`  char(36) NULL DEFAULT NULL ," +
                         "`banned`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 ," +
@@ -253,7 +253,7 @@ public class MySQLDataProvider implements DataProvider {
                 try(Statement stmt = db.createStatement()) {
 
                     if(stmt.executeUpdate("CREATE TABLE IF NOT EXISTS `" + plugin.storagePrefix + "reportrts_ticket` (" +
-                            "`id`  int(10) UNSIGNED NULL AUTO_INCREMENT ," +
+                            "`id`  int(10) UNSIGNED NOT NULL AUTO_INCREMENT ," +
                             "`userId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
                             "`staffId`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
                             "`staffTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 ," +
@@ -966,7 +966,7 @@ public class MySQLDataProvider implements DataProvider {
                     rs.getString("server")
             );
 
-            if(comments.size() > 0) ticket.setComments(comments);
+            if(!comments.isEmpty()) ticket.setComments(comments);
 
             if(rs.getInt("notified") > 0) ticket.setNotified(true);
 

@@ -299,7 +299,7 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     }
 
     private Boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
         if(permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
