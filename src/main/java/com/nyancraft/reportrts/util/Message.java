@@ -9,6 +9,9 @@ import com.nyancraft.reportrts.ReportRTS;
 
 public class Message {
 
+    private Message() {
+    }
+
     private static String parse(String key, Object ... params ){
         Object prop = ReportRTS.getMessageHandler().messageMap.get(key);
         if(prop == null) {

@@ -22,6 +22,9 @@ public class CommentTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private CommentTicket() {
+    }
+
     /**
      * Initial handling of the comment sub-command.
      *

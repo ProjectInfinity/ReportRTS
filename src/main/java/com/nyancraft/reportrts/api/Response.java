@@ -7,6 +7,9 @@ import java.util.Map;
 
 public class Response {
 
+    private Response() {
+    }
+
     public static String getTickets(){
 
         StringBuilder resp = new StringBuilder();

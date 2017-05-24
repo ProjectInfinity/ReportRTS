@@ -19,6 +19,9 @@ public class AssignTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private AssignTicket() {
+    }
+
     /**
      * Initial handling of the AssignTicket sub-command.
      * @param sender player that sent the command

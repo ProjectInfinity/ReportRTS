@@ -20,6 +20,9 @@ public class HoldTicket {
     private static ReportRTS plugin = ReportRTS.getPlugin();
     private static DataProvider data = plugin.getDataProvider();
 
+    private HoldTicket() {
+    }
+
     /**
      * Initial handling of the Hold sub-command.
      * @param sender player that sent the command

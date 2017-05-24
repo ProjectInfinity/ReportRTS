@@ -29,6 +29,9 @@ public class ReadTicket {
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMM.dd kk:mm z");
     private static String substring;
 
+    private ReadTicket() {
+    }
+
     /**
      * Initial handling of the Read sub-command.
      * @param sender player that sent the command

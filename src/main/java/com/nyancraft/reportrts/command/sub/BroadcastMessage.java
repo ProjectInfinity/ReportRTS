@@ -15,6 +15,9 @@ public class BroadcastMessage {
 
     private static ReportRTS plugin = ReportRTS.getPlugin();
 
+    private BroadcastMessage() {
+    }
+
     /**
      * Initial handling of the Broadcast sub-command.
      * @param sender player that sent the command
