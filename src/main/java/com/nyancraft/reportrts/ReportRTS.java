@@ -79,7 +79,9 @@ public class ReportRTS extends JavaPlugin implements PluginMessageListener {
     private String serverIP;
 
     public void onDisable() {
-        provider.close();
+        if (provider != null) {
+            provider.close();
+        }
         if(apiEnabled) {
             try{
                 apiServer.getListener().close();
