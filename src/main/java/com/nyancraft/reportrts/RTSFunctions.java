@@ -19,26 +19,6 @@ public class RTSFunctions {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
-    /**
-     * Join a String[] into a single string with a joiner
-     */
-    public static String implode( String[] array, String glue ) {
-
-    String out = "";
-
-    if( array.length == 0 ) {
-        return out;
-    }
-
-    for( String part : array ) {
-        if(part == null) continue;
-        out = out + part + glue;
-    }
-    out = out.substring(0, out.length() - glue.length() );
-
-    return out;
-    }
-
     public static String cleanUpSign(String[] lines) {
 
         String out = "";

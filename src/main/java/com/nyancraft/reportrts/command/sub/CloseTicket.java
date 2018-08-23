@@ -75,7 +75,7 @@ public class CloseTicket {
 
         args[0] = null;
         int commentId = 0;
-        String comment = RTSFunctions.implode(args, " ");
+        String comment = String.join(" ", args);
         String name = sender.getName();
 
         long timestamp = System.currentTimeMillis() / 1000;

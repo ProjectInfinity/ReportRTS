@@ -67,7 +67,7 @@ public class CommentTicket {
         args[0] = null;
         args[1] = null;
 
-        String comment = RTSFunctions.implode(args, " ").trim();
+        String comment = String.join(" ", args).trim();
 
         String name = sender instanceof Player ? plugin.staff.contains(user.getUuid()) ? sender.getName() + " - Staff" : sender.getName() : sender.getName();
 

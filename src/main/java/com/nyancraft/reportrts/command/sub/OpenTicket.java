@@ -81,7 +81,7 @@ public class OpenTicket {
         }
 
         args[0] = null;
-        String message = RTSFunctions.implode(args, " ");
+        String message = String.join(" ", args);
 
         // Prevent duplicate requests by comparing UUID and message to other currently open requests.
         if(plugin.ticketPreventDuplicate) {

@@ -33,7 +33,7 @@ public class HoldTicket {
         args[0] = "";
         int ticketId = Integer.parseInt(args[1]);
 
-        String reason = RTSFunctions.implode(args, " ").trim();
+        String reason = String.join(" ", args).trim();
 
         if(reason.length() <= args[1].length()) {
             reason = "No reason provided.";
