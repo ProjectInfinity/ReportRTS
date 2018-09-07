@@ -34,7 +34,7 @@ public class Message {
     }
 
     public static void debug(String name, String className, double start, String cmd, String[] args){
-        String arguments = RTSFunctions.implode(args, " ");
+        String arguments = String.join(" ", args);
         ReportRTS.getPlugin().getLogger().info(name + " " + className + " took " + RTSFunctions.getTimeSpent(start) + "ms: " + cmd + " " + arguments);
     }
 
